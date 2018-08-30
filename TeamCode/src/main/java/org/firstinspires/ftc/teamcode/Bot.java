@@ -38,7 +38,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Bot{
+public class Bot extends{
+
+    final static int ENCODER_TICKS_PER_REV = 1120;
+    final static int WHEEL_DIAMETER = 4; //Inches
+    final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
+
+    int _leftOffset;
+    int _rightOffset;
 
     private DcMotor leftBackDrive = null;
     private DcMotor leftFrontDrive = null;
@@ -58,11 +65,11 @@ public class Bot{
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
     }
 
-    public void setPower(double power){
-        leftBackDrive.setPower(power);
-        leftFrontDrive.setPower(power);
-        rightBackDrive.setPower(power);
-        rightFrontDrive.setPower(power);
+    public void setPower(double leftPower, double rightPower){
+        leftBackDrive.setPower(leftPower);
+        leftFrontDrive.setPower(leftPower);
+        rightBackDrive.setPower(-rightPower);
+        rightFrontDrive.setPower(-rightPower);
     }
 
     public void setLeftDirection(DcMotor.Direction direction){
@@ -70,7 +77,8 @@ public class Bot{
         leftFrontDrive.setDirection(direction);
     }
 
-    public void setRightDirection(){
-        
+    public void setRightDirection(DcMotor.Direction direction){
+        rightBackDrive.setDirection(direction);
+        rightFrontDrive.setDirection(direction);
     }
 }
