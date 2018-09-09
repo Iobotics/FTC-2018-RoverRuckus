@@ -52,6 +52,7 @@ public class Bot {
     final static int ENCODER_TICKS_PER_REV = 1120;
     final static int WHEEL_DIAMETER = 4; //Inches
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
+    final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
 
     int _leftOffset;
     int _rightOffset;
@@ -59,13 +60,14 @@ public class Bot {
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double P_TURN_COEFF = 0.143;   // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable .16
 
     private final static double FLAT_PITCH = -1;    // Pitch when robot is flat on the balance stone
     private final static double BALANCE_PITCH = -8; // Pitch when robot is leaving the balance stone
 
     private final static double AUTO_DRIVE_SPEED = 0.6;
     private final static double AUTO_TURN_SPEED = 0.6;
+    private final static double POWER_DAMPEN = .1;
 
     private DcMotor leftBackDrive = null;
     private DcMotor leftFrontDrive = null;
@@ -118,6 +120,11 @@ public class Bot {
         rightFrontDrive.setPower(rightPower);
     }
 
+    public void stop()
+    {
+        setPower(0, 0);
+    }
+
     public void setLeftDirection(DcMotor.Direction direction) {
         leftBackDrive.setDirection(direction);
         leftFrontDrive.setDirection(direction);
@@ -138,11 +145,48 @@ public class Bot {
         return leftFrontDrive.getCurrentPosition();
     }
 
-    public void driveStraight(double inches) {
-        leftBackDrive.setTargetPosition((int) (inches / INCHES_PER_TICK));
-        leftFrontDrive.setTargetPosition((int) (inches / INCHES_PER_TICK));
-        rightBackDrive.setTargetPosition((int) (inches / INCHES_PER_TICK));
-        rightFrontDrive.setTargetPosition((int) (inches / INCHES_PER_TICK));
+    public void driveStraight(double inches)
+    {
+        driveStraight(opMode, inches, 1);
+    }
+
+    /**
+     * Method for driving straight
+     *
+     * @param inches Inches
+     * @param maxSpeed  Should be greater than 0. Sets the maximum possible speed value.
+     */
+    public void driveStraight(LinearOpMode opmode, double inches, double maxSpeed) {
+        double speed;
+        int error;
+        //sets the target encoder value
+        int target = rightFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+
+        // While the absolute value of the error is greater than the error threshold
+        while (opmode.opModeIsActive() && Math.abs(rightFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - rightFrontDrive.getCurrentPosition();
+            speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed , maxSpeed);
+
+            /*if(getGyroHeading() > 5)
+            {
+                setPower(speed-POWER_DAMPEN, speed);
+            }
+            else if(getGyroHeading() < -5)
+            {
+                setPower(speed, speed-POWER_DAMPEN);
+            }
+            else
+            {
+                setPower(speed, speed);
+            }*/
+            setPower(speed, speed-POWER_DAMPEN);
+
+            opmode.telemetry.addData("Left Position", this.getLeftPosition() * INCHES_PER_TICK);
+            opmode.telemetry.addData("Right Position", this.getRightPosition() * INCHES_PER_TICK);
+            opMode.telemetry.update();
+        }
+
+        this.stop();
     }
 
 

@@ -12,6 +12,7 @@ public class Autonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
-        robot.driveStraight(5);
+        robot.driveStraight(40);
+
     }
 }

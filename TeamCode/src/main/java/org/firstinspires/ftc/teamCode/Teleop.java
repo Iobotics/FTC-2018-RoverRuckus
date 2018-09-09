@@ -22,6 +22,7 @@ public class Teleop extends LinearOpMode {
 
             telemetry.addData("Left Position", robot.getLeftPosition());
             telemetry.addData("Right Position", robot.getRightPosition());
+            telemetry.update();
         }
     }
 }
