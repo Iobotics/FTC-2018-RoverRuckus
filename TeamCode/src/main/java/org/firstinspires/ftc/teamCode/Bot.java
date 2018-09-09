@@ -51,16 +51,20 @@ public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
     final static int WHEEL_DIAMETER = 4; //Inches
+
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
+
 
     int _leftOffset;
     int _rightOffset;
 
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
-    private final static double P_TURN_COEFF = 0.143;   // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable .16
+
+    private final static double P_TURN_COEFF = 0.0715;   // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable
+
 
     private final static double FLAT_PITCH = -1;    // Pitch when robot is flat on the balance stone
     private final static double BALANCE_PITCH = -8; // Pitch when robot is leaving the balance stone
@@ -81,7 +85,6 @@ public class Bot {
     private BNO055IMU imu = null;
     private Orientation angles = null;
     private Acceleration gravity = null;
-    private LinearOpMode opmode = null;
 
     private ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -108,11 +111,13 @@ public class Bot {
         imu.initialize(parameters);
 
         setLeftDirection(DcMotor.Direction.REVERSE);
+        setBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         _leftOffset = leftFrontDrive.getCurrentPosition();
         _rightOffset = rightFrontDrive.getCurrentPosition();
     }
 
+    //Sets the power of both sides of the bot
     public void setPower(double leftPower, double rightPower) {
         leftBackDrive.setPower(leftPower);
         leftFrontDrive.setPower(leftPower);
@@ -120,9 +125,16 @@ public class Bot {
         rightFrontDrive.setPower(rightPower);
     }
 
-    public void stop()
-    {
-        setPower(0, 0);
+    public void setBehavior(DcMotor.ZeroPowerBehavior behavior){
+        leftBackDrive.setZeroPowerBehavior(behavior);
+        leftFrontDrive.setZeroPowerBehavior(behavior);
+        rightBackDrive.setZeroPowerBehavior(behavior);
+        rightFrontDrive.setZeroPowerBehavior(behavior);
+    }
+
+    public void stopDrive(){
+        setPower(0,0);
+
     }
 
     public void setLeftDirection(DcMotor.Direction direction) {
@@ -144,6 +156,7 @@ public class Bot {
     {
         return leftFrontDrive.getCurrentPosition();
     }
+
 
     public void driveStraight(double inches)
     {
@@ -186,8 +199,8 @@ public class Bot {
             opMode.telemetry.update();
         }
 
-        this.stop();
-    }
+        this.stopDrive();
+   }
 
 
     /**
@@ -229,37 +242,14 @@ public class Bot {
         return pitch;
     }
 
-    public void gyroTurn ( double angle){
-        gyroTurn(AUTO_TURN_SPEED, angle);
+
+    public void gyroHold ( double angle, double holdTime){
+        gyroHold(AUTO_TURN_SPEED, angle, holdTime);
     }
 
         /**
-         * Method to spin on central axis to point in a new direction.
-         * Move will stop if either of these conditions occur:
-         * 1) Move gets to the heading (angle)
-         * 2) Driver stops the opmode running.
-         *
-         * @param speed Desired speed of turn.
-         * @param angle Absolute Angle (in Degrees) relative to last gyro reset.
-         *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-         *              If a relative angle is required, add/subtract from current heading.
-         */
-        public void gyroTurn ( double speed, double angle){
-
-            // keep looping while we are still active, and not on heading.
-            while (opmode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
-                // Update telemetry & Allow time for other processes to run.
-                opmode.telemetry.update();
-            }
-        }
-
-        public void gyroHold ( double angle, double holdTime){
-            gyroHold(AUTO_TURN_SPEED, angle, holdTime);
-        }
-
-        /**
          * Method to obtain & hold a heading for a finite amount of time
-         * Move will stop once the requested time has elapsed
+         * Move will stop once the requested time has elapsed or the error has reached a threshold
          *
          * @param speed    Desired speed of turn.
          * @param angle    Absolute Angle (in Degrees) relative to last gyro reset.
@@ -267,20 +257,21 @@ public class Bot {
          *                 If a relative angle is required, add/subtract from current heading.
          * @param holdTime Length of time (in seconds) to hold the specified heading.
          */
-        public void gyroHold ( double speed, double angle, double holdTime){
+    public void gyroHold ( double speed, double angle, double holdTime){
 
-            ElapsedTime holdTimer = new ElapsedTime();
+         ElapsedTime holdTimer = new ElapsedTime();
 
-            // keep looping while we have time remaining.
-            holdTimer.reset();
-            while (opmode.opModeIsActive() && (holdTimer.time() < holdTime)) {
-                // Update telemetry & Allow time for other processes to run.
-                onHeading(speed, angle, P_TURN_COEFF);
-                opmode.telemetry.update();
-            }
+         // keep looping while we have time remaining.
+         holdTimer.reset();
+         while (opMode.opModeIsActive() && (holdTimer.time() < holdTime) && !onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
 
-            // Stop all motion;
-            setPower(0, 0);
+            opMode.telemetry.addData("timer", holdTimer.time());
+            opMode.telemetry.update();
+         }
+
+         // Stop all motion;
+         setPower(0, 0);
         }
 
         /**
@@ -318,9 +309,9 @@ public class Bot {
             setPower(leftSpeed, rightSpeed);
 
             // Display it for the driver
-            opmode.telemetry.addData("Target", "%5.2f", angle);
-            opmode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-            opmode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+            opMode.telemetry.addData("Target", "%5.2f", angle);
+            opMode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+            opMode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
 
             return onTarget;
         }
@@ -361,4 +352,23 @@ public class Bot {
         public ElapsedTime getTime () {
             return time;
         }
+    public void encoderDrive(double inches, double maxSpeed) {
+
+        double speed;
+        int error;
+        //sets the target encoder value
+        int target = rightFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+
+        // While the absolute value of the error is greater than the error threshold
+        while (opMode.opModeIsActive() && Math.abs(rightFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - rightFrontDrive.getCurrentPosition();
+            speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed , maxSpeed);
+
+            setPower(speed, speed);
+            opMode.telemetry.addData("speed: ", speed);
+            opMode.telemetry.update();
+        }
+        stopDrive();
+    }
+
 }
