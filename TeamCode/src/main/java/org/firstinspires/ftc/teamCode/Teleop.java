@@ -23,6 +23,8 @@ Teleop extends LinearOpMode {
 
             telemetry.addData("Left Position", robot.getLeftPosition());
             telemetry.addData("Right Position", robot.getRightPosition());
+            telemetry.addData("Gyro", robot.getGyroHeading());
+            telemetry.update();
         }
     }
 }
