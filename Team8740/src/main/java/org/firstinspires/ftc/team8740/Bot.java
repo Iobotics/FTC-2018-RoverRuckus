@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team8898;
+package org.firstinspires.ftc.team8740;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -63,23 +63,13 @@ public class Bot {
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
-        setLeftDirection(DcMotor.Direction.REVERSE);
     }
 
-    public void setPower(double leftPower, double rightPower){
-        leftBackDrive.setPower(leftPower);
-        leftFrontDrive.setPower(leftPower);
-        rightBackDrive.setPower(rightPower);
-        rightFrontDrive.setPower(rightPower);
+    public void setPower(double one, double two, double three,double four){
+        leftBackDrive.setPower(three);
+        leftFrontDrive.setPower(one);
+        rightBackDrive.setPower(four);
+        rightFrontDrive.setPower(two);
     }
 
-    public void setLeftDirection(DcMotor.Direction direction){
-        leftBackDrive.setDirection(direction);
-        leftFrontDrive.setDirection(direction);
-    }
-
-    public void setRightDirection(DcMotor.Direction direction){
-        rightBackDrive.setDirection(direction);
-        rightFrontDrive.setDirection(direction);
-    }
 }

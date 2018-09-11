@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
  */
 @TeleOp(name= "Teleop", group="Bot")
 //@Disabled
-public class Teleop extends LinearOpMode {
+public class
+Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
 
 
