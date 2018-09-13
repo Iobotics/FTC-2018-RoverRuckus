@@ -62,7 +62,7 @@ public class Bot {
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = 0.0715;   // Larger is more responsive, but also less stable
+    private final static double P_TURN_COEFF = 0.0517;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable
 
 
@@ -228,6 +228,19 @@ public class Bot {
         return heading;
     }
 
+    public void gyroTurn(double angle)
+    {
+        gyroTurn(AUTO_TURN_SPEED, angle);
+    }
+
+    public void gyroTurn(double speed, double angle)
+    {
+        while(opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF))
+        {
+            opMode.telemetry.update();
+        }
+    }
+
     /**
      * Gets the pitch of the gyro in degrees
      *
@@ -246,6 +259,7 @@ public class Bot {
     public void gyroHold ( double angle, double holdTime){
         gyroHold(AUTO_TURN_SPEED, angle, holdTime);
     }
+
 
         /**
          * Method to obtain & hold a heading for a finite amount of time
