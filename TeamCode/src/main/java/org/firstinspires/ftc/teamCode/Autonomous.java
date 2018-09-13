@@ -14,14 +14,23 @@ public class Autonomous extends LinearOpMode {
         robot.init(hardwareMap);
 
         waitForStart();
-        robot.encoderDrive(10, 0.5);
-        robot.gyroHold(0.5,90,3);
-        robot.encoderDrive(10, 0.5);
-        robot.gyroHold(0.5,180,3);
-        robot.encoderDrive(10, 0.5);
-        robot.gyroHold(0.5,-90,3);
-        robot.encoderDrive(10, 0.5);
-        robot.gyroHold(0.5,0,3);
+        robot.driveStraight(43);
+        robot.gyroTurn(90);
+        robot.driveStraight(52);
+        robot.gyroTurn(180);
+        robot.driveStraight(52);
+        robot.gyroTurn(-134);
+        robot.driveStraight(54);
+        robot.gyroTurn(-89);
+        robot.driveStraight(104);
+        robot.gyroTurn(-44);
+        robot.driveStraight(54);
+        robot.gyroTurn(1);
+        robot.driveStraight(52);
+        robot.gyroTurn(90);
+        robot.driveStraight(52);
+        robot.gyroTurn(180);
+        robot.driveStraight(43);
 
     }
 }
