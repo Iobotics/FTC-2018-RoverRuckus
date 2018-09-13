@@ -9,28 +9,24 @@ public class Autonomous extends LinearOpMode {
 
     private Bot robot = new Bot(this);
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
-
+        
         waitForStart();
-        robot.driveStraight(43);
+        robot.driveStraight(40);
         robot.gyroTurn(90);
-        robot.driveStraight(52);
-        robot.gyroTurn(180);
-        robot.driveStraight(52);
-        robot.gyroTurn(-134);
-        robot.driveStraight(54);
-        robot.gyroTurn(-89);
-        robot.driveStraight(104);
-        robot.gyroTurn(-44);
-        robot.driveStraight(54);
-        robot.gyroTurn(1);
-        robot.driveStraight(52);
+        robot.driveStraight(28);
         robot.gyroTurn(90);
-        robot.driveStraight(52);
-        robot.gyroTurn(180);
-        robot.driveStraight(43);
-
+        robot.driveStraight(61);
+        robot.gyroTurn(90);
+        robot.driveStraight(56);
+        robot.gyroTurn(90);
+        robot.driveStraight(61);
+        robot.gyroTurn(90);
+        robot.driveStraight(28);
+        robot.gyroTurn(90);
+        robot.driveStraight(40);
     }
 }
