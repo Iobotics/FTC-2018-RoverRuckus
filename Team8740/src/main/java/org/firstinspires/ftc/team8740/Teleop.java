@@ -8,25 +8,29 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 /**
  * Created by Robotics on 8/29/2018.
  */
-@TeleOp(name= "8740BaseTele", group="Bot")
+@TeleOp(name= "8740TeleOPArcade", group="Bot")
 
 public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
 
     public void runOpMode(){
-        robot.init(hardwareMap);
+        robot.init(hardwareMap); 
+
+        telemetry.addData("Start Worked","Status: GO");
+        telemetry.addData("Tele OP", "Current");
+        telemetry.addData("Izec is", "bad");
+        telemetry.update();
         waitForStart();
         while (opModeIsActive()) {
-            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-            double rightX = gamepad1.right_stick_x;
+            telemetry.clear();
+            double drive = -gamepad1.left_stick_y;
+            double turn = gamepad1.right_stick_x;
 
-            final double v1 = r * Math.cos(robotAngle) + rightX;
-            final double v2 = r * Math.sin(robotAngle) - rightX;
-            final double v3 = r * Math.sin(robotAngle) + rightX;
-            final double v4 = r * Math.cos(robotAngle) - rightX;
-
-            robot.setPower(v1,v2,v3,v4);
+            double left = drive + turn;
+            double right = drive - turn;
+            robot.setPower(left,right,left,right);
+            telemetry.addData("left", left);
+            telemetry.addData("right", right);
         }
     }
 }

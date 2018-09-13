@@ -49,27 +49,28 @@ public class Bot {
 
     private DcMotor leftBackDrive = null;
     private DcMotor leftFrontDrive = null;
-    private DcMotor rightFrontDrive  = null;
+    private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
 
-    public Bot (LinearOpMode opMode){this.opMode = opMode;}
+    public Bot(LinearOpMode opMode) {
+        this.opMode = opMode;
+    }
 
-    public void init (HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
 
         leftBackDrive = hwMap.get(DcMotor.class, "backLeft");
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
-    }
+   }
 
-    public void setPower(double one, double two, double three,double four){
+    public void setPower(double one, double two, double three, double four) {
         leftBackDrive.setPower(three);
         leftFrontDrive.setPower(one);
         rightBackDrive.setPower(four);
         rightFrontDrive.setPower(two);
     }
-
 }
