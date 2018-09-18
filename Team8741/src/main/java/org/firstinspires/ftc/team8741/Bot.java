@@ -56,11 +56,13 @@ public class Bot {
     int _leftOffset;
     int _rightOffset;
 
-    private final static double HEADING_THRESHOLD = 2; // As tight as we can make it with an integer gyro
+    private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = 0.0517;   // Larger is more responsive, but also less stable
+    private final static double P_TURN_COEFF = 0.05;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable
+    private final static double F_TURN_COEFF = 0.12;   //Larger the lower the minimum motor speed is
+    private final static double HOLD_TIME = 1.5; //number of milliseconds the bot has to hold a position before the turn is completed
 
 
     private final static double FLAT_PITCH = -1;    // Pitch when robot is flat on the balance stone
@@ -84,6 +86,8 @@ public class Bot {
     private Acceleration gravity = null;
 
     private ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    private ElapsedTime posTimer = new ElapsedTime();
+    private boolean timerStarted = false;
 
     public Bot(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -91,6 +95,8 @@ public class Bot {
 
     public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
+
+
 
         leftBackDrive = hwMap.get(DcMotor.class, "backLeft");
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
@@ -296,23 +302,39 @@ public class Bot {
          */
         boolean onHeading ( double speed, double angle, double PCoeff){
             double error;
-            double steer;
+            double steer = 0;
             boolean onTarget = false;
-            double leftSpeed;
-            double rightSpeed;
+            double leftSpeed = 0;
+            double rightSpeed= 0;
+
 
             // determine turn power based on +/- error
             error = getError(angle);
-
-            if (Math.abs(error) <= HEADING_THRESHOLD) {
+            if(Math.abs(error) <= HEADING_THRESHOLD && posTimer.time() >= HOLD_TIME && timerStarted) {
                 steer = 0.0;
                 leftSpeed = 0.0;
                 rightSpeed = 0.0;
                 onTarget = true;
-            } else {
+
+            }
+
+            else if (Math.abs(error) <= HEADING_THRESHOLD ) {
+                if (timerStarted == false) {
+                    posTimer.reset();
+                    timerStarted = true;
+                    opMode.telemetry.addLine("Reset Time");
+                }
+                else{
+                    opMode.telemetry.addLine("Timer is running");
+                }
+
+            }
+
+            else {
                 steer = getSteer(error, PCoeff);
-                leftSpeed = speed * steer;
+                leftSpeed = Range.clip(steer, -speed, speed);
                 rightSpeed = -leftSpeed;
+                timerStarted = false;
             }
 
             // Send desired speeds to motors
@@ -322,6 +344,8 @@ public class Bot {
             opMode.telemetry.addData("Target", "%5.2f", angle);
             opMode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
             opMode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+            opMode.telemetry.addData("timer started", timerStarted);
+            opMode.telemetry.addData("hold timer", posTimer.time());
 
             return onTarget;
         }
@@ -352,7 +376,11 @@ public class Bot {
          * @return steer
          */
         public double getSteer ( double error, double PCoeff){
-            return Range.clip(error * PCoeff, -1, 1);
+            if (Range.clip(error * PCoeff, -1, 1) < 0){
+                return Range.clip(error * PCoeff, -1, 0) - F_TURN_COEFF;
+            }
+            else{return Range.clip(error * PCoeff, 0, 1) + F_TURN_COEFF;}
+
         }
 
         public void resetTimer () {

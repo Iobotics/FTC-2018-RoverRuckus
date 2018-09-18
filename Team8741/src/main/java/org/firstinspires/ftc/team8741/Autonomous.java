@@ -13,6 +13,7 @@ public class Autonomous extends LinearOpMode {
         robot.init(hardwareMap);
 
         waitForStart();
+
         robot.driveStraight(43);
         robot.gyroTurn(0.4 ,90);
         robot.driveStraight(54);
