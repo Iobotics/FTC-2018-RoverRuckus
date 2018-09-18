@@ -14,23 +14,23 @@ public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
 
     public void runOpMode(){
-        robot.init(hardwareMap); 
+        robot.init(hardwareMap); //initiate robot hardware
 
-        telemetry.addData("Start Worked","Status: GO");
-        telemetry.addData("Tele OP", "Current");
-        telemetry.addData("Izec is", "bad");
-        telemetry.update();
+        telemetry.addData("Start Worked","Status: GO"); //confirm start robot
+        telemetry.addData("Tele OP", "Current"); //confirm telop version
+        telemetry.addData("Izec is", "bad"); //izec is bad and no one likes him
+        telemetry.update(); //send to driver station
         waitForStart();
         while (opModeIsActive()) {
             telemetry.clear();
-            double drive = -gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
+            double drive = -gamepad1.left_stick_y; //drive variable
+            double turn = gamepad1.right_stick_x; //turn variable
 
-            double left = drive + turn;
-            double right = drive - turn;
-            robot.setPower(left,right,left,right);
-            telemetry.addData("left", left);
-            telemetry.addData("right", right);
+            double left = drive + turn; //left power and left turn
+            double right = drive - turn; //right power and right turn
+            robot.setPower(left,right,left,right); //set motor power
+            telemetry.addData("left", left); // power to left
+            telemetry.addData("right", right); // power to right
         }
     }
 }

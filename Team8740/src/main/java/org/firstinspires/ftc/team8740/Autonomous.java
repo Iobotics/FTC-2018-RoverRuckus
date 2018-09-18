@@ -19,6 +19,9 @@ public class Autonomous extends LinearOpMode {
 
         waitForStart();
 
+        robot.setPower(75,75,75,75);
+        robot.sleep(500);
+        robot.gyroTurn(50,90);
 
     }
 }
