@@ -73,10 +73,9 @@ public class Bot {
     private final static double POWER_DAMPEN = .001;
     private final static double TIMEOUT = 5;
 
-    private DcMotor leftBackDrive = null;
-    private DcMotor leftFrontDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotor leftDrive = null;
+    private DcMotor rightDrive = null;
+    private DcMotor liftArm = null;
 
     private LinearOpMode opMode = null;
 
@@ -96,12 +95,10 @@ public class Bot {
     public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
 
-
-
-        leftBackDrive = hwMap.get(DcMotor.class, "backLeft");
-        leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
-        rightBackDrive = hwMap.get(DcMotor.class, "backRight");
-        rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
+        //Instantiate motor objects
+        leftDrive = hwMap.get(DcMotor.class, "left");
+        rightDrive = hwMap.get(DcMotor.class, "right");
+        liftArm = hwMap.get(DcMotor.class, "lift");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -116,24 +113,23 @@ public class Bot {
         setLeftDirection(DcMotor.Direction.REVERSE);
         setBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        _leftOffset = leftFrontDrive.getCurrentPosition();
-        _rightOffset = rightFrontDrive.getCurrentPosition();
+        _leftOffset = leftDrive.getCurrentPosition();
+        _rightOffset = rightDrive.getCurrentPosition();
     }
 
     //Sets the power of both sides of the bot
     public void setPower(double leftPower, double rightPower) {
-        leftBackDrive.setPower(leftPower);
-        leftFrontDrive.setPower(leftPower);
-        rightBackDrive.setPower(rightPower);
-        rightFrontDrive.setPower(rightPower);
+        leftDrive.setPower(leftPower);
+        rightDrive.setPower(rightPower);
     }
 
+    public void setLiftPower(double liftPower) {
+        liftArm.setPower(liftPower);
+    }
 
     public void setBehavior(DcMotor.ZeroPowerBehavior behavior){
-        leftBackDrive.setZeroPowerBehavior(behavior);
-        leftFrontDrive.setZeroPowerBehavior(behavior);
-        rightBackDrive.setZeroPowerBehavior(behavior);
-        rightFrontDrive.setZeroPowerBehavior(behavior);
+        leftDrive.setZeroPowerBehavior(behavior);
+        rightDrive.setZeroPowerBehavior(behavior);
     }
 
     public void stopDrive(){
@@ -142,23 +138,21 @@ public class Bot {
     }
 
     public void setLeftDirection(DcMotor.Direction direction) {
-        leftBackDrive.setDirection(direction);
-        leftFrontDrive.setDirection(direction);
+        leftDrive.setDirection(direction);
     }
 
     public void setRightDirection(DcMotor.Direction direction) {
-        rightBackDrive.setDirection(direction);
-        rightFrontDrive.setDirection(direction);
+        rightDrive.setDirection(direction);
     }
 
     public int getRightPosition()
     {
-        return rightFrontDrive.getCurrentPosition();
+        return rightDrive.getCurrentPosition();
     }
 
     public int getLeftPosition()
     {
-        return leftFrontDrive.getCurrentPosition();
+        return leftDrive.getCurrentPosition();
     }
 
 
@@ -177,13 +171,13 @@ public class Bot {
         double speed = 0;
         int error;
         //sets the target encoder value
-        int target = rightFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+        int target = rightDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
         //sets current gyro value
         double startHeading = getGyroHeading();
         // While the absolute value of the error is greater than the error threshold
         //adds the f value if positive or subtracts if negative
-        while (opmode.opModeIsActive() && Math.abs(rightFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
-            error = target - rightFrontDrive.getCurrentPosition();
+        while (opmode.opModeIsActive() && Math.abs(rightDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - rightDrive.getCurrentPosition();
             if (error * pCoeff < 0) {
                 speed = Range.clip(error * pCoeff, -1, 0) - F_MOTOR_COEFF;
             } else {
