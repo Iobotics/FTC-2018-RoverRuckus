@@ -17,7 +17,7 @@ Teleop extends LinearOpMode {
         robot.init(hardwareMap);
         waitForStart();
         while(opModeIsActive()) {
-            robot.setPower(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            robot.setPower(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
 
             telemetry.addData("Left Position", robot.getLeftPosition());
             telemetry.addData("Right Position", robot.getRightPosition());
