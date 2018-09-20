@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -113,6 +114,11 @@ public class Bot {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
    }
 
     public void setPower(double one, double two, double three, double four) {
