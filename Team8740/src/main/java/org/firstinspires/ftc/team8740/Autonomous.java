@@ -21,7 +21,7 @@ public class Autonomous extends LinearOpMode {
         telemetry.clear();
         telemetry.log().add("START");
         telemetry.update();
-        robot.setPower(75,75,75,75);
+        robot.encoderDrive(5,80);
         robot.sleep(500);
         robot.gyroTurn(50,90);
 
