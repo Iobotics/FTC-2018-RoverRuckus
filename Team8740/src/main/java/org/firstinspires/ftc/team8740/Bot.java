@@ -60,9 +60,9 @@ public class Bot {
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    /*private DcMotor liftOne = null;
-    private DcMotor liftTwo = null;
-    private DcMotor liftThree = null;"*/
+    public DcMotor liftOne = null;
+   /* public DcMotor liftTwo = null;
+    public DcMotor liftThree = null;"*/
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
 
@@ -100,8 +100,8 @@ public class Bot {
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
         //Lift Motors (Expected)
-        /*liftOne = hwMap.get(DcMotor.class, "Lift1");
-        liftTwo = hwMap.get(DcMotor.class, "Lift2");
+        liftOne = hwMap.get(DcMotor.class, "Lift1");
+        /*liftTwo = hwMap.get(DcMotor.class, "Lift2");
         liftThree = hwMap.get(DcMotor.class, "Lift3");
         */
 
