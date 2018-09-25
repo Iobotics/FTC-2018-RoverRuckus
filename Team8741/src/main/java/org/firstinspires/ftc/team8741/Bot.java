@@ -32,6 +32,7 @@ package org.firstinspires.ftc.team8741;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -76,6 +77,7 @@ public class Bot {
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private DcMotor liftArm = null;
+    private ColorSensor colorSensor = null;
 
     private LinearOpMode opMode = null;
 
@@ -99,6 +101,7 @@ public class Bot {
         leftDrive = hwMap.get(DcMotor.class, "left");
         rightDrive = hwMap.get(DcMotor.class, "right");
         liftArm = hwMap.get(DcMotor.class, "lift");
+        colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -115,6 +118,15 @@ public class Bot {
 
         _leftOffset = leftDrive.getCurrentPosition();
         _rightOffset = rightDrive.getCurrentPosition();
+    }
+
+    public int[] getRGB () {
+        int rgbArray[] = new int[3];
+        rgbArray[0] = colorSensor.red();
+        rgbArray[1] = colorSensor.green();
+        rgbArray[2] = colorSensor.blue();
+
+        return rgbArray;
     }
 
     //Sets the power of both sides of the bot
