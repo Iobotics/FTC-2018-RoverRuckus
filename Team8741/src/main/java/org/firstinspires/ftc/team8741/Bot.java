@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.team8741;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -73,6 +75,9 @@ public class Bot {
     private final static double AUTO_TURN_SPEED = 0.6;
     private final static double POWER_DAMPEN = .001;
     private final static double TIMEOUT = 5;
+
+    private final static int YELLOW_THRESHOLD = 10;
+    private final static int YELLOW_LIMIT = 10;
 
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
@@ -120,13 +125,16 @@ public class Bot {
         _rightOffset = rightDrive.getCurrentPosition();
     }
 
-    public int[] getRGB () {
-        int rgbArray[] = new int[3];
-        rgbArray[0] = colorSensor.red();
-        rgbArray[1] = colorSensor.green();
-        rgbArray[2] = colorSensor.blue();
+    public float[] getHSV () {
 
-        return rgbArray;
+        float[] hsvValues = new float[3];
+        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+        return hsvValues;
+    }
+
+    public int getRed(){
+        return colorSensor.red();
     }
 
     //Sets the power of both sides of the bot
@@ -364,5 +372,11 @@ public class Bot {
 
      public ElapsedTime getTime () {
         return time;
+     }
+
+     public boolean isYellow(){
+         float[] hsvValues = new float[3];
+         Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+         return (hsvValues[0] > YELLOW_THRESHOLD) && (YELLOW_LIMIT > hsvValues[0] );
      }
 }
