@@ -60,8 +60,8 @@ public class Bot {
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    public DcMotor liftOne = null;
-   /* public DcMotor liftTwo = null;
+   /* public DcMotor liftOne = null;
+    public DcMotor liftTwo = null;
     public DcMotor liftThree = null;"*/
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
@@ -100,8 +100,8 @@ public class Bot {
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
         //Lift Motors (Expected)
-        liftOne = hwMap.get(DcMotor.class, "Lift1");
-        /*liftTwo = hwMap.get(DcMotor.class, "Lift2");
+        /*liftOne = hwMap.get(DcMotor.class, "Lift1");
+        liftTwo = hwMap.get(DcMotor.class, "Lift2");
         liftThree = hwMap.get(DcMotor.class, "Lift3");
         */
 
@@ -225,7 +225,7 @@ public class Bot {
         }
 
         // Stop all motion;
-        setPower(0, 0,0,0);
+        stopDrive();
     }
 
     /**
@@ -318,7 +318,7 @@ public class Bot {
             error = target - rightFrontDrive.getCurrentPosition();
             speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed , maxSpeed);
 
-            setPower(speed, speed,speed,speed);
+            setPower(speed,speed,speed,speed);
             opMode.telemetry.addData("speed: ", speed);
             opMode.telemetry.update();
         }
