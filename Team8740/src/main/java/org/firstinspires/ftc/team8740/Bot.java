@@ -37,6 +37,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -60,9 +62,9 @@ public class Bot {
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-   /* public DcMotor liftOne = null;
-    public DcMotor liftTwo = null;
-    public DcMotor liftThree = null;"*/
+    //public DcMotor liftOne = null;
+    //public NormalizedColorSensor colorSensor = null;
+    //public Servo markerServo = null;
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
 
@@ -100,11 +102,13 @@ public class Bot {
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
         //Lift Motors (Expected)
-        /*liftOne = hwMap.get(DcMotor.class, "Lift1");
-        liftTwo = hwMap.get(DcMotor.class, "Lift2");
-        liftThree = hwMap.get(DcMotor.class, "Lift3");
-        */
+        //liftOne = hwMap.get(DcMotor.class, "Lift1");
 
+        //Servos (Expected)
+        //markerServo = hwMap.get(Servo.class, "markerServo");
+
+        //Color Sensor (Expected)
+        //colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
