@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team8740;
+package org.firstinspires.ftc.team15076;
 
 import android.graphics.Color;
 
@@ -9,12 +9,12 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.ftccommon.internal.RunOnBoot;
 
+
 /**
- * Created by Jack Gonser & Reid Ginoza on 9/12/2018.
+ * Created by Jack Gonser on 10/1/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="8740AutoBlueMarker", group = "Bot")
-//base auto
-public class Autonomous extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="8740AutoBlueNonMarker", group = "bot")
+public class AutonomousBlueNonMark extends LinearOpMode{
     private Bot robot = new Bot(this);
 
     @Override
@@ -31,10 +31,17 @@ public class Autonomous extends LinearOpMode {
 
         telemetry.clear();
         telemetry.log().add("START");
-        telemetry.log().add("Close to gold + silver");
+        telemetry.log().add("Not near marker so must go to marker");
         telemetry.update();
 
-        //drive to moon rocks
+        //drive from start top moon rock
+        robot.gyroTurn(0.5, -45);
+        robot.encoderDrive(-2, 0.75);
+        robot.gyroTurn(0.5,-0.75);
+
+        //drive to moon rock
+        telemetry.log().add("At gold + silver");
+        telemetry.update();
         robot.encoderDrive(-0.5,0.75);
         robot.gyroTurn(0.5,-40);
 
@@ -80,5 +87,5 @@ public class Autonomous extends LinearOpMode {
         robot.gyroTurn(0.5, -45);
         robot.encoderDrive(78,0.75);
         */
-    }
+}
 }
