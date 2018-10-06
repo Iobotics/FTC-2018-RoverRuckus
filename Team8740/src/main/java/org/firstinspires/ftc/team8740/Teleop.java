@@ -14,7 +14,7 @@ public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
 
     public void runOpMode(){
-        robot.init(hardwareMap); //initiate robot hardware
+        robot.init(hardwareMap, true); //initiate robot hardware
 
         telemetry.log().add("Op Mode is TELEOP"); //Visualize op mode
         telemetry.log().add("Ready For Start");
@@ -37,6 +37,15 @@ public class Teleop extends LinearOpMode {
                 telemetry.addData("left", left); // power to left
                 telemetry.addData("right", right); // power to right
                 telemetry.update();
+
+                //raise and lower hook
+                if (gamepad1.x && gamepad1.dpad_up) {
+                    robot.hook.setPower(1);
+                }
+                if (gamepad1.x && gamepad1.dpad_up) {
+                    robot.hook.setPower(0);
+                }
+                
             /*}else {
             double speed = -gamepad1.left_stick_y;
             robot.liftOne.setPower(speed);

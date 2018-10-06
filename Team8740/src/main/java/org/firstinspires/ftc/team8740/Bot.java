@@ -63,7 +63,8 @@ public class Bot {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     //public DcMotor liftOne = null;
-    //public NormalizedColorSensor colorSensor = null;
+    public DcMotor hook = null;
+    public NormalizedColorSensor colorSensor = null;
     //public Servo markerServo = null;
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
@@ -94,21 +95,27 @@ public class Bot {
         this.opMode = opMode;
     }
 
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap, boolean teleop) {
         hwMap = ahwMap;
         //Drive Motors
         leftBackDrive = hwMap.get(DcMotor.class, "backLeft");
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
+
         //Lift Motors (Expected)
         //liftOne = hwMap.get(DcMotor.class, "Lift1");
 
-        //Servos (Expected)
-        //markerServo = hwMap.get(Servo.class, "markerServo");
+        //Hook Motor
+        hook = hwMap.get(DcMotor.class, "hook");
 
-        //Color Sensor (Expected)
-        //colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+        //Servos (Expected)
+        //markerServo = hwMap.get(Servo.class, "marker");
+
+        //Color Sensor
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+
+        //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -119,11 +126,19 @@ public class Bot {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-   }
+        //Drive Config
+        if (teleop) {
+            leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else {
+            leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+    }
 
     public void setPower(double one, double two, double three, double four) {
         leftBackDrive.setPower(three);
