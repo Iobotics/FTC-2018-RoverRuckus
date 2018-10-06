@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 import org.firstinspires.ftc.ftccommon.internal.RunOnBoot;
 
+import static java.lang.System.currentTimeMillis;
+
 /**
  * Created by Jack Gonser & Reid Ginoza on 9/12/2018.
  */
@@ -20,14 +22,14 @@ public class Autonomous extends LinearOpMode {
     @Override
     public void runOpMode() {
         //Robot will be backwards when operating
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, false);
 
         //robot.markerServo.setPosition(0);
         waitForStart();
 
-        /*if (robot.colorSensor instanceof SwitchableLight) {
+        if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
-        }*/
+        }
 
         telemetry.clear();
         telemetry.log().add("START");
@@ -35,38 +37,35 @@ public class Autonomous extends LinearOpMode {
         telemetry.update();
 
         //drive to moon rocks
-        robot.encoderDrive(-0.5,0.75);
-        robot.gyroTurn(0.5,-40);
+        robot.encoderDrive(6,0.75);
+        robot.gyroTurn(0.5,-30);
+        robot.stopDrive();
 
-        /*NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
+        NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
         int color = colors.toColor();
-        while (Color.red(color) <= 3 && currentTimeMillis() - startTime < 500) {
-            colors = robot.colorSensor.getNormalizedColors();
-            color = colors.toColor();
-            robot.stopDrive();
-        }
         telemetry.clear();
-        telemetry.log.add("Starting First Item Scan");
+        telemetry.log().add("Starting First Item Scan");
         telemetry.update();
 
         //check if moon rock is yellow
         if (color == Color.YELLOW) {
-            telemetry.log.add("First Item is Cube");
+            telemetry.log().add("First Item is Cube");
             telemetry.update();
             robot.encoderDrive(-2,0.75);
             telemetry.clear();
         } else {
-            telemetry.log.add("First Item not Cube, Try Item 2");
+            telemetry.log().add("First Item not Cube, Try Item 2");
             telemetry.update();
             robot.gyroTurn(0.5,130);
             robot.gyroTurn(0.5,90);
+            robot.stopDrive();
             if (color == Color.YELLOW) {
-                telemetry.log.add("Second Item is Cube");
+                telemetry.log().add("Second Item is Cube");
                 telemetry.update();
                 robot.encoderDrive(-2,0.75);
                 telemetry.clear();
             } else {
-                telemetry.log.add("Second Item not Cube, Is Item 3");
+                telemetry.log().add("Second Item not Cube, Is Item 3");
                 telemetry.update();
                 robot.gyroTurn(0.5,130);
                 robot.gyroTurn(0.5,90);
@@ -76,9 +75,9 @@ public class Autonomous extends LinearOpMode {
 
         }
         robot.encoderDrive(2,0.75);
-        robot.markerServo.setPosition(1);
+        //robot.markerServo.setPosition(1);
         robot.gyroTurn(0.5, -45);
         robot.encoderDrive(78,0.75);
-        */
+
     }
 }
