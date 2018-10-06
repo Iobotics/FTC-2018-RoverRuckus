@@ -20,7 +20,7 @@ public class AutonomousBlueNonMark extends LinearOpMode{
     @Override
     public void runOpMode() {
         //Robot will be backwards when operating
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, true);
 
         //robot.markerServo.setPosition(0);
         waitForStart();

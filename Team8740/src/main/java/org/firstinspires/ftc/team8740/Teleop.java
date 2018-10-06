@@ -14,7 +14,7 @@ public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
 
     public void runOpMode(){
-        robot.init(hardwareMap); //initiate robot hardware
+        robot.init(hardwareMap, true); //initiate robot hardware
 
         telemetry.log().add("Op Mode is TELEOP"); //Visualize op mode
         telemetry.log().add("Ready For Start");

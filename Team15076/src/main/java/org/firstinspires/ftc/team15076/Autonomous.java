@@ -23,6 +23,9 @@ public class Autonomous extends LinearOpMode {
     public void runOpMode() {
         //Robot will be backwards when operating
         robot.init(hardwareMap, false);
+        robot.hook.setPower(0.5);
+        robot.sleep(500);
+        robot.hook.setPower(0);
 
         //robot.markerServo.setPosition(0);
         waitForStart();
@@ -35,6 +38,11 @@ public class Autonomous extends LinearOpMode {
         telemetry.log().add("START");
         telemetry.log().add("Close to gold + silver");
         telemetry.update();
+
+        //Undeploy hook
+        robot.hook.setPower(-0.5);
+        robot.sleep(500);
+        robot.hook.setPower(0);
 
         //drive to moon rocks
         robot.encoderDrive(6,0.75);
