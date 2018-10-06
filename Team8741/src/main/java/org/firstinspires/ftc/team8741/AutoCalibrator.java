@@ -14,7 +14,7 @@ public class AutoCalibrator extends LinearOpMode {
     private double fPower = 0;
     private double timeOnPress;
     private double pCoeff_turn = 0.005;
-    private double pCoeff_drive = 0.0004;
+    private double pCoeff_drive = 0.0004 ;
 
     public void runOpMode(){
         robot.init(hardwareMap);

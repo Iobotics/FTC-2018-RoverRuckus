@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team8741;
 
+import android.content.Context;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class
 Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
+    private Utilities util = new Utilities();
 
 
     public void runOpMode(){
@@ -31,6 +34,10 @@ Teleop extends LinearOpMode {
                 robot.setLiftPower(0);
             }
 
+            if(gamepad1.a){
+
+            }
+
 
             telemetry.addData("Left Position", robot.getLeftPosition());
             telemetry.addData("Right Position", robot.getRightPosition());
@@ -40,3 +47,4 @@ Teleop extends LinearOpMode {
         }
     }
 }
+            // util.writeToFile("1", );
