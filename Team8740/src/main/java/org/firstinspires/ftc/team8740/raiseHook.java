@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 /**
- * Created by student on 10/5/2018.
+ * Created by Jack Gonser on 10/5/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Lower Hook  (USE BEFORE RUN)", group = "bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Hook Reset  (USE BEFORE RUN)", group = "bot")
 public class raiseHook extends LinearOpMode {
     private Bot robot = new Bot(this);
 
@@ -18,6 +18,8 @@ public class raiseHook extends LinearOpMode {
         waitForStart();
         robot.hook.setPower(-1);
         robot.sleep(5000);
+        robot.hook.setPower(1);
+        robot.sleep(2500);
         robot.hook.setPower(0);
     }
 }
