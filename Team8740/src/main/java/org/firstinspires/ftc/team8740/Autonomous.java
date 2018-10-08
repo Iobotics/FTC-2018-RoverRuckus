@@ -38,7 +38,7 @@ public class Autonomous extends LinearOpMode {
 
         //Undeploy hook
         robot.hook.setPower(1);
-        robot.sleep(5000);
+        robot.sleep(2500);
         robot.hook.setPower(0);
 
         //drive to moon rocks

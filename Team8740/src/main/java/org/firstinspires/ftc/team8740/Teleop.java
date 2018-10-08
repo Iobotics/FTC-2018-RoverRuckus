@@ -45,7 +45,7 @@ public class Teleop extends LinearOpMode {
                 if (gamepad1.x && gamepad1.dpad_up) {
                     robot.hook.setPower(0);
                 }
-                
+
             /*}else {
             double speed = -gamepad1.left_stick_y;
             robot.liftOne.setPower(speed);
