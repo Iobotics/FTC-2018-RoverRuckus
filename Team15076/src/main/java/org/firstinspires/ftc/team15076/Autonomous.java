@@ -21,6 +21,7 @@ public class Autonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
         //Robot will be backwards when operating
         robot.init(hardwareMap, false);
         robot.hook.setPower(0.5);

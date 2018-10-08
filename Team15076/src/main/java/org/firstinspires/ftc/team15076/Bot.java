@@ -140,14 +140,14 @@ public class Bot {
         }
    }
 
-    public void setPower(double one, double two, double three, double four) {
-        leftBackDrive.setPower(three);
-        leftFrontDrive.setPower(one);
-        rightBackDrive.setPower(four);
-        rightFrontDrive.setPower(two);
+    public void setPower(double left, double right) {
+        leftBackDrive.setPower(left);
+        leftFrontDrive.setPower(left);
+        rightBackDrive.setPower(-right);
+        rightFrontDrive.setPower(-right);
     }
     public void stopDrive(){
-        setPower(0,0,0,0);
+        setPower(0,0);
 
     }
     /**
@@ -279,7 +279,7 @@ public class Bot {
         }
 
         // Send desired speeds to motors
-        setPower(leftSpeed, rightSpeed,leftSpeed,rightSpeed);
+        setPower(leftSpeed, rightSpeed);
 
         // Display it for the driver
         opMode.telemetry.addData("Target", "%5.2f", angle);
@@ -337,7 +337,7 @@ public class Bot {
             error = target - leftBackDrive.getCurrentPosition();
             speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed , maxSpeed);
 
-            setPower(speed,speed,speed,speed);
+            setPower(speed,speed);
             opMode.telemetry.addData("speed: ", speed);
             opMode.telemetry.update();
         }
