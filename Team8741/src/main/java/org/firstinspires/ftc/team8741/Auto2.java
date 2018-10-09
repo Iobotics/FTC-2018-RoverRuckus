@@ -14,6 +14,8 @@ public class Auto2 extends LinearOpMode {
 
         waitForStart();
 
+        robot.driveStraight(20);
 
+        robot.gyroTurn(90);
     }
 }
