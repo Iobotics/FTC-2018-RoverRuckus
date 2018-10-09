@@ -62,10 +62,17 @@ public class Bot {
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    //public DcMotor liftOne = null;
+
+    //public DcMotor intake = null;
+
     public DcMotor hook = null;
+
     public NormalizedColorSensor colorSensor = null;
+    //public NormalizedColorSensor intakeColor = null;
+
     //public Servo markerServo = null;
+    //public Servo intakeServo = null;
+
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
 
@@ -103,17 +110,19 @@ public class Bot {
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
 
-        //Lift Motors (Expected)
-        //liftOne = hwMap.get(DcMotor.class, "Lift1");
+        //intake Motors (Expected)
+        //intake = hwMap.get(DcMotor.class, "Lift1");
 
         //Hook Motor
         hook = hwMap.get(DcMotor.class, "hook");
 
         //Servos (Expected)
         //markerServo = hwMap.get(Servo.class, "marker");
+        //intakeServo = hwMap.get(Servo.class, "intake");
 
         //Color Sensor
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+        //intakeColor = hwMap.get(NormalizedColorSensor.class, "intake");
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

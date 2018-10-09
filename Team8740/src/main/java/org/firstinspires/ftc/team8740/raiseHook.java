@@ -19,7 +19,7 @@ public class raiseHook extends LinearOpMode {
         robot.hook.setPower(-1);
         robot.sleep(5000);
         robot.hook.setPower(1);
-        robot.sleep(2500);
+        robot.sleep(1500);
         robot.hook.setPower(0);
     }
 }

@@ -25,14 +25,19 @@ public class AutonomousBlueNonMark extends LinearOpMode{
         //robot.markerServo.setPosition(0);
         waitForStart();
 
-        /*if (robot.colorSensor instanceof SwitchableLight) {
+        if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
-        }*/
+        }
 
         telemetry.clear();
         telemetry.log().add("START");
         telemetry.log().add("Not near marker so must go to marker");
         telemetry.update();
+
+        //Undeploy hook
+        robot.hook.setPower(1);
+        robot.sleep(3500);
+        robot.hook.setPower(0);
 
         //drive from start top moon rock
         robot.gyroTurn(0.5, -45);
