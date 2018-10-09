@@ -25,5 +25,6 @@ public class Auto3 extends LinearOpMode {
         robot.gyroTurn(45);
         robot.driveStraight(90);
 
+
     }
 }

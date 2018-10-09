@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.team8741;
 
 import android.graphics.Color;
+import android.media.MediaPlayer;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -62,9 +63,9 @@ public class Bot {
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = 0.0016;   // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.0002 ;  // Larger is more responsive, but also less stable
-    private final static double F_MOTOR_COEFF = 0.145;   //Larger the lower the minimum motor power is
+    private final static double P_TURN_COEFF = 0.0025;   // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.0006 ;  // Larger is more responsive, but also less stable
+    private final static double F_MOTOR_COEFF = 0.09;   //Larger the lower the minimum motor power is
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
 
 
@@ -199,9 +200,9 @@ public class Bot {
         while (opmode.opModeIsActive() && Math.abs(rightDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
             error = target - rightDrive.getCurrentPosition();
             if (error * pCoeff < 0) {
-                speed = Range.clip(error * pCoeff, -1, 0) - F_MOTOR_COEFF;
+                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
             } else {
-                speed = Range.clip(error * pCoeff, 0, 1) + F_MOTOR_COEFF;
+                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, 1) ;
             }
 
             if (Math.abs(getGyroHeading() - startHeading) > 1){
@@ -209,8 +210,8 @@ public class Bot {
             }
             else {setPower(speed, speed);}
 
-            opmode.telemetry.addData("Left Position", this.getLeftPosition() * INCHES_PER_TICK);
-            opmode.telemetry.addData("Right Position", this.getRightPosition() * INCHES_PER_TICK);
+            opmode.telemetry.addData("Drive Error", error);
+            opmode.telemetry.addData("Drive Power", rightDrive.getPower());
             opMode.telemetry.update();
         }
         this.stopDrive();
@@ -379,4 +380,5 @@ public class Bot {
          Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
          return (hsvValues[0] > YELLOW_THRESHOLD) && (YELLOW_LIMIT > hsvValues[0] );
      }
+
 }
