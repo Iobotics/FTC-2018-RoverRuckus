@@ -16,10 +16,6 @@ import com.qualcomm.robotcore.util.Range;
 
 public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
-    private MediaPlayer mp;
-
-    private Context context;
-
     double yValue;
     double xValue;
     double leftPower;
@@ -29,7 +25,6 @@ public class Teleop extends LinearOpMode {
 
     public void runOpMode(){
         robot.init(hardwareMap, true); //initiate robot hardware
-        mp = MediaPlayer.create(ApplicationContextProvider.getContext(), R.raw.lol);
 
         telemetry.log().add("Op Mode is TELEOP"); //Visualize op mode
         telemetry.log().add("Ready For Start");
@@ -74,12 +69,6 @@ public class Teleop extends LinearOpMode {
                 //right turn
                 if (gamepad1.right_bumper) {
                     robot.gyroTurn(75,45);
-                }
-
-                if (gamepad1.y && !musicOn) {
-                    mp.start();
-                } else if (gamepad1.y && musicOn) {
-                    mp.stop();
                 }
             }/* else {
                 double speed = -gamepad1.left_stick_y;
