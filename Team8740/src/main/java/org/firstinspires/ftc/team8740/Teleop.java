@@ -61,6 +61,16 @@ public class Teleop extends LinearOpMode {
                     robot.hook.setPower(0);
                 }
 
+                //Move Marker Servo
+                if (gamepad1.x && gamepad1.dpad_left) {
+                    robot.markerServo.setPosition(0);
+                    telemetry.addData("Marker Servo", "left/0");
+                }
+                if (gamepad1.x && gamepad1.dpad_right) {
+                    robot.markerServo.setPosition(1);
+                    telemetry.addData("Marker Servo","right/1");
+                }
+
                 //Quick Turn
                 //left turn
                 if (gamepad1.left_bumper) {
@@ -70,6 +80,9 @@ public class Teleop extends LinearOpMode {
                 if (gamepad1.right_bumper) {
                     robot.gyroTurn(75,45);
                 }
+
+                //Update Phone Log
+                telemetry.update();
             }/* else {
                 double speed = -gamepad1.left_stick_y;
                 robot.intake.setPower(speed);
@@ -89,8 +102,9 @@ public class Teleop extends LinearOpMode {
                 } else {
                     telemetry.log().add("Sphere");
                 }
+                telemetry.update();
+                robot.sleep(1000);
             }
         }*/
-        telemetry.update();
     }
 }
