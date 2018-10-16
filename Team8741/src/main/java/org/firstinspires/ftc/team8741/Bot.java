@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -61,16 +62,11 @@ public class Bot {
     int _rightOffset;
 
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
-    private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = 0.0025;   // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.0006 ;  // Larger is more responsive, but also less stable
+    private final static double P_TURN_COEFF = 0.0035;   // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.00045 ;  // Larger is more responsive, but also less stable
     private final static double F_MOTOR_COEFF = 0.09;   //Larger the lower the minimum motor power is
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
-
-
-    private final static double FLAT_PITCH = -1;    // Pitch when robot is flat on the balance stone
-    private final static double BALANCE_PITCH = -8; // Pitch when robot is leaving the balance stone
 
     private final static double AUTO_DRIVE_SPEED = 0.6;
     private final static double AUTO_TURN_SPEED = 0.6;
@@ -84,6 +80,7 @@ public class Bot {
     private DcMotor rightDrive = null;
     private DcMotor liftArm = null;
     private ColorSensor colorSensor = null;
+    private Servo servo = null;
 
     private LinearOpMode opMode = null;
 
@@ -108,6 +105,8 @@ public class Bot {
         rightDrive = hwMap.get(DcMotor.class, "right");
         liftArm = hwMap.get(DcMotor.class, "lift");
         colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
+        servo = hwMap.get (Servo.class, "servo");
+
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -163,7 +162,7 @@ public class Bot {
     }
 
     public void setRightDirection(DcMotor.Direction direction) {
-        rightDrive.setDirection(direction);
+        leftDrive.setDirection(direction);
     }
 
     public int getRightPosition()
@@ -310,16 +309,22 @@ public class Bot {
                 time.reset();
                 timerStarted = true;
                 opMode.telemetry.addLine("Reset Time");
+                steer = getSteer(error, PCoeff);
+                rightSpeed = Range.clip(steer, -speed, speed);
+                leftSpeed = -rightSpeed;
             }
             else{
                 opMode.telemetry.addLine("Timer is running");
+                steer = getSteer(error, PCoeff);
+                rightSpeed = Range.clip(steer, -speed, speed);
+                leftSpeed = -rightSpeed;
             }
         }
 
         else {
             steer = getSteer(error, PCoeff);
-            leftSpeed = Range.clip(steer, -speed, speed);
-            rightSpeed = -leftSpeed;
+            rightSpeed = Range.clip(steer, -speed, speed);
+            leftSpeed = -rightSpeed;
             timerStarted = false;
         }
        // Send desired speeds to motors
@@ -331,6 +336,7 @@ public class Bot {
         opMode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
         opMode.telemetry.addData("timer started", timerStarted);
         opMode.telemetry.addData("hold timer", time.time());
+        opMode.telemetry.addData("on Target", onTarget);
 
         return onTarget;
     }
@@ -379,6 +385,10 @@ public class Bot {
          float[] hsvValues = new float[3];
          Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
          return (hsvValues[0] > YELLOW_THRESHOLD) && (YELLOW_LIMIT > hsvValues[0] );
+     }
+
+     public void setServo (double position){
+         servo.setPosition(position);
      }
 
 }
