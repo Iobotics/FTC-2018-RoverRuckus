@@ -2,9 +2,9 @@ package org.firstinspires.ftc.team8741;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Autonomous3", group = "Bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Auto", group = "Bot")
 //@Disabled
-public class Auto3 extends LinearOpMode {
+public class Auto extends LinearOpMode {
 
     private Bot robot = new Bot(this);
 

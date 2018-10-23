@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Autonomous2", group = "Bot")
 //@Disabled
-public class Auto2 extends LinearOpMode {
+public class AutoTest extends LinearOpMode {
 
     private Bot robot = new Bot(this);
 
@@ -18,6 +18,6 @@ public class Auto2 extends LinearOpMode {
 
         robot.gyroTurn(90);
 
-        robot.setServo(1);
+        robot.driveStraight(20);
     }
 }
