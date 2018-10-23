@@ -74,8 +74,11 @@ public class AutonomousRedMark extends LinearOpMode {
             }
 
         }
+
         robot.encoderDrive(2,0.75);
+
         robot.markerServo.setPosition(1);
+
         robot.gyroTurn(0.5, 45);
         robot.encoderDrive(78,0.75);
 

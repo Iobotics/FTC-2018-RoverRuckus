@@ -7,9 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
-import org.firstinspires.ftc.ftccommon.internal.RunOnBoot;
-
-import static java.lang.System.currentTimeMillis;
 
 /**
  * Created by Jack Gonser & Reid Ginoza on 9/12/2018.
@@ -86,8 +83,11 @@ public class Autonomous extends LinearOpMode {
             }
 
         }
+
         robot.encoderDrive(2,0.75);
+
         robot.markerServo.setPosition(1);
+
         robot.gyroTurn(0.5, -45);
         robot.encoderDrive(78,0.75);
 

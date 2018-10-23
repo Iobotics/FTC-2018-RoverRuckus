@@ -79,9 +79,12 @@ public class AutonomousRedNonMark extends LinearOpMode{
             }
 
         }
-        robot.encoderDrive(2,0.75);
+
+        robot.encoderDrive(80,0.75);
+
         robot.markerServo.setPosition(1);
-        robot.gyroTurn(0.5, 45);
+
+        robot.gyroTurn(0.5, -180);
         robot.encoderDrive(78,0.75);
     }
 

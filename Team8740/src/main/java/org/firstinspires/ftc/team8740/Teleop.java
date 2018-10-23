@@ -16,12 +16,12 @@ import com.qualcomm.robotcore.util.Range;
 
 public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
+
     double yValue;
     double xValue;
+
     double leftPower;
     double rightPower;
-
-    boolean musicOn = false;
 
     public void runOpMode(){
         robot.init(hardwareMap, true); //initiate robot hardware
@@ -84,7 +84,11 @@ public class Teleop extends LinearOpMode {
                 //Update Phone Log
                 telemetry.update();
             }/* else {
-                double speed = -gamepad1.left_stick_y;
+                double speed;
+
+                if (-gamepad1.left_stick_y > 0.4) speed = -gamepad1.left_stick_y;
+                if (-gamepad1.left_stick_y <= 0.4) speed = 0.4;
+
                 robot.intake.setPower(speed);
 
                 NormalizedColorSensor colors = robot.intakeColor.getNormalizedColors();
