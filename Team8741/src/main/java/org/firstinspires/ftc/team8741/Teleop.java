@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class
 Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
-    private Utilities util = new Utilities();
 
 
     public void runOpMode(){
@@ -35,14 +34,21 @@ Teleop extends LinearOpMode {
             }
 
             if(gamepad1.a){
+                robot.setInPower(1);
 
+            }
+            else if(gamepad1.b){
+                robot.setInPower(-1);
+            }
+            else {
+                robot.setInPower(0);
             }
 
 
             telemetry.addData("Left Position", robot.getLeftPosition());
             telemetry.addData("Right Position", robot.getRightPosition());
             telemetry.addData("Gyro", robot.getGyroHeading());
-            telemetry.addData("Red Green Blue", robot.getHSV());
+            //telemetry.addData("Red Green Blue", robot.getHSV());
             telemetry.update();
         }
     }

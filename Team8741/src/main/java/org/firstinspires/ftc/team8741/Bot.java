@@ -37,6 +37,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -52,7 +53,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
-    final static int WHEEL_DIAMETER = 4; //Inches
+    final static int WHEEL_DIAMETER = 6; //Inches
 
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
@@ -71,7 +72,7 @@ public class Bot {
     private final static double AUTO_DRIVE_SPEED = 0.6;
     private final static double AUTO_TURN_SPEED = 0.6;
     private final static double POWER_DAMPEN = .001;
-    private final static double TIMEOUT = 5;
+    private final static double TIMEOUT = 5000;
 
     private final static int YELLOW_THRESHOLD = 10;
     private final static int YELLOW_LIMIT = 10;
@@ -81,6 +82,8 @@ public class Bot {
     private DcMotor liftArm = null;
     private ColorSensor colorSensor = null;
     private Servo servo = null;
+    private DcMotor leftIntake = null;
+    private DcMotor rightIntake = null;
 
     private LinearOpMode opMode = null;
 
@@ -104,8 +107,11 @@ public class Bot {
         leftDrive = hwMap.get(DcMotor.class, "left");
         rightDrive = hwMap.get(DcMotor.class, "right");
         liftArm = hwMap.get(DcMotor.class, "lift");
-        colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
-        servo = hwMap.get (Servo.class, "servo");
+        //colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
+        //servo = hwMap.get (Servo.class, "servo");
+        leftIntake = hwMap.get(DcMotor.class,"leftIntake");
+        rightIntake = hwMap.get(DcMotor.class,"rightIntake");
+
 
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -118,8 +124,9 @@ public class Bot {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        setLeftDirection(DcMotor.Direction.REVERSE);
+        setRightDirection(DcMotor.Direction.REVERSE);
         setBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         _leftOffset = leftDrive.getCurrentPosition();
         _rightOffset = rightDrive.getCurrentPosition();
@@ -304,7 +311,7 @@ public class Bot {
             onTarget = true;
         }
 
-        else if (Math.abs(error) <= HEADING_THRESHOLD ) {
+        else if (Math.abs(error) <= HEADING_THRESHOLD  && time.time() < HOLD_TIME) {
             if (timerStarted == false) {
                 time.reset();
                 timerStarted = true;
@@ -368,9 +375,9 @@ public class Bot {
      */
      public double getSteer ( double error, double PCoeff){
         if (error * PCoeff < 0){
-            return Range.clip(error * PCoeff, -1, 0) - F_MOTOR_COEFF;
+            return Range.clip((error * PCoeff)  - F_MOTOR_COEFF, -1, 0);
         }
-        else{return Range.clip(error * PCoeff, 0, 1) + F_MOTOR_COEFF;}
+        else{return Range.clip((error * PCoeff) + F_MOTOR_COEFF, 0, 1) ;}
      }
 
      public void resetTimer () {
@@ -389,6 +396,10 @@ public class Bot {
 
      public void setServo (double position){
          servo.setPosition(position);
+     }
+     public void setInPower (double inPower){
+         leftIntake.setPower(inPower);
+         rightIntake.setPower(inPower);
      }
 
 }
