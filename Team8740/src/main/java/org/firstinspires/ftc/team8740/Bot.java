@@ -70,7 +70,7 @@ public class Bot {
     public NormalizedColorSensor colorSensor = null;
     //public NormalizedColorSensor intakeColor = null;
 
-    //public Servo markerServo = null;
+    public Servo markerServo = null;
     //public Servo intakeServo = null;
 
     private LinearOpMode opMode = null;
@@ -112,7 +112,7 @@ public class Bot {
         hook = hwMap.get(DcMotor.class, "hook");
 
         //Servos (Expected)
-        //markerServo = hwMap.get(Servo.class, "marker");
+        markerServo = hwMap.get(Servo.class, "marker");
         //intakeServo = hwMap.get(Servo.class, "intake");
 
         //Color Sensor

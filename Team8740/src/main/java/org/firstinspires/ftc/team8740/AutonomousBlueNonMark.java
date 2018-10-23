@@ -22,7 +22,7 @@ public class AutonomousBlueNonMark extends LinearOpMode{
         //Robot will be backwards when operating
         robot.init(hardwareMap, true);
 
-        //robot.markerServo.setPosition(0);
+        robot.markerServo.setPosition(0);
         waitForStart();
 
         if (robot.colorSensor instanceof SwitchableLight) {
@@ -83,7 +83,7 @@ public class AutonomousBlueNonMark extends LinearOpMode{
 
         }
         robot.encoderDrive(2,0.75);
-        //robot.markerServo.setPosition(1);
+        robot.markerServo.setPosition(1);
         robot.gyroTurn(0.5, -45);
         robot.encoderDrive(78,0.75);
 }
