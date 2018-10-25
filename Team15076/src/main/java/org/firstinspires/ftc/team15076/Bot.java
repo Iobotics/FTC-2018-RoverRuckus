@@ -1,3 +1,4 @@
+//TODO Wednesday 10/17 test everyting (color sensors, encoderdrive, marker drop servo, lift, intake (if done)) (test autonomus and teleop)
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -35,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -57,13 +59,15 @@ public class Bot {
 
     int _leftOffset;
     int _rightOffset;
-
+    private CRServo dropperservo = null;
     private DcMotor leftBackDrive = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    //public DcMotor liftOne = null;
-    public DcMotor hook = null;
+    private DcMotor lift = null;
+    private DcMotor lift2 = null;
+    private DcMotor hook = null;
+    private DcMotor intake = null;
     public NormalizedColorSensor colorSensor = null;
     //public Servo markerServo = null;
     private LinearOpMode opMode = null;
@@ -102,18 +106,20 @@ public class Bot {
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
+        dropperservo = hwMap.get(CRServo.class, "dropperServo");
 
         //Lift Motors (Expected)
-        //liftOne = hwMap.get(DcMotor.class, "Lift1");
+        lift = hwMap.get(DcMotor.class, "lift");
+        intake =hwMap.get(DcMotor.class, "Intake");
 
         //Hook Motor
-        hook = hwMap.get(DcMotor.class, "hook");
+        //hook = hwMap.get(DcMotor.class, "hook");
 
         //Servos (Expected)
         //markerServo = hwMap.get(Servo.class, "marker");
 
         //Color Sensor
-        colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+        //colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -138,7 +144,7 @@ public class Bot {
             rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         }
-   }
+    }
 
     public void setPower(double left, double right) {
         leftBackDrive.setPower(left);
@@ -146,10 +152,12 @@ public class Bot {
         rightBackDrive.setPower(-right);
         rightFrontDrive.setPower(-right);
     }
-    public void stopDrive(){
-        setPower(0,0);
+
+    public void stopDrive() {
+        setPower(0, 0);
 
     }
+
     /**
      * Sleep from LinearOpMode
      *
@@ -162,6 +170,7 @@ public class Bot {
             Thread.currentThread().interrupt();
         }
     }
+
     /**
      * Checks if the gyro is calibrating
      *
@@ -187,15 +196,12 @@ public class Bot {
         return heading;
     }
 
-    public void gyroTurn(double angle)
-    {
+    public void gyroTurn(double angle) {
         gyroTurn(AUTO_TURN_SPEED, angle);
     }
 
-    public void gyroTurn(double speed, double angle)
-    {
-        while(opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF))
-        {
+    public void gyroTurn(double speed, double angle) {
+        while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
             opMode.telemetry.update();
         }
     }
@@ -215,7 +221,7 @@ public class Bot {
     }
 
 
-    public void gyroHold ( double angle, double holdTime){
+    public void gyroHold(double angle, double holdTime) {
         gyroHold(AUTO_TURN_SPEED, angle, holdTime);
     }
 
@@ -230,7 +236,7 @@ public class Bot {
      *                 If a relative angle is required, add/subtract from current heading.
      * @param holdTime Length of time (in seconds) to hold the specified heading.
      */
-    public void gyroHold ( double speed, double angle, double holdTime){
+    public void gyroHold(double speed, double angle, double holdTime) {
 
         ElapsedTime holdTimer = new ElapsedTime();
 
@@ -257,7 +263,7 @@ public class Bot {
      * @param PCoeff Proportional Gain coefficient
      * @return onTarget
      */
-    boolean onHeading ( double speed, double angle, double PCoeff){
+    boolean onHeading(double speed, double angle, double PCoeff) {
         double error;
         double steer;
         boolean onTarget = false;
@@ -296,7 +302,7 @@ public class Bot {
      * @return error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
      * Positive error means the robot should turn LEFT (CCW) to reduce error.
      */
-    public double getError ( double targetAngle){
+    public double getError(double targetAngle) {
 
         double robotError;
 
@@ -314,17 +320,18 @@ public class Bot {
      * @param PCoeff Proportional Gain Coefficient
      * @return steer
      */
-    public double getSteer ( double error, double PCoeff){
+    public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-    public void resetTimer () {
+    public void resetTimer() {
         time.reset();
     }
 
-    public ElapsedTime getTime () {
+    public ElapsedTime getTime() {
         return time;
     }
+
     public void encoderDrive(double inches, double maxSpeed) {
 
         double speed;
@@ -335,13 +342,75 @@ public class Bot {
         // While the absolute value of the error is greater than the error threshold
         while (opMode.opModeIsActive() && Math.abs(leftBackDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
             error = target - leftBackDrive.getCurrentPosition();
-            speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed , maxSpeed);
+            speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed, maxSpeed);
 
-            setPower(speed,speed);
+            setPower(speed, speed);
             opMode.telemetry.addData("speed: ", speed);
             opMode.telemetry.update();
         }
         stopDrive();
     }
 
+    public void liftUp() {
+        lift.setPower(1);
+    }
+
+    public void liftDown() {
+        lift.setPower(-1);
+    }
+
+    public void liftStop() {
+        lift.setPower(0);
+    }
+
+    /**
+     * @param inches
+     * @param maxSpeed
+     */
+    public void liftpos(int inches, double maxSpeed)//no semicolon after creating a method
+    {
+        double speed;
+        int error;
+        //sets the target encoder value
+        int target = leftBackDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+
+        // While the absolute value of the error is greater than the error threshold
+        while (opMode.opModeIsActive() && Math.abs(leftBackDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - leftBackDrive.getCurrentPosition();
+            speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed, maxSpeed);
+
+            setPower(speed, speed);
+            opMode.telemetry.addData("speed: ", speed);
+            opMode.telemetry.update();
+        }
+    }
+
+    public int getliftPos()
+    {
+        return lift.getCurrentPosition();
+    }
+
+    public void markerdrop() {
+        dropperservo.setPower(1);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e1) {
+        }
+        {
+            dropperservo.setPower(-1);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e1) {
+            }
+
+        }
+    }
+    public void inIntake()  {
+        intake.setPower(1);
+    }
+
+    public void OutIntake()
+    {
+        intake.setPower(-1);
+    }
 }
