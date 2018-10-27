@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 /**
  * Created by Reid Ginoza on 9/12/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15076AutoBlue", group = "Bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15076AutoRed", group = "Bot")
 //base auto
 public class AutonomousRed extends LinearOpMode {
     private Bot robot = new Bot(this);
@@ -19,12 +19,14 @@ public class AutonomousRed extends LinearOpMode {
 
 
         //Robot will be backwards when operating
-        robot.init(hardwareMap, false);
+        robot.init(hardwareMap, true);
+
+        robot.driveLander(39);
         /*robot.setPower(0.5, 0.5);
         robot.sleep(500);
         robot.setPower(0, 0);
 */
-
+/*
         //robot.markerServo.setPosition(0);
         waitForStart();
 
@@ -83,7 +85,7 @@ public class AutonomousRed extends LinearOpMode {
         robot.gyroTurn(0.5, 45);
         robot.encoderDrive(78,0.75);
 
-        /*//robot.driveStraight(); && robot.gyroTurn()
+        //robot.driveStraight(); && robot.gyroTurn()
         robot.encoderDrive(65, 1);
         robot.gyroTurn(125);
         robot.encoderDrive(100, 1);

@@ -33,14 +33,10 @@ package org.firstinspires.ftc.team15076;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -54,18 +50,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
-    final static int WHEEL_DIAMETER = 4; //Inches
+    final static int WHEEL_DIAMETER = 4; //Inches TODO - check this
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
 
-    int _leftOffset;
-    int _rightOffset;
+    double _leftOffset;
+    double _rightOffset;
     private CRServo dropperservo = null;
     private DcMotor leftBackDrive = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor lift = null;
-    private DcMotor lift2 = null;
+    private DcMotor liftFront = null;
+    private DcMotor liftBack = null;
     private DcMotor hook = null;
     private DcMotor intake = null;
     public NormalizedColorSensor colorSensor = null;
@@ -80,7 +76,7 @@ public class Bot {
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = 0.0517;   // Larger is more responsive, but also less stable
+    private final static double P_TURN_COEFF = 0.02;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable
 
 
@@ -109,7 +105,9 @@ public class Bot {
         dropperservo = hwMap.get(CRServo.class, "dropperServo");
 
         //Lift Motors (Expected)
-        lift = hwMap.get(DcMotor.class, "lift");
+        liftFront = hwMap.get(DcMotor.class, "liftFront");
+        liftBack = hwMap.get(DcMotor.class, "liftBack");
+
         intake =hwMap.get(DcMotor.class, "Intake");
 
         //Hook Motor
@@ -133,9 +131,10 @@ public class Bot {
         imu.initialize(parameters);
 
         //Drive Config
+
         if (teleop) {
-            leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-            leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
             rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
             rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         } else {
@@ -144,6 +143,13 @@ public class Bot {
             rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         }
+
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        _leftOffset = getLeft();
+        _rightOffset = getRight();
     }
 
     public void setPower(double left, double right) {
@@ -151,6 +157,13 @@ public class Bot {
         leftFrontDrive.setPower(left);
         rightBackDrive.setPower(-right);
         rightFrontDrive.setPower(-right);
+        /*
+        opMode.telemetry.addData("leftBackDrive", leftBackDrive.getCurrentPosition());
+        opMode.telemetry.addData("leftFrontDrive", leftFrontDrive.getCurrentPosition());
+        opMode.telemetry.addData("rightBackDrive", rightBackDrive.getCurrentPosition());
+        opMode.telemetry.addData("rightFrontDrive", rightFrontDrive.getCurrentPosition());
+        opMode.telemetry.update();
+        */
     }
 
     public void stopDrive() {
@@ -202,7 +215,6 @@ public class Bot {
 
     public void gyroTurn(double speed, double angle) {
         while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
-            opMode.telemetry.update();
         }
     }
 
@@ -245,8 +257,8 @@ public class Bot {
         while (opMode.opModeIsActive() && (holdTimer.time() < holdTime) && !onHeading(speed, angle, P_TURN_COEFF)) {
             // Update telemetry & Allow time for other processes to run.
 
-            opMode.telemetry.addData("timer", holdTimer.time());
-            opMode.telemetry.update();
+            //opMode.telemetry.addData("timer", holdTimer.time());
+            //opMode.telemetry.update();
         }
 
         // Stop all motion;
@@ -257,7 +269,7 @@ public class Bot {
      * Perform one cycle of closed loop heading control.
      *
      * @param speed  Desired speed of turn.
-     * @param angle  Absolute Angle (in Degrees) relative to last gyro reset.
+     * @param angle  Absolute Angle (in Degrees) relativgete to last gyro reset.
      *               0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *               If a relative angle is required, add/subtract from current heading.
      * @param PCoeff Proportional Gain coefficient
@@ -288,9 +300,9 @@ public class Bot {
         setPower(leftSpeed, rightSpeed);
 
         // Display it for the driver
-        opMode.telemetry.addData("Target", "%5.2f", angle);
-        opMode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        opMode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+        //opMode.telemetry.addData("Target", "%5.2f", angle);
+        //opMode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        //opMode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
 
         return onTarget;
     }
@@ -351,16 +363,48 @@ public class Bot {
         stopDrive();
     }
 
+    public double getLeft()
+    {
+        return (leftFrontDrive.getCurrentPosition()-_leftOffset)*INCHES_PER_TICK;
+    }
+
+    public double getRight()
+    {
+        return -(rightFrontDrive.getCurrentPosition()-_rightOffset)*INCHES_PER_TICK;
+    }
+
+    public void driveLander(double inches) {
+
+        //sets the target encoder value
+        int target = leftBackDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+
+        // While the absolute value of the error is greater than the error threshold
+        while (opMode.opModeIsActive() && Math.abs(leftBackDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+
+            setPower(1, 1);
+        }
+        stopDrive();
+    }
+
+    public void liftPower(double speed)
+    {
+        liftFront.setPower(speed);
+        liftBack.setPower(speed);
+    }
+
     public void liftUp() {
-        lift.setPower(1);
+        liftFront.setPower(1);
+        liftBack.setPower(1);
     }
 
     public void liftDown() {
-        lift.setPower(-1);
+        liftFront.setPower(-1);
+        liftBack.setPower(-1);
     }
 
     public void liftStop() {
-        lift.setPower(0);
+        liftFront.setPower(0);
+        liftBack.setPower(0);
     }
 
     /**
@@ -375,11 +419,11 @@ public class Bot {
         int target = leftBackDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
 
         // While the absolute value of the error is greater than the error threshold
-        while (opMode.opModeIsActive() && Math.abs(leftBackDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+        while (opMode.opModeIsActive() && Math.abs(liftFront.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
             error = target - leftBackDrive.getCurrentPosition();
             speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed, maxSpeed);
 
-            setPower(speed, speed);
+            this.liftPower(speed);
             opMode.telemetry.addData("speed: ", speed);
             opMode.telemetry.update();
         }
@@ -387,7 +431,7 @@ public class Bot {
 
     public int getliftPos()
     {
-        return lift.getCurrentPosition();
+        return liftFront.getCurrentPosition();
     }
 
     public void markerdrop() {
@@ -405,12 +449,16 @@ public class Bot {
 
         }
     }
-    public void inIntake()  {
-        intake.setPower(1);
+
+    public void setPowerDropper(int power)
+    {
+        dropperservo.setPower(power);
     }
 
-    public void OutIntake()
+
+    public void setPowerIntake(int power)
     {
-        intake.setPower(-1);
+        intake.setPower(power);
     }
+
 }
