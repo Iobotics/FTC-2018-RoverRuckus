@@ -1,37 +1,36 @@
-package org.firstinspires.ftc.team8740;
+package org.firstinspires.ftc.team15076;
 
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
-
 /**
- * Created by Jack Gonser & Reid Ginoza on 9/12/2018.
+ * Created by Reid Ginoza on 9/12/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="8740AutoBlueMarker", group = "Bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15076AutoRed", group = "Bot")
 //base auto
-public class Autonomous extends LinearOpMode {
+public class AutonomousRed extends LinearOpMode {
     private Bot robot = new Bot(this);
 
     @Override
     public void runOpMode() {
+
+
         //Robot will be backwards when operating
-        robot.init(hardwareMap, false);
+        robot.init(hardwareMap, true);
 
-        //Set Marker Servo Pos
-        robot.markerServo.setPosition(0);
-
-        //Set hook pos
-        robot.hook.setPower(-1);
-        robot.sleep(3500);
-        robot.hook.setPower(0);
-
+        robot.driveLander(39);
+        /*robot.setPower(0.5, 0.5);
+        robot.sleep(500);
+        robot.setPower(0, 0);
+*/
+/*
+        //robot.markerServo.setPosition(0);
         waitForStart();
 
-        if (robot.colorSensor instanceof SwitchableLight) {
+        if (robot.colorSensor instanceof SwitchableLight) { //if you are able to change the state of
             ((SwitchableLight) robot.colorSensor).enableLight(true);
         }
 
@@ -41,13 +40,11 @@ public class Autonomous extends LinearOpMode {
         telemetry.update();
 
         //Undeploy hook
-        robot.hook.setPower(1);
-        robot.sleep(3500);
-        robot.hook.setPower(0);
+        robot.liftUp();
 
         //drive to moon rocks
-        robot.encoderDrive(-6,0.75);
-        robot.gyroTurn(0.5,-30);
+        robot.encoderDrive(6,0.75);//TODO measure
+        robot.gyroTurn(0.5,30);
         robot.stopDrive();
 
         NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
@@ -83,13 +80,15 @@ public class Autonomous extends LinearOpMode {
             }
 
         }
-
         robot.encoderDrive(2,0.75);
-
-        robot.markerServo.setPosition(1);
-
-        robot.gyroTurn(0.5, -45);
+        //robot.markerServo.setPosition(1);
+        robot.gyroTurn(0.5, 45);
         robot.encoderDrive(78,0.75);
 
+        //robot.driveStraight(); && robot.gyroTurn()
+        robot.encoderDrive(65, 1);
+        robot.gyroTurn(125);
+        robot.encoderDrive(100, 1);
+*/
     }
 }

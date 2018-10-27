@@ -29,12 +29,17 @@
 
 package org.firstinspires.ftc.team8741;
 
+import android.graphics.Color;
+import android.media.MediaPlayer;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -48,7 +53,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
-    final static int WHEEL_DIAMETER = 4; //Inches
+    final static int WHEEL_DIAMETER = 6; //Inches
 
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
@@ -57,27 +62,28 @@ public class Bot {
     int _leftOffset;
     int _rightOffset;
 
-    private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
-    private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
+    private final static double HEADING_THRESHOLD = 1.8;
 
-    private final static double P_TURN_COEFF = 0.005;   // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.0004 ;  // Larger is more responsive, but also less stable
-    private final static double F_MOTOR_COEFF = 0.145;   //Larger the lower the minimum motor power is
+    private final static double P_TURN_COEFF = 0.050;   // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.00060 ;  // Larger is more responsive, but also less stable
+    private final static double F_MOTOR_COEFF = 0.11;   //Larger the lower the minimum motor power is
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
-
-
-    private final static double FLAT_PITCH = -1;    // Pitch when robot is flat on the balance stone
-    private final static double BALANCE_PITCH = -8; // Pitch when robot is leaving the balance stone
 
     private final static double AUTO_DRIVE_SPEED = 0.6;
     private final static double AUTO_TURN_SPEED = 0.6;
     private final static double POWER_DAMPEN = .001;
-    private final static double TIMEOUT = 5;
+    private final static double TIMEOUT = 5000;
+
+    private final static int YELLOW_THRESHOLD = 10;
+    private final static int YELLOW_LIMIT = 10;
 
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private DcMotor liftArm = null;
     private ColorSensor colorSensor = null;
+    private Servo servo = null;
+    private DcMotor leftIntake = null;
+    private DcMotor rightIntake = null;
 
     private LinearOpMode opMode = null;
 
@@ -101,7 +107,12 @@ public class Bot {
         leftDrive = hwMap.get(DcMotor.class, "left");
         rightDrive = hwMap.get(DcMotor.class, "right");
         liftArm = hwMap.get(DcMotor.class, "lift");
-        colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
+        //colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
+        servo = hwMap.get (Servo.class, "servo");
+        leftIntake = hwMap.get(DcMotor.class,"leftIntake");
+        rightIntake = hwMap.get(DcMotor.class,"rightIntake");
+
+
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -113,20 +124,24 @@ public class Bot {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        setLeftDirection(DcMotor.Direction.REVERSE);
+        setRightDirection(DcMotor.Direction.REVERSE);
         setBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         _leftOffset = leftDrive.getCurrentPosition();
         _rightOffset = rightDrive.getCurrentPosition();
     }
 
-    public int[] getRGB () {
-        int rgbArray[] = new int[3];
-        rgbArray[0] = colorSensor.red();
-        rgbArray[1] = colorSensor.green();
-        rgbArray[2] = colorSensor.blue();
+    public float[] getHSV () {
 
-        return rgbArray;
+        float[] hsvValues = new float[3];
+        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+        return hsvValues;
+    }
+
+    public int getRed(){
+        return colorSensor.red();
     }
 
     //Sets the power of both sides of the bot
@@ -154,7 +169,7 @@ public class Bot {
     }
 
     public void setRightDirection(DcMotor.Direction direction) {
-        rightDrive.setDirection(direction);
+        leftDrive.setDirection(direction);
     }
 
     public int getRightPosition()
@@ -191,9 +206,9 @@ public class Bot {
         while (opmode.opModeIsActive() && Math.abs(rightDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
             error = target - rightDrive.getCurrentPosition();
             if (error * pCoeff < 0) {
-                speed = Range.clip(error * pCoeff, -1, 0) - F_MOTOR_COEFF;
+                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
             } else {
-                speed = Range.clip(error * pCoeff, 0, 1) + F_MOTOR_COEFF;
+                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, 1) ;
             }
 
             if (Math.abs(getGyroHeading() - startHeading) > 1){
@@ -201,8 +216,8 @@ public class Bot {
             }
             else {setPower(speed, speed);}
 
-            opmode.telemetry.addData("Left Position", this.getLeftPosition() * INCHES_PER_TICK);
-            opmode.telemetry.addData("Right Position", this.getRightPosition() * INCHES_PER_TICK);
+            opmode.telemetry.addData("Drive Error", error);
+            opmode.telemetry.addData("Drive Power", rightDrive.getPower());
             opMode.telemetry.update();
         }
         this.stopDrive();
@@ -296,21 +311,27 @@ public class Bot {
             onTarget = true;
         }
 
-        else if (Math.abs(error) <= HEADING_THRESHOLD ) {
+        else if (Math.abs(error) <= HEADING_THRESHOLD) {
             if (timerStarted == false) {
                 time.reset();
                 timerStarted = true;
                 opMode.telemetry.addLine("Reset Time");
+                steer = getSteer(error, PCoeff);
+                rightSpeed = Range.clip(steer, -speed, speed);
+                leftSpeed = -rightSpeed;
             }
             else{
                 opMode.telemetry.addLine("Timer is running");
+                steer = getSteer(error, PCoeff);
+                rightSpeed = Range.clip(steer, -speed, speed);
+                leftSpeed = -rightSpeed;
             }
         }
 
         else {
             steer = getSteer(error, PCoeff);
-            leftSpeed = Range.clip(steer, -speed, speed);
-            rightSpeed = -leftSpeed;
+            rightSpeed = Range.clip(steer, -speed, speed);
+            leftSpeed = -rightSpeed;
             timerStarted = false;
         }
        // Send desired speeds to motors
@@ -322,6 +343,7 @@ public class Bot {
         opMode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
         opMode.telemetry.addData("timer started", timerStarted);
         opMode.telemetry.addData("hold timer", time.time());
+        opMode.telemetry.addData("on Target", onTarget);
 
         return onTarget;
     }
@@ -353,9 +375,9 @@ public class Bot {
      */
      public double getSteer ( double error, double PCoeff){
         if (error * PCoeff < 0){
-            return Range.clip(error * PCoeff, -1, 0) - F_MOTOR_COEFF;
+            return Range.clip((error * PCoeff)  - F_MOTOR_COEFF, -1, 0);
         }
-        else{return Range.clip(error * PCoeff, 0, 1) + F_MOTOR_COEFF;}
+        else{return Range.clip((error * PCoeff) + F_MOTOR_COEFF, 0, 1) ;}
      }
 
      public void resetTimer () {
@@ -365,4 +387,22 @@ public class Bot {
      public ElapsedTime getTime () {
         return time;
      }
+
+     public boolean isYellow(){
+         float[] hsvValues = new float[3];
+         Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+         return (hsvValues[0] > YELLOW_THRESHOLD) && (YELLOW_LIMIT > hsvValues[0] );
+     }
+
+     public void setServo (double position){
+         servo.setPosition(position);
+     }
+     public double getServo () {
+       return servo.getPosition();
+    }
+     public void setInPower (double inPower){
+         leftIntake.setPower(inPower);
+         rightIntake.setPower(inPower);
+     }
+
 }

@@ -1,34 +1,29 @@
-package org.firstinspires.ftc.team8740;
+package org.firstinspires.ftc.team15076;
 
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 
 /**
- * Created by Jack Gonser & Reid Ginoza on 9/12/2018.
+ * Created by Reid Ginoza on 10/1/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="8740AutoBlueMarker", group = "Bot")
-//base auto
-public class Autonomous extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15AutoRedNearDepot", group = "bot")
+public class AutonomousRedNearDepot extends LinearOpMode{
     private Bot robot = new Bot(this);
 
     @Override
     public void runOpMode() {
         //Robot will be backwards when operating
-        robot.init(hardwareMap, false);
+        robot.init(hardwareMap, true);
 
-        //Set Marker Servo Pos
-        robot.markerServo.setPosition(0);
+        robot.encoderDrive(-48.9, 1);
+        robot.encoderDrive(10.3,1);
+        //robot.gyroTurn(20);
+        //robot.encoderDrive(66.8,1);
 
-        //Set hook pos
-        robot.hook.setPower(-1);
-        robot.sleep(3500);
-        robot.hook.setPower(0);
-
+        /*//robot.markerServo.setPosition(0);
         waitForStart();
 
         if (robot.colorSensor instanceof SwitchableLight) {
@@ -37,21 +32,29 @@ public class Autonomous extends LinearOpMode {
 
         telemetry.clear();
         telemetry.log().add("START");
-        telemetry.log().add("Close to gold + silver");
+        telemetry.log().add("Not near marker so must go to marker");
         telemetry.update();
 
-        //Undeploy hook
-        robot.hook.setPower(1);
-        robot.sleep(3500);
-        robot.hook.setPower(0);
+        //drive from start top moon rock
+        robot.gyroTurn(0.5, -45);
+        robot.encoderDrive(-2, 0.75);
+        robot.gyroTurn(0.5,-0.75);
 
-        //drive to moon rocks
-        robot.encoderDrive(-6,0.75);
-        robot.gyroTurn(0.5,-30);
-        robot.stopDrive();
+        //drive to moon rock
+        telemetry.log().add("At gold + silver");
+        telemetry.update();
+        robot.encoderDrive(-0.5,0.75);
+        robot.gyroTurn(0.5,-40);
 
         NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
         int color = colors.toColor();
+
+        while (Color.red(color) <= 3 && currentTimeMillis() - startTime < 500) {
+            colors = robot.colorSensor.getNormalizedColors();
+            color = colors.toColor();
+            robot.stopDrive();
+        }
+
         telemetry.clear();
         telemetry.log().add("Starting First Item Scan");
         telemetry.update();
@@ -67,7 +70,6 @@ public class Autonomous extends LinearOpMode {
             telemetry.update();
             robot.gyroTurn(0.5,130);
             robot.gyroTurn(0.5,90);
-            robot.stopDrive();
             if (color == Color.YELLOW) {
                 telemetry.log().add("Second Item is Cube");
                 telemetry.update();
@@ -83,13 +85,11 @@ public class Autonomous extends LinearOpMode {
             }
 
         }
-
         robot.encoderDrive(2,0.75);
-
-        robot.markerServo.setPosition(1);
-
+        robot.markerdrop();
         robot.gyroTurn(0.5, -45);
         robot.encoderDrive(78,0.75);
+*/
 
-    }
+}
 }
