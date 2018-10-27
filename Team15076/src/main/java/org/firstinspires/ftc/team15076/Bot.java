@@ -386,7 +386,7 @@ public class Bot {
         stopDrive();
     }
 
-    public void liftPower(double speed)
+    /*public void liftPower(double speed)
     {
         liftFront.setPower(speed);
         liftBack.setPower(speed);
@@ -411,7 +411,7 @@ public class Bot {
      * @param inches
      * @param maxSpeed
      */
-    public void liftpos(int inches, double maxSpeed)//no semicolon after creating a method
+   /* public void liftpos(int inches, double maxSpeed)//no semicolon after creating a method
     {
         double speed;
         int error;
@@ -433,6 +433,7 @@ public class Bot {
     {
         return liftFront.getCurrentPosition();
     }
+*/
 
     public void markerdrop() {
         dropperservo.setPower(1);

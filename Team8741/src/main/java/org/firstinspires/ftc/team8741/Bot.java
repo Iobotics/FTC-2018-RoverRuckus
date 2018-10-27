@@ -317,12 +317,22 @@ public class Bot {
                 timerStarted = true;
                 opMode.telemetry.addLine("Reset Time");
                 steer = getSteer(error, PCoeff);
+                steer = getSteer(error, PCoeff);
+                if(steer < 0){
+                    steer -= F_MOTOR_COEFF;
+                }
+                else{steer += F_MOTOR_COEFF;}
                 rightSpeed = Range.clip(steer, -speed, speed);
                 leftSpeed = -rightSpeed;
             }
             else{
                 opMode.telemetry.addLine("Timer is running");
                 steer = getSteer(error, PCoeff);
+                steer = getSteer(error, PCoeff);
+                if(steer < 0){
+                    steer -= F_MOTOR_COEFF;
+                }
+                else{steer += F_MOTOR_COEFF;}
                 rightSpeed = Range.clip(steer, -speed, speed);
                 leftSpeed = -rightSpeed;
             }
@@ -330,6 +340,10 @@ public class Bot {
 
         else {
             steer = getSteer(error, PCoeff);
+            if(steer < 0){
+                steer -= F_MOTOR_COEFF;
+            }
+            else{steer += F_MOTOR_COEFF;}
             rightSpeed = Range.clip(steer, -speed, speed);
             leftSpeed = -rightSpeed;
             timerStarted = false;
