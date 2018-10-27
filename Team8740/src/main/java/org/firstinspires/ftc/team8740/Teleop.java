@@ -81,6 +81,9 @@ public class Teleop extends LinearOpMode {
                     robot.gyroTurn(75,45);
                 }
 
+                //Intake Servo (COMP)
+                if (gamepad1.y && gamepad1.dpad_up) robot.intakeServo.setPosition(0);
+                if (gamepad1.y && gamepad1.dpad_down) robot.intakeServo.setPosition(0.5);
                 //Update Phone Log
                 telemetry.update();
             }/* else {
