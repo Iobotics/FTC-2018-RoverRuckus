@@ -62,9 +62,9 @@ public class Bot {
     int _leftOffset;
     int _rightOffset;
 
-    private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
+    private final static double HEADING_THRESHOLD = 1.8;
 
-    private final static double P_TURN_COEFF = 0.045;   // Larger is more responsive, but also less stable
+    private final static double P_TURN_COEFF = 0.050;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.00060 ;  // Larger is more responsive, but also less stable
     private final static double F_MOTOR_COEFF = 0.11;   //Larger the lower the minimum motor power is
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
