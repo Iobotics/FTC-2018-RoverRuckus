@@ -19,7 +19,7 @@ public class AutonomousRedMark extends LinearOpMode {
         //Robot will be backwards when operating
         robot.init(hardwareMap, false);
 
-        robot.markerServo.setPosition(0);
+        robot.markerServo.setPosition(0.8);
         waitForStart();
 
         if (robot.colorSensor instanceof SwitchableLight) {
@@ -77,7 +77,7 @@ public class AutonomousRedMark extends LinearOpMode {
 
         robot.encoderDrive(2,0.75);
 
-        robot.markerServo.setPosition(1);
+        robot.markerServo.setPosition(0);
 
         robot.gyroTurn(0.5, 45);
         robot.encoderDrive(78,0.75);

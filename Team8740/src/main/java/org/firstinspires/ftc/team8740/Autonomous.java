@@ -27,7 +27,7 @@ public class Autonomous extends LinearOpMode {
         //Set hook pos
         robot.hook.setPower(-1);
         robot.sleep(3500);
-        robot.hook.setPower(0);
+        robot.hook.setPower(0.8);
 
         waitForStart();
 
@@ -86,7 +86,7 @@ public class Autonomous extends LinearOpMode {
 
         robot.encoderDrive(2,0.75);
 
-        robot.markerServo.setPosition(1);
+        robot.markerServo.setPosition(0);
 
         robot.gyroTurn(0.5, -45);
         robot.encoderDrive(78,0.75);

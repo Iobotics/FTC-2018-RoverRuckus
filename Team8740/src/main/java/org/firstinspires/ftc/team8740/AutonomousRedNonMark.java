@@ -32,7 +32,7 @@ public class AutonomousRedNonMark extends LinearOpMode{
         telemetry.update();
 
         //Undeploy hook
-        robot.hook.setPower(1);
+        robot.hook.setPower(0.8);
         robot.sleep(3500);
         robot.hook.setPower(0);
 
@@ -82,7 +82,7 @@ public class AutonomousRedNonMark extends LinearOpMode{
 
         robot.encoderDrive(80,0.75);
 
-        robot.markerServo.setPosition(1);
+        robot.markerServo.setPosition(0);
 
         robot.gyroTurn(0.5, -180);
         robot.encoderDrive(78,0.75);
