@@ -2,9 +2,9 @@ package org.firstinspires.ftc.team8898;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Autonomous", group = "Bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Autonomous2", group = "Bot")
 //@Disabled
-public class Autonomous extends LinearOpMode {
+public class Autonomous2 extends LinearOpMode {
 
     private Bot robot = new Bot(this);
 
@@ -15,11 +15,11 @@ public class Autonomous extends LinearOpMode {
         waitForStart();
         //\robot.dropForPosition(3, -.7);
         // Moving
-        robot.driveStraight(15);
-        robot.gyroTurn(-90);
+        robot.driveStraight(2);
+        robot.gyroTurn(-45);
         robot.driveStraight(27);
-        robot.gyroTurn(-140);
-        robot.driveStraight(40);
+        robot.gyroTurn(45);
+        robot.driveStraight(27);
         robot.gyroTurn(-181);
         // clAIm
 
@@ -59,6 +59,6 @@ public class Autonomous extends LinearOpMode {
         // Parking
         robot.driveStraight(24);
         robot.gyroTurn(-223);
-        robot.driveStraight(-75);
+        robot.driveStraight(-80);
     }
 }

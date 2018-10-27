@@ -113,7 +113,7 @@ public class Bot {
         //intakeServo = hwMap.get(Servo.class, "intake");
 
         //Color Sensor
-        colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+        //colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         //intakeColor = hwMap.get(NormalizedColorSensor.class, "intake");
 
         //Gyro

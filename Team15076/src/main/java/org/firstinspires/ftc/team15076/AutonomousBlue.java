@@ -24,12 +24,16 @@ public class AutonomousBlue extends LinearOpMode {
 
 
         //Robot will be backwards when operating
-        robot.init(hardwareMap, false);
+        robot.init(hardwareMap, true);
+
+        robot.driveLander(39);
+        // just go to crater robot.driveLander(46); //start it parallel to starting line with lift on the same line as the hook
+
         /*robot.setPower(0.5, 0.5);
         robot.sleep(500);
         robot.setPower(0, 0);
 */
-
+/*
         //robot.markerServo.setPosition(0);
         waitForStart();
 
@@ -45,12 +49,15 @@ public class AutonomousBlue extends LinearOpMode {
         //Undeploy hook
         robot.liftUp();
 
+
+
+
         //drive to moon rocks
         robot.encoderDrive(6,0.75);//TODO measure
         robot.gyroTurn(0.5,-30);
         robot.stopDrive();
 
-       /* NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
+       NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
         int color = colors.toColor();
         telemetry.clear();
         telemetry.log().add("Starting First Item Scan");
@@ -64,7 +71,8 @@ public class AutonomousBlue extends LinearOpMode {
             telemetry.clear();
         } else if{
             telemetry.log().add("First Item not Cube, Try Item 2");
-            telemetry.update();            robot.gyroTurn(0.5,130);
+            telemetry.update();
+            robot.gyroTurn(0.5,130);
             robot.gyroTurn(0.5,90);
             robot.stopDrive();
             if (color == Color.YELLOW) {
@@ -81,7 +89,7 @@ public class AutonomousBlue extends LinearOpMode {
                 telemetry.clear();
             }
 
-        }*/
+        }
 
         robot.encoderDrive(2,0.75);
         //robot.markerServo.setPosition(1);
@@ -92,6 +100,6 @@ public class AutonomousBlue extends LinearOpMode {
         robot.encoderDrive(65, 1);
         robot.gyroTurn(125);
         robot.encoderDrive(100, 1);
-
+*/
     }
 }

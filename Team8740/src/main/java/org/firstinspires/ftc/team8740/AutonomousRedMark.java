@@ -48,7 +48,7 @@ public class AutonomousRedMark extends LinearOpMode {
         telemetry.update();
 
         //check if moon rock is yellow
-        if (color == Color.YELLOW) {
+        /*if (color == Color.YELLOW) {
             telemetry.log().add("First Item is Cube");
             telemetry.update();
             robot.encoderDrive(-2,0.75);
@@ -73,7 +73,7 @@ public class AutonomousRedMark extends LinearOpMode {
                 telemetry.clear();
             }
 
-        }
+        }*/
 
         robot.encoderDrive(2,0.75);
 
