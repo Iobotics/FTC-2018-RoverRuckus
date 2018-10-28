@@ -22,7 +22,7 @@ public class Autonomous extends LinearOpMode {
         robot.init(hardwareMap, false);
 
         //Set Marker Servo Pos
-        robot.markerServo.setPosition(0.8);
+        robot.markerServo.setPosition(0.6);
 
         waitForStart();
 

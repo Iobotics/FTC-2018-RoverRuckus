@@ -22,7 +22,7 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
         //Robot will be backwards when operating
         robot.init(hardwareMap, true);
 
-        robot.markerServo.setPosition(0.8);
+        robot.markerServo.setPosition(0.6);
         waitForStart();
 
         /*if (robot.colorSensor instanceof SwitchableLight) {
