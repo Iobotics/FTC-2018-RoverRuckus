@@ -19,6 +19,7 @@ public class AutonomousRedNearDepot extends LinearOpMode{
         robot.init(hardwareMap, true);
 
         robot.encoderDrive(-48.9, 1);
+        robot.markerdrop();
         robot.encoderDrive(10.3,1);
         //robot.gyroTurn(20);
         //robot.encoderDrive(66.8,1);

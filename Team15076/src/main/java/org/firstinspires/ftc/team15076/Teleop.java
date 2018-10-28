@@ -36,7 +36,7 @@ public class Teleop extends LinearOpMode {
             {
                 robot.liftStop();
             }
-
+    /*
             if(gamepad1.y)//button y
             {
                 robot.liftpos(30, 1);//inches needs to be changed with "telemetary" and speed is from -1 to 1
@@ -45,6 +45,7 @@ public class Teleop extends LinearOpMode {
             {
                 robot.liftpos(0, 1);
             }
+            */
             telemetry.addData("liftPos", robot.getliftPos());
             telemetry.update();
 
@@ -67,7 +68,7 @@ public class Teleop extends LinearOpMode {
             }
             else if(gamepad1.x)
             {
-                robot.setPowerDropper(-1);
+                robot.markerdrop();
             }
             else
             {

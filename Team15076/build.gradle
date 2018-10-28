@@ -7,13 +7,12 @@
 // the build definitions, you can place those customizations in this file, but
 // please think carefully as to whether such customizations are really necessary
 // before doing so.
-
-
 // Custom definitions may go here
-
 // Include common definitions from above.
 apply from: '../build.common.gradle'
-
 android {
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
+}
+dependencies {
+    implementation files('C:/Users/Robotics/Desktop/GitHub/FTC-2018-RoverRuckus/libs/aapt2-3.2.1-4818971-windows.jar')
 }
