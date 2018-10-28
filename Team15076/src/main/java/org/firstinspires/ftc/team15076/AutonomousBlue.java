@@ -26,7 +26,7 @@ public class AutonomousBlue extends LinearOpMode {
         //Robot will be backwards when operating
         robot.init(hardwareMap, true);
 
-        robot.driveLander(39);
+        robot.driveLander(38);
         // just go to crater robot.driveLander(46); //start it parallel to starting line with lift on the same line as the hook
 
         /*robot.setPower(0.5, 0.5);

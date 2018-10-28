@@ -68,7 +68,7 @@ public class Teleop extends LinearOpMode {
             }
             else if(gamepad1.x)
             {
-                robot.markerdrop();
+                //robot.markerdrop();
             }
             else
             {

@@ -50,7 +50,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
-    final static int WHEEL_DIAMETER = 4; //Inches TODO - check this
+    final static int WHEEL_DIAMETER = 4;
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
 
     double _leftOffset;
@@ -76,7 +76,7 @@ public class Bot {
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = 0.02;   // Larger is more responsive, but also less stable
+    private final static double P_TURN_COEFF = 0.015;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable
 
 
@@ -436,14 +436,14 @@ public class Bot {
 
 
     public void markerdrop() {
-        dropperservo.setPower(1);
+        this.setPowerDropper(-1);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (InterruptedException e1) {}
         dropperservo.setPower(0);
     }
 
-    public void setPowerDropper(int power)
+    public void setPowerDropper(double power)
     {
         dropperservo.setPower(-power);
     }

@@ -21,7 +21,9 @@ public class AutonomousRed extends LinearOpMode {
         //Robot will be backwards when operating
         robot.init(hardwareMap, true);
 
-        robot.driveLander(39);
+        robot.driveLander(38); //39 before
+
+
         /*robot.setPower(0.5, 0.5);
         robot.sleep(500);
         robot.setPower(0, 0);
