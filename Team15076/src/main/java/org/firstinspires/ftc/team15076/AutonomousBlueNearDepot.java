@@ -27,7 +27,13 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
         robot.init(hardwareMap, true);
 
         robot.encoderDrive(-48.9, 1);
-        robot.encoderDrive(10.3,1);
+        robot.markerdrop();
+
+        //robot.liftUp();
+        //robot.encoderDrive(, 1);
+        //robot.liftDown();
+        //robot.gyroTurn()
+        //robot.encoderDrive(10.3,1);
         //robot.gyroTurn(-46.7);
         //robot.encoderDrive(66.8,1);
 

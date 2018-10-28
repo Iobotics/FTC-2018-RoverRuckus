@@ -37,7 +37,7 @@ public class Teleop extends LinearOpMode {
 
                 telemetry.log().add("Normal Operation");
                 yValue = gamepad1.right_stick_y;
-                xValue = gamepad1.right_stick_x;
+                xValue = -gamepad1.right_stick_x;
 
                 leftPower =  yValue - xValue;
                 rightPower = yValue + xValue;

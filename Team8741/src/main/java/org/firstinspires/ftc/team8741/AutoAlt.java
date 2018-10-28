@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoAlt", group = "Bot")
 //@Disabled
-public class AutoAlt extends LinearOpMode {
+public class
+
+AutoAlt extends LinearOpMode {
 
     private Bot robot = new Bot(this);
 

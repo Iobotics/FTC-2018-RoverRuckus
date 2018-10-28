@@ -19,18 +19,12 @@ public class AutonomousRedNearDepot extends LinearOpMode{
         //Robot will be backwards when operating
         robot.init(hardwareMap, true);
 
-        robot.encoderDrive(-48.9, 1);
-        robot.encoderDrive(10.3,1);
-        robot.gyroTurn(46.7);
-        robot.encoderDrive(66.8,1);
-
-
-        robot.markerServo.setPosition(0);
+        robot.markerServo.setPosition(0.6);
         waitForStart();
 
-        if (robot.colorSensor instanceof SwitchableLight) {
+        /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
-        }
+        }*/
 
         telemetry.clear();
         telemetry.log().add("START");
@@ -38,8 +32,8 @@ public class AutonomousRedNearDepot extends LinearOpMode{
         telemetry.update();
 
         //Undeploy hook
-        robot.hook.setPower(0.8);
-        robot.sleep(3500);
+        robot.hook.setPower(1);
+        robot.sleep(5000);
         robot.hook.setPower(0);
 
         //drive from start top moon rock
@@ -53,8 +47,8 @@ public class AutonomousRedNearDepot extends LinearOpMode{
         robot.encoderDrive(-0.5,0.75);
         robot.gyroTurn(0.5,40);
 
-        NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
-        int color = colors.toColor();
+        /*NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
+        int color = colors.toColor();*/
         telemetry.clear();
         telemetry.log().add("Starting First Item Scan");
         telemetry.update();

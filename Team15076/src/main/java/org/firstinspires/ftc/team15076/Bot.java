@@ -50,7 +50,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
-    final static int WHEEL_DIAMETER = 4; //Inches TODO - check this
+    final static int WHEEL_DIAMETER = 4;
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
 
     double _leftOffset;
@@ -76,7 +76,7 @@ public class Bot {
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = 0.02;   // Larger is more responsive, but also less stable
+    private final static double P_TURN_COEFF = 0.015;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable
 
 
@@ -386,7 +386,7 @@ public class Bot {
         stopDrive();
     }
 
-    /*public void liftPower(double speed)
+    public void liftPower(double speed)
     {
         liftFront.setPower(speed);
         liftBack.setPower(speed);
@@ -411,7 +411,7 @@ public class Bot {
      * @param inches
      * @param maxSpeed
      */
-   /* public void liftpos(int inches, double maxSpeed)//no semicolon after creating a method
+    public void liftpos(int inches, double maxSpeed)//no semicolon after creating a method
     {
         double speed;
         int error;
@@ -433,27 +433,19 @@ public class Bot {
     {
         return liftFront.getCurrentPosition();
     }
-*/
+
 
     public void markerdrop() {
-        dropperservo.setPower(1);
+        this.setPowerDropper(-1);
         try {
-            Thread.sleep(500);
-        } catch (InterruptedException e1) {
-        }
-        {
-            dropperservo.setPower(-1);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e1) {
-            }
-
-        }
+            Thread.sleep(5000);
+        } catch (InterruptedException e1) {}
+        dropperservo.setPower(0);
     }
 
-    public void setPowerDropper(int power)
+    public void setPowerDropper(double power)
     {
-        dropperservo.setPower(power);
+        dropperservo.setPower(-power);
     }
 
 

@@ -22,7 +22,7 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
         //Robot will be backwards when operating
         robot.init(hardwareMap, true);
 
-        robot.markerServo.setPosition(0.8);
+        robot.markerServo.setPosition(0.6);
         waitForStart();
 
         /*if (robot.colorSensor instanceof SwitchableLight) {
@@ -36,7 +36,7 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
 
         //Undeploy hook
         robot.hook.setPower(1);
-        robot.sleep(3500);
+        robot.sleep(5000);
         robot.hook.setPower(0);
 
         //drive from start top moon rock

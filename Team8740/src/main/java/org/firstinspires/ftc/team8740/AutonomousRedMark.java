@@ -19,10 +19,10 @@ public class AutonomousRedMark extends LinearOpMode {
         //Robot will be backwards when operating
         robot.init(hardwareMap, false);
 
-        robot.markerServo.setPosition(0.8);
+        robot.markerServo.setPosition(0.6);
         waitForStart();
 
-        if (robot.colorSensor instanceof SwitchableLight) {
+        /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
         }
 
@@ -33,7 +33,7 @@ public class AutonomousRedMark extends LinearOpMode {
 
         //Undeploy hook
         robot.hook.setPower(1);
-        robot.sleep(3500);
+        robot.sleep(5000);
         robot.hook.setPower(0);
 
         //drive to moon rocks
@@ -42,14 +42,14 @@ public class AutonomousRedMark extends LinearOpMode {
         robot.gyroTurn(0.5,30);
         robot.stopDrive();
 
-        NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
-        int color = colors.toColor();
+        //NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
+        //int color = colors.toColor();
         telemetry.clear();
         telemetry.log().add("Starting First Item Scan");
         telemetry.update();
 
         //check if moon rock is yellow
-        /*if (color == Color.YELLOW) {
+        if (color == Color.YELLOW) {
             telemetry.log().add("First Item is Cube");
             telemetry.update();
             robot.encoderDrive(-2,0.75);
