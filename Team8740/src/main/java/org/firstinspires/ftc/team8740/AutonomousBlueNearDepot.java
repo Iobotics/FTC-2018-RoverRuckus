@@ -25,9 +25,9 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
         robot.markerServo.setPosition(0.8);
         waitForStart();
 
-        if (robot.colorSensor instanceof SwitchableLight) {
+        /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
-        }
+        }*/
 
         telemetry.clear();
         telemetry.log().add("START");
@@ -36,7 +36,7 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
 
         //Undeploy hook
         robot.hook.setPower(1);
-        robot.sleep(3500);
+        robot.sleep(5000);
         robot.hook.setPower(0);
 
         //drive from start top moon rock
@@ -50,8 +50,8 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
         robot.encoderDrive(-0.5,0.75);
         robot.gyroTurn(0.5,-40);
 
-        NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
-        int color = colors.toColor();
+        //NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
+        //int color = colors.toColor();
         telemetry.clear();
         telemetry.log().add("Starting First Item Scan");
         telemetry.update();

@@ -22,18 +22,13 @@ public class Autonomous extends LinearOpMode {
         robot.init(hardwareMap, false);
 
         //Set Marker Servo Pos
-        robot.markerServo.setPosition(0);
-
-        //Set hook pos
-        robot.hook.setPower(-1);
-        robot.sleep(3500);
-        robot.hook.setPower(0.8);
+        robot.markerServo.setPosition(0.8);
 
         waitForStart();
 
-        if (robot.colorSensor instanceof SwitchableLight) {
+        /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
-        }
+        }*/
 
         telemetry.clear();
         telemetry.log().add("START");
@@ -42,7 +37,7 @@ public class Autonomous extends LinearOpMode {
 
         //Undeploy hook
         robot.hook.setPower(1);
-        robot.sleep(3500);
+        robot.sleep(5000);
         robot.hook.setPower(0);
 
         //drive to moon rocks
@@ -50,8 +45,8 @@ public class Autonomous extends LinearOpMode {
         robot.gyroTurn(0.5,-30);
         robot.stopDrive();
 
-        NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
-        int color = colors.toColor();
+        //NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
+        //int color = colors.toColor();
         telemetry.clear();
         telemetry.log().add("Starting First Item Scan");
         telemetry.update();

@@ -64,7 +64,7 @@ public class Bot {
 
     public DcMotor hook = null;
 
-    public NormalizedColorSensor colorSensor = null;
+    //public NormalizedColorSensor colorSensor = null;
     //public NormalizedColorSensor intakeColor = null;
 
     public Servo markerServo = null;
