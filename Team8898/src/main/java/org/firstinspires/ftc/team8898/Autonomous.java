@@ -19,11 +19,11 @@ public class Autonomous extends LinearOpMode {
         robot.gyroTurn(-90);
         robot.driveStraight(27);
         robot.gyroTurn(-140);
-        robot.driveStraight(40);
-        robot.gyroTurn(-181);
+        robot.driveStraight(40, .7);
+        //robot.gyroTurn(-181);
         // clAIm
 
-        robot.setDropper(.12);
+        robot.setDropper(0);
         try {
             Thread.sleep(2000);
         }
@@ -57,8 +57,8 @@ public class Autonomous extends LinearOpMode {
         //robot.setIntakePower(0);
 
         // Parking
-        robot.driveStraight(24);
-        robot.gyroTurn(-223);
+        //robot.driveStraight(24);
+        //robot.gyroTurn(-223);
         robot.driveStraight(-75);
     }
 }

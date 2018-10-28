@@ -26,26 +26,26 @@ public class Teleop extends LinearOpMode {
             robot.setPower(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
             if(gamepad1.right_bumper)
             {
-                robot.liftUp();
+                //robot.liftUp();
             }
             else if(gamepad1.right_trigger>=0.25)
             {
-                robot.liftDown();
+                //robot.liftDown();
             }
             else
             {
-                robot.liftStop();
+                //robot.liftStop();
             }
 
             if(gamepad1.y)//button y
             {
-                robot.liftpos(30, 1);//inches needs to be changed with "telemetary" and speed is from -1 to 1
+                //robot.liftpos(30, 1);//inches needs to be changed with "telemetary" and speed is from -1 to 1
             }
             else if(gamepad1.b)//button b
             {
-                robot.liftpos(0, 1);
+                //robot.liftpos(0, 1);
             }
-            telemetry.addData("liftPos", robot.getliftPos());
+            //telemetry.addData("liftPos", robot.getliftPos());
             telemetry.update();
 
             if(gamepad1.left_bumper)
@@ -74,7 +74,7 @@ public class Teleop extends LinearOpMode {
                 robot.setPowerDropper(0);
             }
 
-            telemetry.addData("lift distance", robot.getliftPos());
+            //telemetry.addData("lift distance", robot.getliftPos());
             telemetry.addData("left distance", robot.getLeft());
             telemetry.addData("Right distance", robot.getRight());
             telemetry.addData("angle", robot.getGyroHeading());

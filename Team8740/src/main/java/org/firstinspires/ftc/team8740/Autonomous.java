@@ -31,9 +31,9 @@ public class Autonomous extends LinearOpMode {
 
         waitForStart();
 
-        if (robot.colorSensor instanceof SwitchableLight) {
+        /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
-        }
+        }*/
 
         telemetry.clear();
         telemetry.log().add("START");
@@ -50,8 +50,8 @@ public class Autonomous extends LinearOpMode {
         robot.gyroTurn(0.5,-30);
         robot.stopDrive();
 
-        NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
-        int color = colors.toColor();
+        //NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
+        //int color = colors.toColor();
         telemetry.clear();
         telemetry.log().add("Starting First Item Scan");
         telemetry.update();

@@ -126,6 +126,7 @@ public class Bot {
 
         setRightDirection(DcMotor.Direction.REVERSE);
         setBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         _leftOffset = leftDrive.getCurrentPosition();

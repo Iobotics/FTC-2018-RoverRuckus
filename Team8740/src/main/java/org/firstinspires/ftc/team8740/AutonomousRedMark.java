@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team8740;
+/*package org.firstinspires.ftc.team8740;
 
 import android.graphics.Color;
 
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 /**
  * Created by student on 10/8/2018.
  */
-
+/*
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoRedMark", group = "bot")
 public class AutonomousRedMark extends LinearOpMode {
     private Bot robot = new Bot(this);
@@ -38,6 +38,7 @@ public class AutonomousRedMark extends LinearOpMode {
 
         //drive to moon rocks
         robot.encoderDrive(-6,0.75);
+        robot.hook.setPower(-1);
         robot.gyroTurn(0.5,30);
         robot.stopDrive();
 
@@ -73,7 +74,7 @@ public class AutonomousRedMark extends LinearOpMode {
                 telemetry.clear();
             }
 
-        }*/
+        }
 
         robot.encoderDrive(2,0.75);
 
@@ -84,3 +85,4 @@ public class AutonomousRedMark extends LinearOpMode {
 
     }
 }
+*/

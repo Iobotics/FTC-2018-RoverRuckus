@@ -197,7 +197,10 @@ public class Bot {
         return leftFrontDrive.getCurrentPosition();
     }
 
-
+    public void driveStraight(double inches, double power)
+    {
+        driveStraight(opMode, inches, power, P_DRIVE_COEFF);
+    }
     public void driveStraight(double inches)
     {
         driveStraight(opMode, inches, AUTO_DRIVE_SPEED, P_DRIVE_COEFF);
