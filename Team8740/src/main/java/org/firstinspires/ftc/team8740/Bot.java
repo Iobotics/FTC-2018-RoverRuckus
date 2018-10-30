@@ -29,6 +29,9 @@
 
 package org.firstinspires.ftc.team8740;
 
+import android.os.Handler;
+
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -45,6 +48,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 
 public class Bot {
 
@@ -89,6 +93,8 @@ public class Bot {
     private ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
+
+    private Handler handler = new Handler();
 
     public Bot(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -141,12 +147,24 @@ public class Bot {
         }
     }
 
-    public void setPower(double one, double two, double three, double four) {
-        leftBackDrive.setPower(three);
-        leftFrontDrive.setPower(one);
-        rightBackDrive.setPower(four);
-        rightFrontDrive.setPower(two);
+    /**
+     * Set the drive power
+     *
+     * @param leftFront
+     * @param rightFront
+     * @param leftBack
+     * @param rightBack
+     */
+    public void setPower(double leftFront, double rightFront, double leftBack, double rightBack) {
+        leftBackDrive.setPower(leftBack);
+        leftFrontDrive.setPower(leftFront);
+        rightBackDrive.setPower(rightBack);
+        rightFrontDrive.setPower(rightFront);
     }
+
+    /**
+     * Stop robot movement
+     */
     public void stopDrive(){
         setPower(0,0,0,0);
 
@@ -163,8 +181,38 @@ public class Bot {
             Thread.currentThread().interrupt();
         }
     }
+
+    /**
+     * Raise hook without interrupting main thread
+     *
+     * @param delay
+     */
+    public void hookRaise (int delay) {
+        hook.setPower(1);
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                hook.setPower(0);
+            }
+        }, delay);
+    }
+
+    /**
+     * Lower hook without interrupting main thread
+     *
+     * @param delay
+     */
+    public void hookLower (int delay) {
+        hook.setPower(-1);
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                hook.setPower(0);
+            }
+        }, delay);
+    }
+
     /**
      * Checks if the gyro is calibrating
+     *
      *
      * @return isCalibrating
      */

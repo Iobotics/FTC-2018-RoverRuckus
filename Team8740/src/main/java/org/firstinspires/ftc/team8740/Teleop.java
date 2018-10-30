@@ -50,15 +50,11 @@ public class Teleop extends LinearOpMode {
                 //raise and lower hook
                 if (gamepad1.x && gamepad1.dpad_up) {
                     telemetry.log().add("Hook Up");
-                    robot.hook.setPower(1);
-                    robot.sleep(4000);
-                    robot.hook.setPower(0);
+                    robot.hookRaise(5000);
                 }
                 if (gamepad1.x && gamepad1.dpad_down) {
                     telemetry.log().add("Hook Down");
-                    robot.hook.setPower(-1);
-                    robot.sleep(4000);
-                    robot.hook.setPower(0);
+                    robot.hookLower(5000);
                 }
 
                 //Move Marker Servo
@@ -84,6 +80,18 @@ public class Teleop extends LinearOpMode {
                 //Intake Servo (COMP)
                 if (gamepad1.y && gamepad1.dpad_up) robot.intakeServo.setPosition(0);
                 if (gamepad1.y && gamepad1.dpad_down) robot.intakeServo.setPosition(0.5);
+
+                //Individually spin motors
+                if (gamepad1.right_stick_button && gamepad1.dpad_up) {
+                    robot.setPower(-gamepad1.right_stick_y,0,0,0);
+                } else if (gamepad1.right_stick_button && gamepad1.dpad_right) {
+                    robot.setPower(0,-gamepad1.right_stick_y,0,0);
+                } else if (gamepad1.right_stick_button && gamepad1.dpad_down) {
+                    robot.setPower(0,0,-gamepad1.right_stick_y,0);
+                } else if (gamepad1.right_stick_button && gamepad1.dpad_up) {
+                    robot.setPower(0,0,0,-gamepad1.right_stick_y);
+                }
+
                 //Update Phone Log
                 telemetry.update();
             }/* else {
