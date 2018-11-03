@@ -25,7 +25,6 @@ public class Teleop extends LinearOpMode {
 
     public void runOpMode(){
         robot.init(hardwareMap, true); //initiate robot hardware
-
         telemetry.log().add("Op Mode is TELEOP"); //Visualize op mode
         telemetry.log().add("Ready For Start");
         telemetry.update(); //send to driver station
@@ -36,8 +35,8 @@ public class Teleop extends LinearOpMode {
                 telemetry.log().clear();
 
                 telemetry.log().add("Normal Operation");
-                yValue = gamepad1.right_stick_y;
-                xValue = -gamepad1.right_stick_x;
+                yValue = gamepad1.left_stick_y;
+                xValue = gamepad1.right_stick_x;
 
                 leftPower =  yValue - xValue;
                 rightPower = yValue + xValue;
@@ -92,8 +91,6 @@ public class Teleop extends LinearOpMode {
                     robot.setPower(0,0,0,-gamepad1.right_stick_y);
                 }
 
-                //Update Phone Log
-                telemetry.update();
             }/* else {
                 double speed;
 

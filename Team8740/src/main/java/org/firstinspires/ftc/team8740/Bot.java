@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.team8740;
 
 import android.os.Handler;
+import android.os.Looper;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -48,6 +49,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class Bot {
@@ -94,7 +97,6 @@ public class Bot {
 
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
 
-    private Handler handler = new Handler();
 
     public Bot(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -145,6 +147,7 @@ public class Bot {
             rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         }
+        Looper.prepare();
     }
 
     /**
@@ -188,6 +191,7 @@ public class Bot {
      * @param delay
      */
     public void hookRaise (int delay) {
+        Handler handler = new Handler();
         hook.setPower(1);
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -202,13 +206,16 @@ public class Bot {
      * @param delay
      */
     public void hookLower (int delay) {
+        Handler handler = new Handler();
         hook.setPower(-1);
         handler.postDelayed(new Runnable() {
             public void run() {
                 hook.setPower(0);
+                opMode.telemetry.update();
             }
         }, delay);
     }
+
 
     /**
      * Checks if the gyro is calibrating
