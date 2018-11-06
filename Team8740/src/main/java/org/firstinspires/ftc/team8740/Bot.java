@@ -79,7 +79,7 @@ public class Bot {
     public Servo intakeServo = null;
 
     private TouchSensor armLimitL = null;
-    private TouchSensor armLimitH
+    private TouchSensor armLimitH = null;
 
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
