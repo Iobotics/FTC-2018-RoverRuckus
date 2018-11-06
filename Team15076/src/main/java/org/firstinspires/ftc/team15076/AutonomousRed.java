@@ -23,6 +23,9 @@ public class AutonomousRed extends LinearOpMode {
 
         robot.driveLander(38); //39 before
 
+        int color = Color.RED;
+
+
 
         /*robot.setPower(0.5, 0.5);
         robot.sleep(500);
@@ -33,7 +36,7 @@ public class AutonomousRed extends LinearOpMode {
         waitForStart();
 
         if (robot.colorSensor instanceof SwitchableLight) { //if you are able to change the state of
-            ((SwitchableLight) robot.colorSensor).enableLight(true);
+            ((SwitchableLight) robot.colorSensor).enableLight(true);th
         }
 
         telemetry.clear();
