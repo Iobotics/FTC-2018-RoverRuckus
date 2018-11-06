@@ -23,14 +23,15 @@ Teleop extends LinearOpMode {
 
 
             if(gamepad1.left_trigger > 0.5){
-                robot.setLiftPower(0.5);
+                robot.setLiftPower(0.8);
             }
 
            else if(gamepad1.right_trigger > 0.5){
-                robot.setLiftPower(-0.5);
+                robot.setLiftPower(-0.8);
             }
             else{
                 robot.setLiftPower(0);
+                //does lift up and down
             }
 
             if(gamepad1.a){
@@ -42,6 +43,7 @@ Teleop extends LinearOpMode {
             }
             else {
                 robot.setInPower(0);
+                //works intake and outtake
             }
 
 
