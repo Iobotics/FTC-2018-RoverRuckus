@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -77,6 +78,9 @@ public class Bot {
     public Servo markerServo = null;
     public Servo intakeServo = null;
 
+    private TouchSensor armLimitL = null;
+    private TouchSensor armLimitH = null;
+
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
 
@@ -96,6 +100,9 @@ public class Bot {
     private ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
+
+    private boolean limitHitL = false;
+    private boolean limitHitH = false;
 
 
     public Bot(LinearOpMode opMode) {
@@ -123,6 +130,10 @@ public class Bot {
         //Color Sensor
         //colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         //intakeColor = hwMap.get(NormalizedColorSensor.class, "intake");
+
+        //Touch Sensors
+        armLimitL = hwMap.get(TouchSensor.class, "armLow");
+        armLimitH = hwMap.get(TouchSensor.class, "armHigh");
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -187,33 +198,44 @@ public class Bot {
 
     /**
      * Raise hook without interrupting main thread
-     *
-     * @param delay
      */
-    public void hookRaise (int delay) {
-        Handler handler = new Handler();
+    public void hookRaise () {
         hook.setPower(1);
-        handler.postDelayed(new Runnable() {
+        new Thread(new Runnable() {
+            @Override
             public void run() {
+                while (!limitHitH) {
+                    if (armLimitH.isPressed()) {
+                        limitHitH = true;
+                    }
+                }
                 hook.setPower(0);
             }
-        }, delay);
+        }, "T2").start();
+        sleep(5000);
+        getThreadByName("T2").interrupt();
+        limitHitH = false;
     }
 
     /**
      * Lower hook without interrupting main thread
-     *
-     * @param delay
      */
-    public void hookLower (int delay) {
-        Handler handler = new Handler();
+    public void hookLower () {
         hook.setPower(-1);
-        handler.postDelayed(new Runnable() {
+        new Thread(new Runnable() {
+            @Override
             public void run() {
+                while (!limitHitL) {
+                    if (armLimitL.isPressed()) {
+                        limitHitL = true;
+                    }
+                }
                 hook.setPower(0);
-                opMode.telemetry.update();
             }
-        }, delay);
+        }, "T1").start();
+        sleep(5000);
+        getThreadByName("T1").interrupt();
+        limitHitL = false;
     }
 
 
@@ -400,4 +422,10 @@ public class Bot {
         stopDrive();
     }
 
+    public Thread getThreadByName(String threadName) {
+        for (Thread t : Thread.getAllStackTraces().keySet()) {
+            if (t.getName().equals(threadName)) return t;
+        }
+        return null;
+    }
 }
