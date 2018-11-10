@@ -34,11 +34,11 @@ Teleop extends LinearOpMode {
                 //does lift up and down
             }
 
-            if(gamepad1.a){
+            if(gamepad1.left_bumper){
                 robot.setInPower(1);
 
             }
-            else if(gamepad1.b){
+            else if(gamepad1.right_bumper){
                 robot.setInPower(-1);
             }
             else {

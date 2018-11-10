@@ -12,11 +12,16 @@ AutoAlt extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        /*
+        Auto for the Closest To the Drop Off Zone
+         */
+
         robot.init(hardwareMap);
 
         waitForStart();
         robot.setLiftPower(1);
-        robot.sleep(1000);
+        robot.sleep(1300);
         robot.setLiftPower(0);
         robot.driveStraight(-15);
         robot.gyroTurn(-90);
