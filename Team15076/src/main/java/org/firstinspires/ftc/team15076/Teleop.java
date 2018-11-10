@@ -14,8 +14,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
 
+    double power = 0;
+
     public void runOpMode(){
-        robot.init(hardwareMap, true); //initiate robot hardware
+        robot.init(hardwareMap); //initiate robot hardware
 
         telemetry.log().add("Op Mode is TELEOP"); //Visualize op mode
         telemetry.log().add("Ready For Start");
@@ -26,28 +28,31 @@ public class Teleop extends LinearOpMode {
             robot.setPower(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
             if(gamepad1.right_bumper)
             {
-                //robot.liftUp();
+                robot.liftPower(1);
             }
             else if(gamepad1.right_trigger>=0.25)
             {
-                //robot.liftDown();
+                robot.liftPower(-1);
             }
             else
             {
-                //robot.liftStop();
+                robot.liftStop();
             }
-    
+
             if(gamepad1.y)//button y
             {
-                //robot.liftpos(30, 1);//inches needs to be changed with "telemetary" and speed is from -1 to 1
+                robot.liftTime(450, 1);
             }
             else if(gamepad1.b)//button b
             {
-                //robot.liftpos(0, 1);
+                robot.liftTime(450, -1);
+            }
+            else
+            {
+                robot.liftStop();
             }
 
             telemetry.addData("liftPos", robot.getliftPos());
-
             telemetry.update();
 
             if(gamepad1.left_bumper)
@@ -65,21 +70,27 @@ public class Teleop extends LinearOpMode {
 
             if(gamepad1.a)
             {
-                robot.setPowerDropper(1);
+                robot.gyroTurn(90);
             }
-            else if(gamepad1.x)
+            if(gamepad1.x)
             {
-                //robot.markerdrop();
+
+                //robot.gyroTurn(90);
+                power = power + .01;
             }
             else
             {
                 robot.setPowerDropper(0);
             }
 
-            //telemetry.addData("lift distance", robot.getliftPos());
+
+            robot.setPower(power, power);
+            telemetry.addData("power", power);
+            telemetry.addData("lift distance", robot.getliftPos());
             telemetry.addData("left distance", robot.getLeft());
-            telemetry.addData("Right distance", robot.getRight());
+            telemetry.addData("right distance", robot.getRight());
             telemetry.addData("angle", robot.getGyroHeading());
+            //telemetry.addData("", robot.getRed());
         }
     }
 
