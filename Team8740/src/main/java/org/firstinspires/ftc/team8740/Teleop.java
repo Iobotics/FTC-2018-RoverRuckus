@@ -49,11 +49,11 @@ public class Teleop extends LinearOpMode {
                 //raise and lower hook
                 if (gamepad1.x && gamepad1.dpad_up) {
                     telemetry.log().add("Hook Up");
-                    robot.hookRaise(5000);
+                    robot.hookRaise();
                 }
                 if (gamepad1.x && gamepad1.dpad_down) {
                     telemetry.log().add("Hook Down");
-                    robot.hookLower(5000);
+                    robot.hookLower();
                 }
 
                 //Move Marker Servo
@@ -90,6 +90,7 @@ public class Teleop extends LinearOpMode {
                 } else if (gamepad1.right_stick_button && gamepad1.dpad_up) {
                     robot.setPower(0,0,0,-gamepad1.right_stick_y);
                 }
+
 
             }/* else {
                 double speed;
