@@ -14,9 +14,9 @@ import static java.lang.System.currentTimeMillis;
 /**
  * Created by Reid Ginoza on 9/12/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15076AutoNoColor", group = "Bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15076AutoNearCraterNoColor", group = "Bot")
 //base auto
-public class AutonomousNoColor extends LinearOpMode {
+public class AutonomousNearCraterNoColor extends LinearOpMode {
     private Bot robot = new Bot(this);
 
 
@@ -31,15 +31,16 @@ public class AutonomousNoColor extends LinearOpMode {
         waitForStart();
 
         sleep(0); //Change if needed
-        robot.liftTime(450, 1);
-        robot.encoderDrive(40,1);
-        robot.liftTime(450, -1);
-        robot.gyroTurn(-55); //TODO fix
-        robot.encoderDrive(70,1);
+        //robot.liftTime(450, 1);
+        robot.encoderDrive(11,1); //Add 3 inches to compensate for lift down
+        //robot.liftTime(450, -1);
+        robot.gyroTurn(-73);
+        robot.encoderDrive(-25, 1);
+        robot.gyroTurn(-43);//-38 before
+        robot.encoderDrive(-8, 1);
+        robot.gyroTurn(-88);
         robot.markerdrop();
-        robot.gyroTurn(-10);
-        robot.encoderDrive(70, 1);
-        robot.gyroTurn(30);
-        robot.driveLander(10);
+        robot.gyroTurn(-43);
+        robot.encoderDrive(33, 1);
     }
 }

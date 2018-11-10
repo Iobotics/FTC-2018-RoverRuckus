@@ -75,13 +75,13 @@ public class Bot {
     private Orientation angles = null;
     private Acceleration gravity = null;
 
-    private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
+    private final static double HEADING_THRESHOLD = 15; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
     private final static double P_TURN_COEFF = .01;  // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.0006;  // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.002;  // Larger is more responsive, but also less stable
     private final static double P_LIFT_COEFF = .01;
-    private final static double F_MOTOR_COEFF = .075; //.2 before starts at .1
+    private final static double F_MOTOR_COEFF = .07; //.2 before starts at .1
     final static double POWER_DAMPEN = .001;
     static final double P_LANDER_COEFF = .0006;
     private final static double HOLD_TIME = .7;
@@ -365,17 +365,24 @@ public class Bot {
         encoderDrive(opMode, inches, 1, P_LANDER_COEFF);
     }
 
+    /**
+     * r
+     * @param opmode
+     * @param inches
+     * @param maxSpeed
+     * @param pCoeff
+     */
     public void encoderDrive(LinearOpMode opmode, double inches, double maxSpeed, double pCoeff) {
         double speed = 0;
         int error;
         //sets the target encoder value
-        int target = rightFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+        int target = leftFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
         //sets current gyro value
         double startHeading = getGyroHeading();
         // While the absolute value of the error is greater than the error threshold
         //adds the f value if positive or subtracts if negative
-        while (opmode.opModeIsActive() && Math.abs(rightFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
-            error = target - rightFrontDrive.getCurrentPosition();
+        while (opmode.opModeIsActive() && Math.abs(leftFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - leftFrontDrive.getCurrentPosition();
             if (error * pCoeff < 0) {
                 speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
             } else {
@@ -388,7 +395,7 @@ public class Bot {
             else {setPower(speed, speed);}
 
             opmode.telemetry.addData("Drive Error", error);
-            opmode.telemetry.addData("Drive Power", rightFrontDrive.getPower());
+            opmode.telemetry.addData("Drive Power", leftFrontDrive.getPower());
             opMode.telemetry.update();
         }
         this.stopDrive();
@@ -423,27 +430,32 @@ public class Bot {
         liftBack.setPower(0);
     }
 
-    /**
-     * @param inches
-     * @param maxSpeed
-     */
+ /*
     public void liftPos(int inches, double maxSpeed)//no semicolon after creating a method
     {
-        double speed;
+        double speed = 0;
         int error;
         //sets the target encoder value
-        int target = liftBack.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
-
+        int target = rightFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+        //sets current gyro value
+        double startHeading = getGyroHeading();
         // While the absolute value of the error is greater than the error threshold
-        while (opMode.opModeIsActive() && Math.abs(liftBack.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
-            error = target - liftBack.getCurrentPosition();
-            speed = Range.clip(error * P_LIFT_COEFF, -maxSpeed, maxSpeed);
-
-            this.liftPower(speed);
-            opMode.telemetry.addData("lift position", getliftPos());
-            opMode.telemetry.update();
+        //adds the f value if positive or subtracts if negative
+        while (opMode.opModeIsActive() && Math.abs(rightFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - rightFrontDrive.getCurrentPosition();
+            if (error * P_LIFT_COEFF < 0) {
+                speed = Range.clip((error * P_LIFT_COEFF) - F_MOTOR_COEFF, -1, 0);
+            } else {
+                speed = Range.clip((error * P_LIFT_COEFF) + F_MOTOR_COEFF, 0, 1);
+            }
         }
-    }
+
+
+
+            opMode.telemetry.addData("Drive Error", error);
+            opMode.telemetry.addData("Drive Power", rightFrontDrive.getPower());
+            opMode.telemetry.update();
+    }*/
 
     public int getliftPos()
     {
@@ -451,9 +463,8 @@ public class Bot {
     }
 
 
-
     public void markerdrop() {
-        this.setPowerDropper(-1);
+        this.setPowerDropper(1);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e1) {}

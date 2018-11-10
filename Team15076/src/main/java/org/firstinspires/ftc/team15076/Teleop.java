@@ -70,17 +70,19 @@ public class Teleop extends LinearOpMode {
 
             if(gamepad1.a)
             {
-                robot.gyroTurn(90);
+                //robot.gyroTurn(90);
+                //robot.gyroTurn(180);
             }
             if(gamepad1.x)
             {
-
+                robot.gyroTurn(45);
+                //robot.encoderDrive(-5, 1);
                 //robot.gyroTurn(90);
-                power = power + .01;
+                //power = power + .01;
             }
             else
             {
-                robot.setPowerDropper(0);
+                //robot.setPowerDropper(0);
             }
 
 

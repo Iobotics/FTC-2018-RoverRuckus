@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team15076;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
  * Created by Reid Ginoza on 9/12/2018.
  *
  */
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15076AutoColor", group = "Bot")
 //base auto
 public class AutonomousColor extends LinearOpMode {

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team15076;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 /**
  * Created by Reid Ginoza on 10/1/2018.
  */
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15AutoRedNearDepotColor", group = "bot")
 public class AutonomousNearDepotColor extends LinearOpMode{
     private Bot robot = new Bot(this);
