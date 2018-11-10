@@ -53,6 +53,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.System.currentTimeMillis;
+
 
 public class Bot {
 
@@ -63,10 +65,10 @@ public class Bot {
     int _leftOffset;
     int _rightOffset;
 
-    private DcMotor leftBackDrive = null;
-    private DcMotor leftFrontDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    public DcMotor leftBackDrive = null;
+    public DcMotor leftFrontDrive = null;
+    public DcMotor rightFrontDrive = null;
+    public DcMotor rightBackDrive = null;
 
     //public DcMotor intake = null;
 
@@ -91,7 +93,8 @@ public class Bot {
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
     private final static double P_TURN_COEFF = 0.0517;   // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.16;  // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.0002;  // Larger is more responsive, but also less stable
+    private final static double F_MOTOR_COEFF = 0.11;   //Minimum amount of power given to motor from control loop
 
     private final static double AUTO_DRIVE_SPEED = 0.6;
     private final static double AUTO_TURN_SPEED = 0.6;
@@ -103,6 +106,8 @@ public class Bot {
 
     private boolean limitHitL = false;
     private boolean limitHitH = false;
+
+    private boolean isComm = false;
 
 
     public Bot(LinearOpMode opMode) {
@@ -121,7 +126,7 @@ public class Bot {
         //intake = hwMap.get(DcMotor.class, "Lift1");
 
         //Hook Motor
-        hook = hwMap.get(DcMotor.class, "hook");
+        //hook = hwMap.get(DcMotor.class, "hook");
 
         //Servos (Expected)
         markerServo = hwMap.get(Servo.class, "marker");
@@ -132,8 +137,8 @@ public class Bot {
         //intakeColor = hwMap.get(NormalizedColorSensor.class, "intake");
 
         //Touch Sensors
-        armLimitL = hwMap.get(TouchSensor.class, "armLow");
-        armLimitH = hwMap.get(TouchSensor.class, "armHigh");
+        //armLimitL = hwMap.get(TouchSensor.class, "armLow");
+        //armLimitH = hwMap.get(TouchSensor.class, "armHigh");
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -179,10 +184,11 @@ public class Bot {
     /**
      * Stop robot movement
      */
-    public void stopDrive(){
-        setPower(0,0,0,0);
+    public void stopDrive() {
+        setPower(0, 0, 0, 0);
 
     }
+
     /**
      * Sleep from LinearOpMode
      *
@@ -199,49 +205,65 @@ public class Bot {
     /**
      * Raise hook without interrupting main thread
      */
-    public void hookRaise () {
+    public void hookRaise() {
         hook.setPower(1);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!limitHitH) {
-                    if (armLimitH.isPressed()) {
-                        limitHitH = true;
-                    }
-                }
-                hook.setPower(0);
+        while (opMode.gamepad1.x) {
+            //nothing
+        }
+        /*
+        while (!limitHitH) {
+            if (armHigh.isPressed()) {
+                limitHitH = true;
             }
-        }, "T2").start();
-        sleep(5000);
-        getThreadByName("T2").interrupt();
-        limitHitH = false;
+        }
+         */
+        hook.setPower(0);
+        //limitHitH = false;
     }
 
     /**
      * Lower hook without interrupting main thread
      */
-    public void hookLower () {
+    public void hookLower() {
         hook.setPower(-1);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!limitHitL) {
-                    if (armLimitL.isPressed()) {
-                        limitHitL = true;
-                    }
-                }
-                hook.setPower(0);
+        while (opMode.gamepad1.x) {
+            //nothing
+        }
+        /*
+        while (!limitHitL) {
+            if (armLow.isPressed()) {
+                limitHitL = true;
             }
-        }, "T1").start();
-        sleep(5000);
-        getThreadByName("T1").interrupt();
-        limitHitL = false;
+        }
+         */
+        hook.setPower(0);
+        //limitHitL = false;
     }
 
+    /**
+     * Update phone telemtery every second without interrupting loop.
+     */
+    public void updateTelemetry() {
+        if (!isComm) {
+            isComm = true;
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    opMode.telemetry.update();
+                }
+            }, 1000);
+            long previousMillis = currentTimeMillis();
+            long currentMillis = 0;
+            while (currentMillis - previousMillis < 1000) {
+                currentMillis = currentTimeMillis();
+            }
+            isComm = false;
+        }
+    }
 
     /**
      * Checks if the gyro is calibrating
-     *
      *
      * @return isCalibrating
      */
@@ -265,15 +287,12 @@ public class Bot {
         return heading;
     }
 
-    public void gyroTurn(double angle)
-    {
+    public void gyroTurn(double angle) {
         gyroTurn(AUTO_TURN_SPEED, angle);
     }
 
-    public void gyroTurn(double speed, double angle)
-    {
-        while(opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF))
-        {
+    public void gyroTurn(double speed, double angle) {
+        while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
             opMode.telemetry.update();
         }
     }
@@ -293,7 +312,7 @@ public class Bot {
     }
 
 
-    public void gyroHold ( double angle, double holdTime){
+    public void gyroHold(double angle, double holdTime) {
         gyroHold(AUTO_TURN_SPEED, angle, holdTime);
     }
 
@@ -308,7 +327,7 @@ public class Bot {
      *                 If a relative angle is required, add/subtract from current heading.
      * @param holdTime Length of time (in seconds) to hold the specified heading.
      */
-    public void gyroHold ( double speed, double angle, double holdTime){
+    public void gyroHold(double speed, double angle, double holdTime) {
 
         ElapsedTime holdTimer = new ElapsedTime();
 
@@ -335,7 +354,7 @@ public class Bot {
      * @param PCoeff Proportional Gain coefficient
      * @return onTarget
      */
-    boolean onHeading ( double speed, double angle, double PCoeff){
+    boolean onHeading(double speed, double angle, double PCoeff) {
         double error;
         double steer;
         boolean onTarget = false;
@@ -357,7 +376,7 @@ public class Bot {
         }
 
         // Send desired speeds to motors
-        setPower(leftSpeed, rightSpeed,leftSpeed,rightSpeed);
+        setPower(leftSpeed, rightSpeed, leftSpeed, rightSpeed);
 
         // Display it for the driver
         opMode.telemetry.addData("Target", "%5.2f", angle);
@@ -374,7 +393,7 @@ public class Bot {
      * @return error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
      * Positive error means the robot should turn LEFT (CCW) to reduce error.
      */
-    public double getError ( double targetAngle){
+    public double getError(double targetAngle) {
 
         double robotError;
 
@@ -392,30 +411,31 @@ public class Bot {
      * @param PCoeff Proportional Gain Coefficient
      * @return steer
      */
-    public double getSteer ( double error, double PCoeff){
+    public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-    public void resetTimer () {
+    public void resetTimer() {
         time.reset();
     }
 
-    public ElapsedTime getTime () {
+    public ElapsedTime getTime() {
         return time;
     }
+
     public void encoderDrive(double inches, double maxSpeed) {
 
         double speed;
         int error;
         //sets the target encoder value
-        int target = rightFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+        int target = leftFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
 
         // While the absolute value of the error is greater than the error threshold
-        while (opMode.opModeIsActive() && Math.abs(rightFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
-            error = target - rightFrontDrive.getCurrentPosition();
-            speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed , maxSpeed);
+        while (opMode.opModeIsActive() && Math.abs(leftFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - leftFrontDrive.getCurrentPosition();
+            speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed, maxSpeed);
 
-            setPower(speed,speed,speed,speed);
+            setPower(speed, speed, speed, speed);
             opMode.telemetry.addData("speed: ", speed);
             opMode.telemetry.update();
         }
@@ -427,5 +447,45 @@ public class Bot {
             if (t.getName().equals(threadName)) return t;
         }
         return null;
+    }
+
+    public void driveStraight(double inches) {
+        driveStraight(opMode, inches, AUTO_DRIVE_SPEED, P_DRIVE_COEFF);
+    }
+
+    /**
+     * Method for driving straight
+     *
+     * @param inches Inches
+     */
+
+    public void driveStraight(LinearOpMode opmode, double inches, double maxSpeed, double pCoeff) {
+        double speed = 0;
+        int error;
+        //sets the target encoder value
+        int target = leftFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+        //sets current gyro value
+        double startHeading = getGyroHeading();
+        // While the absolute value of the error is greater than the error threshold
+        //adds the f value if positive or subtracts if negative
+        while (opmode.opModeIsActive() && Math.abs(leftFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - leftFrontDrive.getCurrentPosition();
+            if (error * pCoeff < 0) {
+                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
+            } else {
+                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, 1);
+            }
+
+            if (false/*Math.abs(getGyroHeading() - startHeading) > 1*/) {
+                //setPower(speed, -(speed + POWER_DAMPEN * (getGyroHeading() - startHeading)), speed, -(speed + POWER_DAMPEN * (getGyroHeading() - startHeading)));
+            } else {
+                setPower(-speed, speed, -speed, speed);
+            }
+
+            opmode.telemetry.addData("Drive Error", error);
+            opmode.telemetry.addData("Drive Power", rightFrontDrive.getPower());
+            opMode.telemetry.update();
+        }
+        this.stopDrive();
     }
 }

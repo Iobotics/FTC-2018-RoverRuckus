@@ -16,8 +16,8 @@ public class raiseHook extends LinearOpMode {
         //raise hook before comp
         robot.init(hardwareMap, false);
         waitForStart();
-        robot.hook.setPower(-1);
+        //robot.hook.setPower(-1);
         robot.sleep(5000);
-        robot.hook.setPower(0);
+        //robot.hook.setPower(0);
     }
 }

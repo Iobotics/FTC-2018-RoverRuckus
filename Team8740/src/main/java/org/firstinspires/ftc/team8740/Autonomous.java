@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 
 /**
- * Created by Jack Gonser & Reid Ginoza on 9/12/2018.
+ * Created by Jack Gonser on 9/12/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="8740AutoBlueMarker", group = "Bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoBlueMarker", group = "Bot")
 //base auto
 public class Autonomous extends LinearOpMode {
     private Bot robot = new Bot(this);
@@ -22,7 +22,7 @@ public class Autonomous extends LinearOpMode {
         robot.init(hardwareMap, false);
 
         //Set Marker Servo Pos
-        robot.markerServo.setPosition(0.6);
+        robot.markerServo.setPosition(0);
 
         waitForStart();
 
@@ -35,13 +35,8 @@ public class Autonomous extends LinearOpMode {
         telemetry.log().add("Close to gold + silver");
         telemetry.update();
 
-        //Undeploy hook
-        robot.hook.setPower(1);
-        robot.sleep(5000);
-        robot.hook.setPower(0);
-
         //drive to moon rocks
-        robot.encoderDrive(-6,0.75);
+        robot.encoderDrive(6,0.75);
         robot.gyroTurn(0.5,-30);
         robot.stopDrive();
 
@@ -81,9 +76,9 @@ public class Autonomous extends LinearOpMode {
 
         robot.encoderDrive(2,0.75);
 
-        robot.markerServo.setPosition(0);
+        robot.markerServo.setPosition(1);
 
-        robot.gyroTurn(0.5, -45);
+        robot.gyroTurn(0.5, -90);
         robot.encoderDrive(78,0.75);
 
     }

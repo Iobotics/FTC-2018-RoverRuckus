@@ -13,7 +13,7 @@ import org.firstinspires.ftc.ftccommon.internal.RunOnBoot;
 /**
  * Created by Jack Gonser on 10/1/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="8740AutoBlueNonMarker", group = "bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoBlueNonMarker", group = "bot")
 public class AutonomousBlueNearDepot extends LinearOpMode{
     private Bot robot = new Bot(this);
 
@@ -22,7 +22,7 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
         //Robot will be backwards when operating
         robot.init(hardwareMap, true);
 
-        robot.markerServo.setPosition(0.6);
+        robot.markerServo.setPosition(0);
         waitForStart();
 
         /*if (robot.colorSensor instanceof SwitchableLight) {
@@ -34,21 +34,16 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
         telemetry.log().add("Not near marker so must go to marker");
         telemetry.update();
 
-        //Undeploy hook
-        robot.hook.setPower(1);
-        robot.sleep(5000);
-        robot.hook.setPower(0);
 
         //drive from start top moon rock
         robot.gyroTurn(0.5, -45);
-        robot.encoderDrive(-2, 0.75);
-        robot.gyroTurn(0.5,-0.75);
+        robot.encoderDrive(2, 0.75);
 
         //drive to moon rock
-        telemetry.log().add("At gold + silver");
+        /*telemetry.log().add("At gold + silver");
         telemetry.update();
         robot.encoderDrive(-0.5,0.75);
-        robot.gyroTurn(0.5,-40);
+        robot.gyroTurn(0.5,-40);*/
 
         //NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
         //int color = colors.toColor();
@@ -83,9 +78,9 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
 
         }*/
 
-        robot.encoderDrive(80,0.75);
+        robot.encoderDrive(60,0.75);
 
-        robot.markerServo.setPosition(0);
+        robot.markerServo.setPosition(1);
 
         robot.gyroTurn(0.5, 180);
         robot.encoderDrive(78,0.75);

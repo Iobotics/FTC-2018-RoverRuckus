@@ -1,4 +1,4 @@
-/*package org.firstinspires.ftc.team8740;
+package org.firstinspires.ftc.team8740;
 
 import android.graphics.Color;
 
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 /**
  * Created by student on 10/8/2018.
  */
-/*
+
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoRedMark", group = "bot")
 public class AutonomousRedMark extends LinearOpMode {
     private Bot robot = new Bot(this);
@@ -19,28 +19,21 @@ public class AutonomousRedMark extends LinearOpMode {
         //Robot will be backwards when operating
         robot.init(hardwareMap, false);
 
-        robot.markerServo.setPosition(0.6);
+        robot.markerServo.setPosition(0);
         waitForStart();
 
         /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
-        }
+        }*/
 
         telemetry.clear();
         telemetry.log().add("START");
         telemetry.log().add("Close to gold + silver");
         telemetry.update();
 
-        //Undeploy hook
-        robot.hook.setPower(1);
-        robot.sleep(5000);
-        robot.hook.setPower(0);
-
         //drive to moon rocks
-        robot.encoderDrive(-6,0.75);
-        robot.hook.setPower(-1);
-        robot.gyroTurn(0.5,30);
-        robot.stopDrive();
+        robot.driveStraight(8);
+        robot.gyroTurn(0.5,15);
 
         //NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
         //int color = colors.toColor();
@@ -49,7 +42,7 @@ public class AutonomousRedMark extends LinearOpMode {
         telemetry.update();
 
         //check if moon rock is yellow
-        if (color == Color.YELLOW) {
+        /*if (color == Color.YELLOW) {
             telemetry.log().add("First Item is Cube");
             telemetry.update();
             robot.encoderDrive(-2,0.75);
@@ -74,15 +67,14 @@ public class AutonomousRedMark extends LinearOpMode {
                 telemetry.clear();
             }
 
-        }
+        }*/
 
-        robot.encoderDrive(2,0.75);
+        robot.driveStraight(20);
 
-        robot.markerServo.setPosition(0);
+        robot.markerServo.setPosition(1);
 
-        robot.gyroTurn(0.5, 45);
-        robot.encoderDrive(78,0.75);
+        robot.gyroTurn(0.5, 180);
+        robot.driveStraight(78);
 
     }
 }
-*/

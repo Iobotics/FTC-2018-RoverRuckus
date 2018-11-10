@@ -31,8 +31,6 @@ public class Teleop extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             //if (!gamepad1.a) {
-                telemetry.clear();
-                telemetry.log().clear();
 
                 telemetry.log().add("Normal Operation");
                 yValue = gamepad1.left_stick_y;
@@ -47,14 +45,14 @@ public class Teleop extends LinearOpMode {
                 telemetry.addData("power", "  left=" + leftPower + "  right=" + rightPower);
 
                 //raise and lower hook
-                if (gamepad1.x && gamepad1.dpad_up) {
+                /*if (gamepad1.x && gamepad1.dpad_up) {
                     telemetry.log().add("Hook Up");
                     robot.hookRaise();
                 }
                 if (gamepad1.x && gamepad1.dpad_down) {
                     telemetry.log().add("Hook Down");
                     robot.hookLower();
-                }
+                }*/
 
                 //Move Marker Servo
                 if (gamepad1.x && gamepad1.dpad_left) {
@@ -91,7 +89,16 @@ public class Teleop extends LinearOpMode {
                     robot.setPower(0,0,0,-gamepad1.right_stick_y);
                 }
 
+                if (gamepad1.b) {
+                    telemetry.clear();
+                    telemetry.addData("Right Front",robot.rightFrontDrive.getCurrentPosition());
+                    telemetry.addData("Right Back",robot.rightBackDrive.getCurrentPosition());
+                    telemetry.addData("Left Front",robot.leftFrontDrive.getCurrentPosition());
+                    telemetry.addData("Left Back",robot.leftBackDrive.getCurrentPosition());
+                    telemetry.update();
+                }
 
+                //robot.updateTelemetry();
             }/* else {
                 double speed;
 
