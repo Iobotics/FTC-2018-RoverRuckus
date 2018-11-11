@@ -109,8 +109,8 @@ public class Bot {
         liftArm = hwMap.get(DcMotor.class, "lift");
         //colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
         servo = hwMap.get (Servo.class, "servo");
-        leftIntake = hwMap.get(DcMotor.class,"leftIntake");
-        rightIntake = hwMap.get(DcMotor.class,"rightIntake");
+        //leftIntake = hwMap.get(DcMotor.class,"leftIntake");
+        //rightIntake = hwMap.get(DcMotor.class,"rightIntake");
 
 
 
@@ -416,8 +416,8 @@ public class Bot {
        return servo.getPosition();
     }
      public void setInPower (double inPower){
-         leftIntake.setPower(inPower);
-         rightIntake.setPower(inPower);
+         //leftIntake.setPower(inPower);
+         //rightIntake.setPower(inPower);
      }
 
      public void sleep (long millis){
