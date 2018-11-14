@@ -54,6 +54,8 @@ public class Bot {
     final static int ENCODER_TICKS_PER_REV = 1120;
     final static int WHEEL_DIAMETER = 4;
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
+    final static double F_LIFT_COEFF = 0; //Against Gravity
+    final static int LIFT_THRESHOLD = 1;
 
     double _leftOffset;
     double _rightOffset;
@@ -114,12 +116,6 @@ public class Bot {
 
         intake =hwMap.get(DcMotor.class, "Intake");
 
-        //Hook Motor
-        //hook = hwMap.get(DcMotor.class, "hook");
-
-        //Servos (Expected)
-        //markerServo = hwMap.get(Servo.class, "marker");
-
         //Color Sensor
         //colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
 
@@ -136,14 +132,19 @@ public class Bot {
 
         //Drive Config
 
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        //leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        //leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        //rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        //rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         liftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         liftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftPower(0);
+
+        dropperservo.setDirection(DcMotorSimple.Direction.REVERSE);
 
         _leftOffset = getLeft();
         _rightOffset = getRight();
@@ -430,32 +431,46 @@ public class Bot {
         liftBack.setPower(0);
     }
 
- /*
+    public void liftHold()
+    {
+        liftPower(-1);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        liftPower(-.2);
+    }
+
+
     public void liftPos(int inches, double maxSpeed)//no semicolon after creating a method
     {
         double speed = 0;
         int error;
         //sets the target encoder value
-        int target = rightFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+        int target = liftBack.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
         //sets current gyro value
         double startHeading = getGyroHeading();
         // While the absolute value of the error is greater than the error threshold
         //adds the f value if positive or subtracts if negative
-        while (opMode.opModeIsActive() && Math.abs(rightFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+        while (opMode.opModeIsActive() && Math.abs(liftBack.getCurrentPosition() - target) >= LIFT_THRESHOLD) {
             error = target - rightFrontDrive.getCurrentPosition();
             if (error * P_LIFT_COEFF < 0) {
-                speed = Range.clip((error * P_LIFT_COEFF) - F_MOTOR_COEFF, -1, 0);
+                speed = Range.clip((error * P_LIFT_COEFF) - F_LIFT_COEFF, -1, 0);
             } else {
-                speed = Range.clip((error * P_LIFT_COEFF) + F_MOTOR_COEFF, 0, 1);
+                speed = Range.clip((error * P_LIFT_COEFF) + F_LIFT_COEFF, 0, 1);
             }
-        }
-
-
+            liftPower(speed);
 
             opMode.telemetry.addData("Drive Error", error);
-            opMode.telemetry.addData("Drive Power", rightFrontDrive.getPower());
+            opMode.telemetry.addData("Drive Power", liftBack.getPower());
             opMode.telemetry.update();
-    }*/
+
+        }
+        liftStop();
+
+
+    }
 
     public int getliftPos()
     {
@@ -473,7 +488,7 @@ public class Bot {
 
     public void setPowerDropper(double power)
     {
-        dropperservo.setPower(-power);
+        dropperservo.setPower(power);
     }
 
 

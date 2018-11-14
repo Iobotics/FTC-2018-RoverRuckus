@@ -30,7 +30,7 @@ public class AutonomousNearDepotNoColor extends LinearOpMode{
 
         sleep(0); //Change if needed
         //robot.liftTime(450, 1);
-        robot.encoderDrive(24, 1); //Add 3 inches to compensate for lift down
+        robot.encoderDrive(25, 1); //Add 3 inches to compensate for lift down
         //robot.liftTime(450, -1);
         robot.gyroTurn(180);
         robot.markerdrop();

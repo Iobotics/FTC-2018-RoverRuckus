@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * Created by Reid Ginoza on 9/12/2018.
  *
  */
-@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="15076AutoNearCrater", group = "Bot")
 //base auto
 public class AutonomousNearCrater extends LinearOpMode {
