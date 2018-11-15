@@ -22,6 +22,8 @@ public class AutonomousRedMark extends LinearOpMode {
         robot.markerServo.setPosition(0);
         waitForStart();
 
+        robot.hookRaise();
+
         /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
         }*/
@@ -34,6 +36,7 @@ public class AutonomousRedMark extends LinearOpMode {
         //drive to moon rocks
         robot.driveStraight(8);
         robot.gyroTurn(0.5,15);
+
 
         //NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
         //int color = colors.toColor();

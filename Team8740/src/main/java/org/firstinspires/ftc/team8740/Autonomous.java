@@ -26,6 +26,8 @@ public class Autonomous extends LinearOpMode {
 
         waitForStart();
 
+        robot.hookRaise();
+
         /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
         }*/
@@ -46,6 +48,9 @@ public class Autonomous extends LinearOpMode {
         telemetry.log().add("Starting First Item Scan");
         telemetry.update();
 
+        /*
+        TODO: ADD Color Sensor
+         */
         //check if moon rock is yellow
         /*if (color == Color.YELLOW) {
             telemetry.log().add("First Item is Cube");

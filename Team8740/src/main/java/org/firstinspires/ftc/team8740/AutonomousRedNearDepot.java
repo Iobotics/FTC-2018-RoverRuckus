@@ -22,6 +22,8 @@ public class AutonomousRedNearDepot extends LinearOpMode{
         robot.markerServo.setPosition(0);
         waitForStart();
 
+        robot.hookRaise();
+
         /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
         }*/

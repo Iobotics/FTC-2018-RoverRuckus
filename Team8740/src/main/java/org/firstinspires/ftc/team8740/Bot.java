@@ -36,6 +36,7 @@ import android.os.Looper;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -70,6 +71,8 @@ public class Bot {
     public DcMotor rightFrontDrive = null;
     public DcMotor rightBackDrive = null;
 
+    public ElapsedTime runtime = new ElapsedTime();
+
     //public DcMotor intake = null;
 
     public DcMotor hook = null;
@@ -80,8 +83,8 @@ public class Bot {
     public Servo markerServo = null;
     public Servo intakeServo = null;
 
-    private TouchSensor armLimitL = null;
-    private TouchSensor armLimitH = null;
+    public TouchSensor armLimitL = null;
+    public TouchSensor armLimitH = null;
 
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
@@ -107,9 +110,6 @@ public class Bot {
     private boolean limitHitL = false;
     private boolean limitHitH = false;
 
-    private boolean isComm = false;
-
-
     public Bot(LinearOpMode opMode) {
         this.opMode = opMode;
     }
@@ -126,7 +126,7 @@ public class Bot {
         //intake = hwMap.get(DcMotor.class, "Lift1");
 
         //Hook Motor
-        //hook = hwMap.get(DcMotor.class, "hook");
+        hook = hwMap.get(DcMotor.class, "hook");
 
         //Servos (Expected)
         markerServo = hwMap.get(Servo.class, "marker");
@@ -137,8 +137,8 @@ public class Bot {
         //intakeColor = hwMap.get(NormalizedColorSensor.class, "intake");
 
         //Touch Sensors
-        //armLimitL = hwMap.get(TouchSensor.class, "armLow");
-        //armLimitH = hwMap.get(TouchSensor.class, "armHigh");
+        armLimitL = hwMap.get(TouchSensor.class, "armLow");
+        armLimitH = hwMap.get(TouchSensor.class, "armHigh");
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -205,62 +205,49 @@ public class Bot {
     /**
      * Raise hook without interrupting main thread
      */
-    public void hookRaise() {
-        hook.setPower(1);
-        while (opMode.gamepad1.x) {
-            //nothing
+    public void hookRaise(){
+        hook.setPower(0.5);
+        runtime.reset();
+        while (armLimitL.isPressed()) {
+            opMode.telemetry.addData("Is pressed?","%s", armLimitH.isPressed());
+            opMode.telemetry.update();
+            opMode.idle();
         }
-        /*
-        while (!limitHitH) {
-            if (armHigh.isPressed()) {
-                limitHitH = true;
+        /*while (!limitHitL) {
+            if (armLimitL.isPressed()) {
+                limitHitL = true;
             }
-        }
-         */
+        }*/
         hook.setPower(0);
-        //limitHitH = false;
+        limitHitL = false;
     }
-
+    public void hookRaiseTeleOp () {
+        while (opMode.gamepad1.x && !limitHitH) {
+            hook.setPower(1);
+        }
+        hook.setPower(0);
+    }
+    public void raiseHook () {
+        hook.setPower(1);
+    }
     /**
      * Lower hook without interrupting main thread
      */
     public void hookLower() {
-        hook.setPower(-1);
-        while (opMode.gamepad1.x) {
-            //nothing
+        hook.setPower(-0.5);
+        while (armLimitL.isPressed()) {
+            opMode.telemetry.addData("Is pressed?","%s", armLimitL.isPressed());
+            opMode.idle();
         }
-        /*
-        while (!limitHitL) {
-            if (armLow.isPressed()) {
+        /*while (!limitHitL) {
+            if (armLimitL.isPressed()) {
                 limitHitL = true;
             }
-        }
-         */
+        }*/
         hook.setPower(0);
-        //limitHitL = false;
+        limitHitL = false;
     }
 
-    /**
-     * Update phone telemtery every second without interrupting loop.
-     */
-    public void updateTelemetry() {
-        if (!isComm) {
-            isComm = true;
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    opMode.telemetry.update();
-                }
-            }, 1000);
-            long previousMillis = currentTimeMillis();
-            long currentMillis = 0;
-            while (currentMillis - previousMillis < 1000) {
-                currentMillis = currentTimeMillis();
-            }
-            isComm = false;
-        }
-    }
 
     /**
      * Checks if the gyro is calibrating
@@ -272,7 +259,9 @@ public class Bot {
 
         return isCalibrating;
     }
-
+    /*
+    TODO: Recalibrate Gyro
+     */
     /**
      * Gets the heading of the gyro in degrees
      *
