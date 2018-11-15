@@ -99,7 +99,7 @@ public class Bot {
     private final static double P_DRIVE_COEFF = 0.0002;  // Larger is more responsive, but also less stable
     private final static double F_MOTOR_COEFF = 0.11;   //Minimum amount of power given to motor from control loop
 
-    private final static double AUTO_DRIVE_SPEED = 0.6;
+    private final static double AUTO_DRIVE_SPEED = 0.8;
     private final static double AUTO_TURN_SPEED = 0.6;
     private final static double POWER_DAMPEN = .1;
 
@@ -109,6 +109,8 @@ public class Bot {
 
     private boolean limitHitL = false;
     private boolean limitHitH = false;
+
+    public boolean isLiftDone = false;
 
     public Bot(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -163,7 +165,6 @@ public class Bot {
             rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         }
-        Looper.prepare();
     }
 
     /**
@@ -219,7 +220,11 @@ public class Bot {
             }
         }*/
         hook.setPower(0);
+
+        driveStraight(3);
+
         limitHitL = false;
+        isLiftDone = true;
     }
     public void hookRaiseTeleOp () {
         while (opMode.gamepad1.x && !limitHitH) {
@@ -246,6 +251,7 @@ public class Bot {
         }*/
         hook.setPower(0);
         limitHitL = false;
+        isLiftDone = true;
     }
 
 
@@ -429,13 +435,6 @@ public class Bot {
             opMode.telemetry.update();
         }
         stopDrive();
-    }
-
-    public Thread getThreadByName(String threadName) {
-        for (Thread t : Thread.getAllStackTraces().keySet()) {
-            if (t.getName().equals(threadName)) return t;
-        }
-        return null;
     }
 
     public void driveStraight(double inches) {

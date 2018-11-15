@@ -13,9 +13,23 @@ import org.firstinspires.ftc.ftccommon.internal.RunOnBoot;
 /**
  * Created by Jack Gonser on 10/1/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoBlueNonMarker", group = "bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoBlueNonDepot", group = "bot")
 public class AutonomousBlueNearDepot extends LinearOpMode{
     private Bot robot = new Bot(this);
+
+    public class hookRaiseRunnable implements Runnable {
+        @Override
+        public void run() {
+            robot.hookRaise();
+        }
+    }
+
+    public Thread hookRaiseThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    });
 
     @Override
     public void runOpMode() {
@@ -23,9 +37,10 @@ public class AutonomousBlueNearDepot extends LinearOpMode{
         robot.init(hardwareMap, true);
 
         robot.markerServo.setPosition(0);
+
         waitForStart();
 
-        robot.hookRaise();
+        hookRaiseThread = new Thread(new hookRaiseRunnable());
 
         /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
