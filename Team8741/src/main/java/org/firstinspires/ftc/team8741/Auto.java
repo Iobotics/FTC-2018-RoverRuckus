@@ -17,8 +17,8 @@ public class Auto extends LinearOpMode {
 
         waitForStart();
         robot.setLiftPower(1);
-        robot.setPower(-0.15, -0.15);
-        robot.sleep(4600);
+        robot.setPower(-0.10, -0.10);
+        robot.sleep(4000);
         robot.setLiftPower(0);  
         robot.gyroTurn(0);
         robot.driveStraight(-15);
@@ -26,7 +26,7 @@ public class Auto extends LinearOpMode {
         robot.driveStraight(42);
         robot.gyroTurn(135);
         robot.driveStraight(-45);
-        robot.setServo(0);
+        robot.setServo(0.5);
         robot.sleep(500);
         robot.driveStraight(100);
 
