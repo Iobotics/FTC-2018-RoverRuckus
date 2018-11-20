@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.team8740;
+package org.firstinspires.ftc.teamShane;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -36,7 +36,6 @@ import android.os.Looper;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -70,21 +69,20 @@ public class Bot {
     public DcMotor leftFrontDrive = null;
     public DcMotor rightFrontDrive = null;
     public DcMotor rightBackDrive = null;
-
-    public ElapsedTime runtime = new ElapsedTime();
+    public DcMotor extend = null;
+    public DcMotor intake = null;
+    public DcMotor leftLift = null;
+    public DcMotor rightLift = null;
 
     //public DcMotor intake = null;
 
-    public DcMotor hook = null;
+
 
     //public NormalizedColorSensor colorSensor = null;
     //public NormalizedColorSensor intakeColor = null;
 
-    public Servo markerServo = null;
     public Servo intakeServo = null;
 
-    public TouchSensor armLimitL = null;
-    public TouchSensor armLimitH = null;
 
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
@@ -99,7 +97,7 @@ public class Bot {
     private final static double P_DRIVE_COEFF = 0.0002;  // Larger is more responsive, but also less stable
     private final static double F_MOTOR_COEFF = 0.11;   //Minimum amount of power given to motor from control loop
 
-    private final static double AUTO_DRIVE_SPEED = 0.8;
+    private final static double AUTO_DRIVE_SPEED = 0.6;
     private final static double AUTO_TURN_SPEED = 0.6;
     private final static double POWER_DAMPEN = .1;
 
@@ -110,7 +108,8 @@ public class Bot {
     private boolean limitHitL = false;
     private boolean limitHitH = false;
 
-    public boolean isLiftDone = false;
+    private boolean isComm = false;
+
 
     public Bot(LinearOpMode opMode) {
         this.opMode = opMode;
@@ -124,23 +123,20 @@ public class Bot {
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
 
-        //intake Motors (Expected)
-        //intake = hwMap.get(DcMotor.class, "Lift1");
-
-        //Hook Motor
-        hook = hwMap.get(DcMotor.class, "hook");
-
         //Servos (Expected)
-        markerServo = hwMap.get(Servo.class, "marker");
-        intakeServo = hwMap.get(Servo.class, "intake");
+        intakeServo = hwMap.get(Servo.class, "intakeAct");
 
-        //Color Sensor
-        //colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
-        //intakeColor = hwMap.get(NormalizedColorSensor.class, "intake");
+        //Lift Motor
+        leftLift = hwMap.get(DcMotor.class, "leftLift");
+        rightLift = hwMap.get(DcMotor.class, "rightLift");
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //Touch Sensors
-        armLimitL = hwMap.get(TouchSensor.class, "armLow");
-        armLimitH = hwMap.get(TouchSensor.class, "armHigh");
+        //Intake Motor
+        extend = hwMap.get(DcMotor.class, "arm");
+        intake = hwMap.get(DcMotor.class, "intake");
+
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -165,6 +161,7 @@ public class Bot {
             rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         }
+        Looper.prepare();
     }
 
     /**
@@ -191,6 +188,14 @@ public class Bot {
     }
 
     /**
+     * Moves arm w/ intake based on input
+     */
+    public void setExtPower(double extendPower){
+        extend.setPower(extendPower);
+    }
+
+
+    /**
      * Sleep from LinearOpMode
      *
      * @param milliseconds
@@ -204,56 +209,48 @@ public class Bot {
     }
 
     /**
-     * Raise hook without interrupting main thread
+     * Moves the lift on up and down based on input
      */
-    public void hookRaise(){
-        hook.setPower(0.5);
-        runtime.reset();
-        while (armLimitL.isPressed()) {
-            opMode.telemetry.addData("Is pressed?","%s", armLimitH.isPressed());
-            opMode.telemetry.update();
-            opMode.idle();
-        }
-        /*while (!limitHitL) {
-            if (armLimitL.isPressed()) {
-                limitHitL = true;
-            }
-        }*/
-        hook.setPower(0);
+    public void setLiftPower(double liftPower){
+        rightLift.setPower(liftPower);
+        leftLift.setPower(liftPower);
+    }
 
-        driveStraight(3);
-
-        limitHitL = false;
-        isLiftDone = true;
-    }
-    public void hookRaiseTeleOp () {
-        while (opMode.gamepad1.x && !limitHitH) {
-            hook.setPower(1);
-        }
-        hook.setPower(0);
-    }
-    public void raiseHook () {
-        hook.setPower(1);
-    }
     /**
-     * Lower hook without interrupting main thread
+     * Moves intake to in or out
      */
-    public void hookLower() {
-        hook.setPower(-0.5);
-        while (armLimitL.isPressed()) {
-            opMode.telemetry.addData("Is pressed?","%s", armLimitL.isPressed());
-            opMode.idle();
-        }
-        /*while (!limitHitL) {
-            if (armLimitL.isPressed()) {
-                limitHitL = true;
-            }
-        }*/
-        hook.setPower(0);
-        limitHitL = false;
-        isLiftDone = true;
+    public void setInPower(double inPower){
+        intake.setPower(inPower);
     }
 
+    /**
+     * Sets servo position of intake servo
+     */
+    public void setServo(double servoPos){
+        intakeServo.setPosition(servoPos);
+    }
+
+    /**
+     * Update phone telemtery every second without interrupting loop.
+     */
+    public void updateTelemetry() {
+        if (!isComm) {
+            isComm = true;
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    opMode.telemetry.update();
+                }
+            }, 1000);
+            long previousMillis = currentTimeMillis();
+            long currentMillis = 0;
+            while (currentMillis - previousMillis < 1000) {
+                currentMillis = currentTimeMillis();
+            }
+            isComm = false;
+        }
+    }
 
     /**
      * Checks if the gyro is calibrating
@@ -265,9 +262,7 @@ public class Bot {
 
         return isCalibrating;
     }
-    /*
-    TODO: Recalibrate Gyro
-     */
+
     /**
      * Gets the heading of the gyro in degrees
      *
@@ -435,6 +430,13 @@ public class Bot {
             opMode.telemetry.update();
         }
         stopDrive();
+    }
+
+    public Thread getThreadByName(String threadName) {
+        for (Thread t : Thread.getAllStackTraces().keySet()) {
+            if (t.getName().equals(threadName)) return t;
+        }
+        return null;
     }
 
     public void driveStraight(double inches) {

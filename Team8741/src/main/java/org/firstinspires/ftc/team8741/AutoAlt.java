@@ -21,7 +21,7 @@ AutoAlt extends LinearOpMode {
         waitForStart();
         robot.setLiftPower(1);
         robot.setPower(-0.10, -0.10);
-        robot.sleep(4600);
+        robot.sleep(4000);
         robot.setLiftPower(0);
         robot.gyroTurn(0);
         robot.driveStraight(-17);
@@ -31,7 +31,7 @@ AutoAlt extends LinearOpMode {
         robot.driveStraight(18);
         robot.gyroTurn(135);
         robot.driveStraight(35);
-        robot.setServo(0);
+        robot.setServo(0.5);
         robot.sleep(500);
         robot.gyroTurn(45);
         robot.driveStraight(108);

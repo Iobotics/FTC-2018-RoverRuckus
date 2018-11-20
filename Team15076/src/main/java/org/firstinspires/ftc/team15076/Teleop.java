@@ -41,15 +41,15 @@ public class Teleop extends LinearOpMode {
 
             if(gamepad1.y)//button y
             {
-                robot.liftTime(450, 1);
+                robot.liftHold();
             }
             else if(gamepad1.b)//button b
             {
-                robot.liftTime(450, -1);
+                 //robot.liftTime(450, -1);
             }
             else
             {
-                robot.liftStop();
+                //robot.liftStop();
             }
 
             telemetry.addData("liftPos", robot.getliftPos());
@@ -70,23 +70,25 @@ public class Teleop extends LinearOpMode {
 
             if(gamepad1.a)
             {
+                robot.setPowerDropper(1);
                 //robot.gyroTurn(90);
                 //robot.gyroTurn(180);
             }
             if(gamepad1.x)
             {
-                robot.gyroTurn(45);
+                robot.setPowerDropper(-1);
+                //robot.gyroTurn(45);
                 //robot.encoderDrive(-5, 1);
                 //robot.gyroTurn(90);
-                //power = power + .01;
             }
             else
             {
-                //robot.setPowerDropper(0);
+                robot.setPowerDropper(0);
             }
 
 
-            robot.setPower(power, power);
+            //robot.setPower(power, power);
+            //robot.liftPower(power);
             telemetry.addData("power", power);
             telemetry.addData("lift distance", robot.getliftPos());
             telemetry.addData("left distance", robot.getLeft());

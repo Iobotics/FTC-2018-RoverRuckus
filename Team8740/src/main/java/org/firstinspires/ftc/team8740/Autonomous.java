@@ -11,20 +11,46 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 /**
  * Created by Jack Gonser on 9/12/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoBlueMarker", group = "Bot")
+
 //base auto
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoBlueDepot", group = "Bot")
 public class Autonomous extends LinearOpMode {
     private Bot robot = new Bot(this);
+
+    public class hookRaiseRunnable implements Runnable {
+        @Override
+        public void run() {
+            robot.hookRaise();
+        }
+    }
+
+    public Thread hookRaiseThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    });
 
     @Override
     public void runOpMode() {
         //Robot will be backwards when operating
         robot.init(hardwareMap, false);
 
+        hookRaiseThread.start();
+
         //Set Marker Servo Pos
         robot.markerServo.setPosition(0);
 
         waitForStart();
+
+        hookRaiseThread = new Thread(new hookRaiseRunnable());
+        hookRaiseThread.start();
+
+        while (!robot.isLiftDone) {
+            idle();
+        }
+
+        robot.isLiftDone = false;
 
         /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
@@ -46,6 +72,9 @@ public class Autonomous extends LinearOpMode {
         telemetry.log().add("Starting First Item Scan");
         telemetry.update();
 
+        /*
+        TODO: ADD Color Sensor
+         */
         //check if moon rock is yellow
         /*if (color == Color.YELLOW) {
             telemetry.log().add("First Item is Cube");

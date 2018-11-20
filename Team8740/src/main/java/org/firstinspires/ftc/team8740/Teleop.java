@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Created by Jack Gonser on 8/29/2018.
  */
@@ -23,16 +25,44 @@ public class Teleop extends LinearOpMode {
     double leftPower;
     double rightPower;
 
+    public class HookLowerRunnable implements Runnable {
+        @Override
+        public void run() {
+            robot.hookLower();
+        }
+    }
+
+    public Thread hookLowerThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+        }
+    });
+
+    public class HookRaiseRunnable implements Runnable {
+        @Override
+        public void run() {
+            robot.hookRaiseTeleOp();
+        }
+    }
+
+    public Thread hookRaiseThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    });
     public void runOpMode(){
         robot.init(hardwareMap, true); //initiate robot hardware
-        telemetry.log().add("Op Mode is TELEOP"); //Visualize op mode
-        telemetry.log().add("Ready For Start");
+        telemetry.addLine("Op Mode is TELEOP"); //Visualize op mode
+        telemetry.addLine("Ready For Start");
         telemetry.update(); //send to driver station
         waitForStart();
+        hookLowerThread.start();
+        hookRaiseThread.start();
         while (opModeIsActive()) {
             //if (!gamepad1.a) {
 
-                telemetry.log().add("Normal Operation");
+                telemetry.addLine("Normal Operation");
                 yValue = gamepad1.left_stick_y;
                 xValue = gamepad1.right_stick_x;
 
@@ -44,15 +74,15 @@ public class Teleop extends LinearOpMode {
                 telemetry.addData("stick", "  y=" + yValue + "  x=" + xValue);
                 telemetry.addData("power", "  left=" + leftPower + "  right=" + rightPower);
 
-                //raise and lower hook
-                /*if (gamepad1.x && gamepad1.dpad_up) {
-                    telemetry.log().add("Hook Up");
-                    robot.hookRaise();
-                }
-                if (gamepad1.x && gamepad1.dpad_down) {
-                    telemetry.log().add("Hook Down");
-                    robot.hookLower();
-                }*/
+
+                 if (gamepad1.left_bumper) {
+                    robot.hook.setPower(-1);
+                } else  if (gamepad1.left_trigger > 0.5) {
+                    robot.hook.setPower(1);
+                 } else {
+                     robot.hook.setPower(0);
+                 }
+
 
                 //Move Marker Servo
                 if (gamepad1.x && gamepad1.dpad_left) {
@@ -62,16 +92,6 @@ public class Teleop extends LinearOpMode {
                 if (gamepad1.x && gamepad1.dpad_right) {
                     robot.markerServo.setPosition(1);
                     telemetry.addData("Marker Servo","right/1");
-                }
-
-                //Quick Turn
-                //left turn
-                if (gamepad1.left_bumper) {
-                    robot.gyroTurn(75,-45);
-                }
-                //right turn
-                if (gamepad1.right_bumper) {
-                    robot.gyroTurn(75,45);
                 }
 
                 //Intake Servo (COMP)
@@ -98,7 +118,7 @@ public class Teleop extends LinearOpMode {
                     telemetry.update();
                 }
 
-                //robot.updateTelemetry();
+                telemetry.update();
             }/* else {
                 double speed;
 

@@ -30,7 +30,7 @@ public class AutonomousNearCraterNoColor extends LinearOpMode {
 
         waitForStart();
 
-        sleep(0); //Change if needed
+        sleep(3000); //Change if needed
         //robot.liftTime(450, 1);
         robot.encoderDrive(11,1); //Add 3 inches to compensate for lift down
         //robot.liftTime(450, -1);

@@ -10,9 +10,23 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
  * Created by student on 10/8/2018.
  */
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoRedMark", group = "bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoRedDepot", group = "bot")
 public class AutonomousRedMark extends LinearOpMode {
     private Bot robot = new Bot(this);
+
+    public class hookRaiseRunnable implements Runnable {
+        @Override
+        public void run() {
+            robot.hookRaise();
+        }
+    }
+
+    public Thread hookRaiseThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    });
 
     @Override
     public void runOpMode() {
@@ -20,7 +34,21 @@ public class AutonomousRedMark extends LinearOpMode {
         robot.init(hardwareMap, false);
 
         robot.markerServo.setPosition(0);
+
+        hookRaiseThread.start();
+
         waitForStart();
+
+        hookRaiseThread = new Thread(new hookRaiseRunnable());
+        hookRaiseThread.start();
+
+        while (!robot.isLiftDone) {
+            idle();
+        }
+
+        robot.isLiftDone = false;
+
+        hookRaiseThread.interrupt();
 
         /*if (robot.colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) robot.colorSensor).enableLight(true);
@@ -34,6 +62,7 @@ public class AutonomousRedMark extends LinearOpMode {
         //drive to moon rocks
         robot.driveStraight(8);
         robot.gyroTurn(0.5,15);
+
 
         //NormalizedRGBA colors = robot.colorSensor.getNormalizedColors();
         //int color = colors.toColor();

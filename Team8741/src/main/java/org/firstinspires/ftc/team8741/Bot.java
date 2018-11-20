@@ -58,15 +58,15 @@ public class Bot {
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
 
+    private final static double HEADING_THRESHOLD = 1.8;
 
     int _leftOffset;
     int _rightOffset;
 
-    private final static double HEADING_THRESHOLD = 1.8;
 
     private final static double P_TURN_COEFF = 0.050;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.00060 ;  // Larger is more responsive, but also less stable
-    private final static double F_MOTOR_COEFF = 0.11;   //Larger the lower the minimum motor power is
+    private final static double F_MOTOR_COEFF = 0.11;   //Minimum amount of power given to motor from control loop
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
 
     private final static double AUTO_DRIVE_SPEED = 0.6;
