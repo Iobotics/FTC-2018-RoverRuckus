@@ -58,7 +58,7 @@ public class Bot {
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
 
-    private final static double HEADING_THRESHOLD = 1.8;
+    private final static double HEADING_THRESHOLD = 2.1;
 
     int _leftOffset;
     int _rightOffset;
@@ -109,8 +109,8 @@ public class Bot {
         liftArm = hwMap.get(DcMotor.class, "lift");
         //colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
         servo = hwMap.get (Servo.class, "servo");
-        //leftIntake = hwMap.get(DcMotor.class,"leftIntake");
-        //rightIntake = hwMap.get(DcMotor.class,"rightIntake");
+        leftIntake = hwMap.get(DcMotor.class,"leftIntake");
+        rightIntake = hwMap.get(DcMotor.class,"rightIntake");
 
 
 

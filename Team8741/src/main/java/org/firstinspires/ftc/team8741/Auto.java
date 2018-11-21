@@ -21,12 +21,12 @@ public class Auto extends LinearOpMode {
         robot.sleep(4200);
         robot.setLiftPower(0);  
         robot.gyroTurn(0);
-        robot.driveStraight(-17);
+        robot.driveStraight(-19);
         robot.gyroTurn(-90);
         robot.driveStraight(42);
         robot.gyroTurn(135);
-        robot.driveStraight(-45);
-        robot.setServo(0.5);
+        robot.driveStraight(-47);
+        robot.setServo(0);
         robot.sleep(500);
         robot.driveStraight(100);
 

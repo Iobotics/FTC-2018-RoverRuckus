@@ -45,7 +45,15 @@ Teleop extends LinearOpMode {
                 robot.setInPower(0);
                 //works intake and outtake
             }
-
+            if(gamepad1.y) {
+                robot.setServo(1);
+            }
+            else if(gamepad1.x) {
+                robot.setServo(-1);
+            }
+            else {
+                robot.setServo(0);
+            }
 
             telemetry.addData("Left Position", robot.getLeftPosition());
             telemetry.addData("Right Position", robot.getRightPosition());
