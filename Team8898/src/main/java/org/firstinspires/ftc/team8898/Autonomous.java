@@ -14,12 +14,12 @@ public class Autonomous extends LinearOpMode {
         robot.setDropper(.2549);
         waitForStart();
         // Moving
-        //        robot.driveStraight(20);
-        //        robot.driveStraight(13);
         robot.driveStraight(10);
         robot.gyroTurn(90);
-        robot.driveStraight(29);
+        robot.driveStraight(32);
         robot.gyroTurn(135);
+        robot.driveStraight(18);
+        robot.driveStraight(10);
         robot.gyroTurn(45);
         // clAIm
 

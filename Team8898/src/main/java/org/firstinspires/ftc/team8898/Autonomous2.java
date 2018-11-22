@@ -15,10 +15,10 @@ public class Autonomous2 extends LinearOpMode {
         waitForStart();
         // Moving
         robot.driveStraight(10);
-        robot.gyroTurn(90);
+        robot.gyroTurn(88);
         robot.driveStraight(30);
-        robot.gyroTurn(-45);
-        robot.driveStraight(52);
+        robot.gyroTurn(-48);
+        robot.driveStraight(47);
         // clAIm
 
         robot.setDropper(.15);
