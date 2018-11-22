@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team15076;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
@@ -22,6 +21,6 @@ public class AutonomousNearDepot extends LinearOpMode {
         waitForStart();
 
         robot.encoderDrive(-24, 1);
-        robot.markerdrop();
+        //robot.markerdrop();
     }
 }

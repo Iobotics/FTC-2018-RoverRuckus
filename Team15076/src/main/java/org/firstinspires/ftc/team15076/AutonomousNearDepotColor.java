@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.team15076;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 
 /**
@@ -49,7 +46,7 @@ public class AutonomousNearDepotColor extends LinearOpMode{
 
         sleep(0); //Change if needed
         robot.encoderDrive(-49, 1);
-        robot.markerdrop();  //reid is badd
+        //robot.markerdrop();  //reid is badd
         robot.gyroTurn(-60);
         robot.driveLander(20);
 

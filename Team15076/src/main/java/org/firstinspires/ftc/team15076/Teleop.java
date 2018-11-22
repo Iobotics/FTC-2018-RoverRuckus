@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.team15076;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
  * Created by Reid on 8/29/2018.
@@ -41,21 +38,18 @@ public class Teleop extends LinearOpMode {
 
             if(gamepad1.y)//button y
             {
-                robot.liftHold();
+                robot.liftPos(29,1);
             }
             else if(gamepad1.b)//button b
             {
-                 //robot.liftTime(450, -1);
+                 robot.liftPos(0,1);
             }
             else
             {
                 //robot.liftStop();
             }
 
-            telemetry.addData("liftPos", robot.getliftPos());
-            telemetry.update();
-
-            if(gamepad1.left_bumper)
+           /* if(gamepad1.left_bumper)
             {
                 robot.setPowerIntake(1);
             }
@@ -84,17 +78,34 @@ public class Teleop extends LinearOpMode {
             else
             {
                 robot.setPowerDropper(0);
-            }
+            }*/
+
+           if(gamepad1.dpad_up)
+           {
+               robot.winchPower(1);
+           }
+           if(gamepad1.dpad_down)
+           {
+               robot.winchPower(-1);
+           }
+           else
+           {
+               robot.winchPower(0);
+           }
+
+
 
 
             //robot.setPower(power, power);
             //robot.liftPower(power);
-            telemetry.addData("power", power);
+            //telemetry.addData("power", power);
+            telemetry.addData("is pressed", robot.isPressed());
             telemetry.addData("lift distance", robot.getliftPos());
             telemetry.addData("left distance", robot.getLeft());
             telemetry.addData("right distance", robot.getRight());
             telemetry.addData("angle", robot.getGyroHeading());
             //telemetry.addData("", robot.getRed());
+            telemetry.update();
         }
     }
 

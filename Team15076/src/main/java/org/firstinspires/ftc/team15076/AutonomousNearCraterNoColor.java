@@ -1,15 +1,6 @@
 package org.firstinspires.ftc.team15076;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
-
-import org.firstinspires.ftc.ftccommon.internal.RunOnBoot;
-
-import static java.lang.System.currentTimeMillis;
 
 /**
  * Created by Reid Ginoza on 9/12/2018.
@@ -39,7 +30,7 @@ public class AutonomousNearCraterNoColor extends LinearOpMode {
         robot.gyroTurn(-43);//-38 before
         robot.encoderDrive(-8, 1);
         robot.gyroTurn(-88);
-        robot.markerdrop();
+        //robot.markerdrop();
         robot.gyroTurn(-43);
         robot.encoderDrive(33, 1);
     }

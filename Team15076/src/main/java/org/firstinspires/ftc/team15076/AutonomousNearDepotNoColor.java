@@ -1,17 +1,6 @@
 package org.firstinspires.ftc.team15076;
 
-import android.graphics.Color;
-import android.graphics.Path;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
-
-import org.firstinspires.ftc.ftccommon.internal.RunOnBoot;
-
-import static java.lang.System.currentTimeMillis;
 
 
 /**
@@ -33,7 +22,7 @@ public class AutonomousNearDepotNoColor extends LinearOpMode{
         robot.encoderDrive(25, 1); //Add 3 inches to compensate for lift down
         //robot.liftTime(450, -1);
         robot.gyroTurn(180);
-        robot.markerdrop();
+        //robot.markerdrop();
         robot.gyroTurn(45);
         robot.driveLander(-40);
         //robot.gyroTurn(40);

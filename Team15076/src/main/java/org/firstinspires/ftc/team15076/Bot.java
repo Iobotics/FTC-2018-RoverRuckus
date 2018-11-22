@@ -33,15 +33,12 @@ package org.firstinspires.ftc.team15076;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -59,19 +56,23 @@ public class Bot {
 
     double _leftOffset;
     double _rightOffset;
-    private CRServo dropperservo = null;
+    //private CRServo dropperservo = null;
     private DcMotor leftBackDrive = null;
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor liftFront = null;
-    private DcMotor liftBack = null;
-    private DcMotor hook = null;
-    private DcMotor intake = null;
+    public DcMotor winch = null;
+    //public DcMotor intake = null;
+    public DcMotor leftLift = null;
+    public DcMotor rightLift = null;
     //public NormalizedColorSensor colorSensor = null;
-    public ColorSensor colorSensor = null;
+    //public ColorSensor colorSensor = null;
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
+    //private Servo intakeServo = null;
+
+    private TouchSensor limitSwitch = null;
+
 
     private BNO055IMU imu = null;
     private Orientation angles = null;
@@ -108,16 +109,24 @@ public class Bot {
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
-        dropperservo = hwMap.get(CRServo.class, "dropperServo");
+        //dropperservo = hwMap.get(CRServo.class, "dropperServo");
+        //intakeServo = hwMap.get(Servo.class, "intakeServo");
 
-        //Lift Motors (Expected)
-        liftFront = hwMap.get(DcMotor.class, "liftFront");
-        liftBack = hwMap.get(DcMotor.class, "liftBack");
+//Lift Motor
+        leftLift = hwMap.get(DcMotor.class, "leftLift");
+        rightLift = hwMap.get(DcMotor.class, "rightLift");
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        winch = hwMap.get(DcMotor.class, "winch");
+        //rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); TODO- Test
+        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        intake =hwMap.get(DcMotor.class, "Intake");
+
+        //intake =hwMap.get(DcMotor.class, "Intake");
 
         //Color Sensor
         //colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
+
+        limitSwitch = hwMap.get(TouchSensor.class, "limitSwitch");
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -132,19 +141,13 @@ public class Bot {
 
         //Drive Config
 
-        //leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        //leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        //rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        //rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        liftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        liftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        liftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        //rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftPower(0);
 
-        dropperservo.setDirection(DcMotorSimple.Direction.REVERSE);
+        //dropperservo.setDirection(DcMotorSimple.Direction.REVERSE);
 
         _leftOffset = getLeft();
         _rightOffset = getRight();
@@ -414,8 +417,8 @@ public class Bot {
 
     public void liftPower(double speed)
     {
-        liftFront.setPower(speed);
-        liftBack.setPower(speed);
+        rightLift.setPower(speed);
+        leftLift.setPower(speed);
     }
 
     public void liftTime(int miliseconds, double speed)
@@ -427,34 +430,27 @@ public class Bot {
     }
 
     public void liftStop() {
-        liftFront.setPower(0);
-        liftBack.setPower(0);
+        rightLift.setPower(0);
+        leftLift.setPower(0);
     }
 
-    public void liftHold()
+    public void liftPos(int inches)
     {
-        liftPower(-1);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        liftPower(-.2);
+        liftPos(inches, 1);
     }
-
 
     public void liftPos(int inches, double maxSpeed)//no semicolon after creating a method
     {
         double speed = 0;
         int error;
         //sets the target encoder value
-        int target = liftBack.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+        int target = leftLift.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
         //sets current gyro value
         double startHeading = getGyroHeading();
         // While the absolute value of the error is greater than the error threshold
         //adds the f value if positive or subtracts if negative
-        while (opMode.opModeIsActive() && Math.abs(liftBack.getCurrentPosition() - target) >= LIFT_THRESHOLD) {
-            error = target - rightFrontDrive.getCurrentPosition();
+        while (opMode.opModeIsActive() && Math.abs(leftLift.getCurrentPosition() - target) >= LIFT_THRESHOLD) {
+            error = target - leftLift.getCurrentPosition();
             if (error * P_LIFT_COEFF < 0) {
                 speed = Range.clip((error * P_LIFT_COEFF) - F_LIFT_COEFF, -1, 0);
             } else {
@@ -462,8 +458,8 @@ public class Bot {
             }
             liftPower(speed);
 
-            opMode.telemetry.addData("Drive Error", error);
-            opMode.telemetry.addData("Drive Power", liftBack.getPower());
+            opMode.telemetry.addData("Lift Error", error);
+            opMode.telemetry.addData("Lift Power", leftLift.getPower());
             opMode.telemetry.update();
 
         }
@@ -472,12 +468,23 @@ public class Bot {
 
     }
 
-    public int getliftPos()
+    public void winchPower(double power)//do this
     {
-        return liftBack.getCurrentPosition();
+       winch.setPower(power);//also do this to make variable
     }
 
 
+    public int getliftPos()
+    {
+        return (int) (leftLift.getCurrentPosition() * INCHES_PER_TICK);
+    }
+
+    public boolean isPressed()
+    {
+        return limitSwitch.isPressed();
+    }
+
+/*
     public void markerdrop() {
         this.setPowerDropper(1);
         try {
@@ -495,8 +502,8 @@ public class Bot {
     public void setPowerIntake(int power)
     {
         intake.setPower(power);
-    }
-
+    }*/
+/*
     public boolean isBlock()
     {
         return colorSensor.red() > 45 && colorSensor.green() > 34 && colorSensor.blue() < 100 && colorSensor.red() - colorSensor.blue() >= 10;
@@ -517,4 +524,9 @@ public class Bot {
     {
         return colorSensor.alpha();
     }
+*/
+    /*private void setIntakeArm(int position)
+    {
+        intakeServo.setPosition(position);
+    }*/
 }

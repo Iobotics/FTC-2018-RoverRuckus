@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team15076;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
@@ -21,6 +20,10 @@ public class AutonomousNearCrater extends LinearOpMode {
 
         waitForStart();
 
+      //  robot.liftPos();
+
         robot.driveLander(39);
+
+        //robot.liftPos();
     }
 }

@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.team15076;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
 
 /**
  * Created by Reid Ginoza on 9/12/2018.
@@ -33,7 +29,7 @@ public class AutonomousColor extends LinearOpMode {
         sleep(0); //Change if needed
         robot.encoderDrive(7,1);
         robot.gyroTurn(-90);
-        if(robot.isBlock())//if 1st block
+        /*if(robot.isBlock())//if 1st block
         {
             robot.gyroTurn(180);//hit and turn around
             robot.encoderDrive(-4,1);//go back to start
@@ -53,9 +49,10 @@ public class AutonomousColor extends LinearOpMode {
                 robot.encoderDrive(-15,1);//go to start
             }
         }
+        */
         robot.gyroTurn(-80);
         robot.encoderDrive(-40, 1);
-        robot.markerdrop();
+        //robot.markerdrop();
         robot.gyroTurn(60);
         robot.driveLander(18);
 
