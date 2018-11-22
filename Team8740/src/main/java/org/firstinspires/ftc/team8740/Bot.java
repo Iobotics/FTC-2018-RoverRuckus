@@ -107,9 +107,6 @@ public class Bot {
 
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
 
-    private boolean limitHitL = false;
-    private boolean limitHitH = false;
-
     public boolean isLiftDone = false;
 
     public Bot(LinearOpMode opMode) {
@@ -219,18 +216,13 @@ public class Bot {
                 limitHitL = true;
             }
         }*/
+
+        sleep(250);
         hook.setPower(0);
 
-        driveStraight(3);
+        driveStraight(-1);
 
-        limitHitL = false;
         isLiftDone = true;
-    }
-    public void hookRaiseTeleOp () {
-        while (opMode.gamepad1.x && !limitHitH) {
-            hook.setPower(1);
-        }
-        hook.setPower(0);
     }
     public void raiseHook () {
         hook.setPower(1);
@@ -241,7 +233,6 @@ public class Bot {
     public void hookLower() {
         hook.setPower(-0.5);
         while (armLimitL.isPressed()) {
-            opMode.telemetry.addData("Is pressed?","%s", armLimitL.isPressed());
             opMode.idle();
         }
         /*while (!limitHitL) {
@@ -250,7 +241,6 @@ public class Bot {
             }
         }*/
         hook.setPower(0);
-        limitHitL = false;
         isLiftDone = true;
     }
 
