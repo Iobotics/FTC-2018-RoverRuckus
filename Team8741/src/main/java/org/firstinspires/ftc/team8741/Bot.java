@@ -271,37 +271,12 @@ public class Bot {
         }
     }
 
-    /**
-     * Gets the pitch of the gyro in degrees
-     *
-     * @return pitch
-     */
-    public double getGyroPitch() {
-        // Update gyro
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        gravity = imu.getGravity();
-
-        double pitch = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.thirdAngle));
-        return pitch;
-    }
-
-        /**
-         * Perform one cycle of closed loop heading control.
-         *
-         * @param speed  Desired speed of turn.
-         * @param angle  Absolute Angle (in Degrees) relative to last gyro reset.
-         *               0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-         *               If a relative angle is required, add/subtract from current heading.
-         * @param PCoeff Proportional Gain coefficient
-         * @return onTarget
-         */
     boolean onHeading ( double speed, double angle, double PCoeff){
         double error;
         double steer = 0;
         boolean onTarget = false;
         double leftSpeed = 0;
         double rightSpeed= 0;
-
 
         // determine turn power based on +/- error
         error = getError(angle);
@@ -349,7 +324,7 @@ public class Bot {
             leftSpeed = -rightSpeed;
             timerStarted = false;
         }
-       // Send desired speeds to motors
+        // Send desired speeds to motors
         setPower(leftSpeed, rightSpeed);
 
         // Display it for the driver
@@ -361,6 +336,33 @@ public class Bot {
         opMode.telemetry.addData("on Target", onTarget);
 
         return onTarget;
+    }
+    /**
+     * Gets the pitch of the gyro in degrees
+     *
+     * @return pitch
+     */
+    public double getGyroPitch() {
+        // Update gyro
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        gravity = imu.getGravity();
+
+        double pitch = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.thirdAngle));
+        return pitch;
+    }
+
+        /**
+         * Perform one cycle of closed loop heading control.
+         *
+         * @param speed  Desired speed of turn.
+         * @param angle  Absolute Angle (in Degrees) relative to last gyro reset.
+         *               0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+         *               If a relative angle is required, add/subtract from current heading.
+         * @param PCoeff Proportional Gain coefficient
+         * @return onTarget
+         */
+    public boolean isTimerStarted() {
+        return timerStarted;
     }
 
     /**

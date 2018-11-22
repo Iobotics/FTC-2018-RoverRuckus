@@ -11,19 +11,17 @@ public class Autonomous2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
-        robot.setDropper(.50);
+        robot.setDropper(.2549);
         waitForStart();
-        //\robot.dropForPosition(3, -.7);
         // Moving
-        robot.driveStraight(4);
+        robot.driveStraight(10);
+        robot.gyroTurn(90);
+        robot.driveStraight(30);
         robot.gyroTurn(-45);
-        robot.driveStraight(27);
-        robot.gyroTurn(48);
-        robot.driveStraight(27, .7);
-        //robot.gyroTurn(-181);
+        robot.driveStraight(52);
         // clAIm
 
-        robot.setDropper(0);
+        robot.setDropper(.15);
         try {
             Thread.sleep(2000);
         }
@@ -57,8 +55,8 @@ public class Autonomous2 extends LinearOpMode {
         //robot.setIntakePower(0);
 
         // Parking
-        //robot.driveStraight(24);
-        //robot.gyroTurn(-223);
-        robot.driveStraight(-80);
+        for(int i=0; i<3; i++){
+            robot.driveStraight( -20);
+        }
     }
 }

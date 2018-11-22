@@ -65,7 +65,7 @@ public class Bot {
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
     private final static double P_TURN_COEFF = 0.02;   // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.0007;  // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.0003;  // Larger is more responsive, but also less stable
     private final static double F_MOTOR_COEFF = 0.145;   //Larger the lower the minimum motor power is
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
 
@@ -73,8 +73,8 @@ public class Bot {
     private final static double FLAT_PITCH = -1;    // Pitch when robot is flat on the balance stone
     private final static double BALANCE_PITCH = -8; // Pitch when robot is leaving the balance stone
 
-    private final static double AUTO_DRIVE_SPEED = 0.6;
-    private final static double AUTO_TURN_SPEED = 0.8;
+    private final static double AUTO_DRIVE_SPEED = 0.45;
+    private final static double AUTO_TURN_SPEED = 0.6;
     private final static double POWER_DAMPEN = .001;
     private final static double TIMEOUT = 2000;
 
@@ -245,7 +245,7 @@ public class Bot {
         ElapsedTime timePassed = new ElapsedTime();
         setLiftPower(power);
         try {
-            wait(1000*time);
+            Thread.sleep(time);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

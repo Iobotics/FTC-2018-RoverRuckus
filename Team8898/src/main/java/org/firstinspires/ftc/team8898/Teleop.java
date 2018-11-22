@@ -16,16 +16,16 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode(){
         robot.init(hardwareMap);
-        robot.setDropper(0);
+        //robot.setDropper(0);
 
 
         waitForStart();
         while(opModeIsActive()) {
             robot.setPower(gamepad1.left_stick_y, gamepad1.right_stick_y);
-            if (gamepad1.a) {
+            if (gamepad1.b) {
                 robot.setLiftPower(.7);
             }
-            else if (gamepad1.b){
+            else if (gamepad1.a){
                 robot.setLiftPower(-.7);
             }
             else {
