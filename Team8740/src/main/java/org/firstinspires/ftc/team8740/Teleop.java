@@ -25,40 +25,12 @@ public class Teleop extends LinearOpMode {
     double leftPower;
     double rightPower;
 
-    public class HookLowerRunnable implements Runnable {
-        @Override
-        public void run() {
-            robot.hookLower();
-        }
-    }
-
-    public Thread hookLowerThread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-        }
-    });
-
-    public class HookRaiseRunnable implements Runnable {
-        @Override
-        public void run() {
-            robot.hookRaiseTeleOp();
-        }
-    }
-
-    public Thread hookRaiseThread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-
-        }
-    });
     public void runOpMode(){
         robot.init(hardwareMap, true); //initiate robot hardware
         telemetry.addLine("Op Mode is TELEOP"); //Visualize op mode
         telemetry.addLine("Ready For Start");
         telemetry.update(); //send to driver station
         waitForStart();
-        hookLowerThread.start();
-        hookRaiseThread.start();
         while (opModeIsActive()) {
             //if (!gamepad1.a) {
 
@@ -95,8 +67,8 @@ public class Teleop extends LinearOpMode {
                 }
 
                 //Intake Servo (COMP)
-                if (gamepad1.y && gamepad1.dpad_up) robot.intakeServo.setPosition(0);
-                if (gamepad1.y && gamepad1.dpad_down) robot.intakeServo.setPosition(0.5);
+                if (gamepad1.y && gamepad1.dpad_up) robot.intakeServo.setPosition(1);
+                if (gamepad1.y && gamepad1.dpad_down) robot.intakeServo.setPosition(0);
 
                 //Individually spin motors
                 if (gamepad1.right_stick_button && gamepad1.dpad_up) {
