@@ -18,14 +18,16 @@ public class Automini extends LinearOpMode {
         waitForStart();
         robot.setLiftPower(1);
         robot.setPower(-0.10, -10);
-        robot.sleep(4600);
+        robot.sleep(4200);
         robot.setLiftPower(0);
         robot.gyroTurn(0);
         robot.driveStraight(-17);
         robot.gyroTurn(-90);
-        robot.driveStraight(42);
+        robot.driveStraight(29);
+        robot.gyroTurn(-180);
+        robot.driveStraight(18);
         robot.gyroTurn(135);
-        robot.driveStraight(-45);
+        robot.driveStraight(35);
         robot.setServo(0);
         robot.sleep(500);
     }
