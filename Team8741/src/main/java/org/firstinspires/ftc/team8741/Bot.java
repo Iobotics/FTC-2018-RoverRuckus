@@ -56,7 +56,7 @@ public class Bot {
     final static int WHEEL_DIAMETER = 6; //Inches
 
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
-    final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
+    final static int DRIVE_THRESHOLD = (int) (0.5 / INCHES_PER_TICK);
 
     private final static double HEADING_THRESHOLD = 2.1;
 
@@ -66,7 +66,7 @@ public class Bot {
 
     private final static double P_TURN_COEFF = 0.050;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.00060 ;  // Larger is more responsive, but also less stable
-    private final static double F_MOTOR_COEFF = 0.11;   //Minimum amount of power given to motor from control loop
+    private final static double F_MOTOR_COEFF = 0.09;   //Minimum amount of power given to motor from control loop
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
 
     private final static double AUTO_DRIVE_SPEED = 0.6;
@@ -82,8 +82,6 @@ public class Bot {
     private DcMotor liftArm = null;
     private ColorSensor colorSensor = null;
     private Servo servo = null;
-    private DcMotor leftIntake = null;
-    private DcMotor rightIntake = null;
 
     private LinearOpMode opMode = null;
 
@@ -109,9 +107,6 @@ public class Bot {
         liftArm = hwMap.get(DcMotor.class, "lift");
         //colorSensor = hwMap.get (ColorSensor.class, "sensor_color");
         servo = hwMap.get (Servo.class, "servo");
-        leftIntake = hwMap.get(DcMotor.class,"leftIntake");
-        rightIntake = hwMap.get(DcMotor.class,"rightIntake");
-
 
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -127,7 +122,7 @@ public class Bot {
         setRightDirection(DcMotor.Direction.REVERSE);
         setBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        //leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         _leftOffset = leftDrive.getCurrentPosition();
         _rightOffset = rightDrive.getCurrentPosition();
@@ -354,11 +349,11 @@ public class Bot {
         /**
          * Perform one cycle of closed loop heading control.
          *
-         * @param speed  Desired speed of turn.
-         * @param angle  Absolute Angle (in Degrees) relative to last gyro reset.
+         * speed  Desired speed of turn.
+         * angle  Absolute Angle (in Degrees) relative to last gyro reset.
          *               0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
          *               If a relative angle is required, add/subtract from current heading.
-         * @param PCoeff Proportional Gain coefficient
+         * PCoeff Proportional Gain coefficient
          * @return onTarget
          */
     public boolean isTimerStarted() {
