@@ -65,15 +65,10 @@ public class Teleop extends LinearOpMode {
             if(gamepad1.a)
             {
                 robot.setPowerDropper(1);
-                //robot.gyroTurn(90);
-                //robot.gyroTurn(180);
             }
             if(gamepad1.x)
             {
                 robot.setPowerDropper(-1);
-                //robot.gyroTurn(45);
-                //robot.encoderDrive(-5, 1);
-                //robot.gyroTurn(90);
             }
             else
             {
@@ -101,8 +96,8 @@ public class Teleop extends LinearOpMode {
             //telemetry.addData("power", power);
             telemetry.addData("is pressed", robot.isPressed());
             telemetry.addData("lift distance", robot.getliftPos());
-            telemetry.addData("left distance", robot.getLeft());
-            telemetry.addData("right distance", robot.getRight());
+            //telemetry.addData("left distance", robot.getLeft());
+            //telemetry.addData("right distance", robot.getRight());
             telemetry.addData("angle", robot.getGyroHeading());
             //telemetry.addData("", robot.getRed());
             telemetry.update();

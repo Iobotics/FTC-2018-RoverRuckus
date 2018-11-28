@@ -45,6 +45,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 public class Bot {
 
@@ -95,6 +97,38 @@ public class Bot {
 
     private ElapsedTime time = new ElapsedTime();
     private boolean timerStarted = false;
+
+    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
+    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
+    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
+
+    /*
+     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
+     * web site at https://developer.vuforia.com/license-manager.
+     *
+     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
+     * random data. As an example, here is a example of a fragment of a valid key:
+     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+     * Once you've obtained a license key, copy the string from the Vuforia web site
+     * and paste it in to your code on the next line, between the double quotes.
+     */
+    private static final String VUFORIA_KEY = "ATClfsj/////AAAAGatavarNS0Ylq023fWG1Jgh553vtJDAOos2tGaHmeax7mcLW+BKC1TW84Spw4Y0oriANTicNCtnBfPQMDLWgayG7lHY/BE+IM5O7IB6177cNPk1uXN9CuSuq2mBkQh7cScuDbOOYraxGjL6xYWYrxNwlPYsk3+fR8d/pcgHr0xw8uezm0kgeiTHEbv4ww6XEg6oKFre1LwMlyjo1cFBP2nL3IdTEGczeT08wXC3mMbVfH8NQL6f8P4/Z8baRRgbQUDs4d5WgKSgMT0RW3JgghWwQdih06VKl+x6OhEd2T0bYNIQ7Ljhg03Nvya9DysJ+qVzbcTIyM/u6IUIoXdEqqRYNQpO/q/sg6XnZZRBrri1j";
+
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+    private VuforiaLocalizer vuforia;
+/*
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
+     * Detection engine.
+     */
+    //private TFObjectDetector tfod;
+    //String VUFORIA_KEY = "ATClfsj/////AAAAGatavarNS0Ylq023fWG1Jgh553vtJDAOos2tGaHmeax7mcLW+BKC1TW84Spw4Y0oriANTicNCtnBfPQMDLWgayG7lHY/BE+IM5O7IB6177cNPk1uXN9CuSuq2mBkQh7cScuDbOOYraxGjL6xYWYrxNwlPYsk3+fR8d/pcgHr0xw8uezm0kgeiTHEbv4ww6XEg6oKFre1LwMlyjo1cFBP2nL3IdTEGczeT08wXC3mMbVfH8NQL6f8P4/Z8baRRgbQUDs4d5WgKSgMT0RW3JgghWwQdih06VKl+x6OhEd2T0bYNIQ7Ljhg03Nvya9DysJ+qVzbcTIyM/u6IUIoXdEqqRYNQpO/q/sg6XnZZRBrri1j";
+
 
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
 
