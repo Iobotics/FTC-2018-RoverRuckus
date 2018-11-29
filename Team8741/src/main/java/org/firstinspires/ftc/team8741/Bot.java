@@ -66,10 +66,10 @@ public class Bot {
 
     private final static double P_TURN_COEFF = 0.050;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.00060 ;  // Larger is more responsive, but also less stable
-    private final static double F_MOTOR_COEFF = 0.09;   //Minimum amount of power given to motor from control loop
+    private final static double F_MOTOR_COEFF = 0.07;   //Minimum amount of power given to motor from control loop
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
 
-    private final static double AUTO_DRIVE_SPEED = 0.6;
+    private final static double AUTO_DRIVE_SPEED = 0.7;
     private final static double AUTO_TURN_SPEED = 0.6;
     private final static double POWER_DAMPEN = .001;
     private final static double TIMEOUT = 5000;
@@ -202,9 +202,9 @@ public class Bot {
         while (opmode.opModeIsActive() && Math.abs(rightDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
             error = target - rightDrive.getCurrentPosition();
             if (error * pCoeff < 0) {
-                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
+                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -maxSpeed, 0);
             } else {
-                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, 1) ;
+                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, maxSpeed) ;
             }
 
             if (Math.abs(getGyroHeading() - startHeading) > 1){
