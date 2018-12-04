@@ -48,6 +48,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+
+
+import android.hardware.Camera;
+
 //Disabled
 public class Bot {
 
@@ -91,6 +95,7 @@ public class Bot {
 
     private ColorSensor color = null;
     private DistanceSensor distanceSensor = null;
+    private Camera camera = null;
 
     private LinearOpMode opMode = null;
 
@@ -122,6 +127,8 @@ public class Bot {
         color = hwMap.get(ColorSensor.class, "color");
 
         distanceSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
+
+        camera = hwMap.get(Camera.class, "camera");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -312,6 +319,8 @@ public class Bot {
             opMode.telemetry.update();
         }
     }
+
+
 
     /**
      * Gets the pitch of the gyro in degrees
