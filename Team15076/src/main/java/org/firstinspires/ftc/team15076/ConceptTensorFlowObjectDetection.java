@@ -68,24 +68,28 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      * Once you've obtained a license key, copy the string from the Vuforia web site
      * and paste it in to your code on the next line, between the double quotes.
      */
-    private static final String VUFORIA_KEY = "ATClfsj/////AAAAGatavarNS0Ylq023fWG1Jgh553vtJDAOos2tGaHmeax7mcLW+BKC1TW84Spw4Y0oriANTicNCtnBfPQMDLWgayG7lHY/BE+IM5O7IB6177cNPk1uXN9CuSuq2mBkQh7cScuDbOOYraxGjL6xYWYrxNwlPYsk3+fR8d/pcgHr0xw8uezm0kgeiTHEbv4ww6XEg6oKFre1LwMlyjo1cFBP2nL3IdTEGczeT08wXC3mMbVfH8NQL6f8P4/Z8baRRgbQUDs4d5WgKSgMT0RW3JgghWwQdih06VKl+x6OhEd2T0bYNIQ7Ljhg03Nvya9DysJ+qVzbcTIyM/u6IUIoXdEqqRYNQpO/q/sg6XnZZRBrri1j";
-
+    private static final String VUFORIA_KEY = "AQj0pPH/////AAABmSrjBOi8mEYyq+f3D1eTfiBjSvauR9qamlC6RNhe4G2EpxiWBjQvXgldcaF1LMgyat0nDF7I66sGqhLbUTIULS1lbm+eEm0ogP0gNxEzXZJlCi0AjX+fUA2k2eYKBsG+Fil8g79yBcVMcXLIaUL3WCOG6ztSm8KhrSrdaDILJhD9eqn0NPHc3Bf2HDUTEaFObd7ui/McbzHln9ebXQa4uQAm9vbr579u+35OV5XA1vMRuRb7gY0slmpXHr5us09jrdcDbIyYOPN72ITyEnfE5SSZ7D9huGvaRhUTqfX+fZVgTUAhe5RoRPR/UY1JYjWhuyUHraS5oQ51D7CXTpeahiWtOhcX79kKcZ1Pz5PUyUZJ";
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
     private VuforiaLocalizer vuforia;
 
-    /**
+    /*/**
      * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
      * Detection engine.
      */
     private TFObjectDetector tfod;
 
+    private TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters();
+
     @Override
     public void runOpMode() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
+
+        //tfodParameters.useObjectTracker = false;
+
         initVuforia();
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -162,6 +166,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
+
     }
 
     /**
@@ -173,5 +178,6 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+
     }
 }
