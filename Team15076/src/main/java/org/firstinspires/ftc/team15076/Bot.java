@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -50,8 +51,12 @@ public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
     final static int WHEEL_DIAMETER = 4;
+    final static int WINCH_DIAMETER  = 1;
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
+    final static double WINCH_INCH_PER_TICK = (WINCH_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
     final static double F_LIFT_COEFF = 0; //Against Gravity
+    final static double F_WINCH_COEFF = 0;
+    final static double WINCH_THRESHOLD = 1;
     final static int LIFT_THRESHOLD = 1;
 
     double _leftOffset;
@@ -62,14 +67,13 @@ public class Bot {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     public DcMotor winch = null;
-    //public DcMotor intake = null;
+    public DcMotor intake = null;
     public DcMotor leftLift = null;
     public DcMotor rightLift = null;
     //public NormalizedColorSensor colorSensor = null;
     //public ColorSensor colorSensor = null;
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
-    //private Servo intakeServo = null;
 
     private TouchSensor limitSwitch = null;
 
@@ -81,16 +85,17 @@ public class Bot {
     private final static double HEADING_THRESHOLD = 15; // As tight as we can make it with an integer gyro
     private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = .01;  // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.002;  // Larger is more responsive, but also less stable
+    private final static double P_TURN_COEFF = .004;  // Larger is more responsive, but also less stable (0.001 works but slow)
+    private final static double P_DRIVE_COEFF = 0.001;  // Larger is more responsive, but also less stable
     private final static double P_LIFT_COEFF = .01;
-    private final static double F_MOTOR_COEFF = .07; //.2 before starts at .1
-    final static double POWER_DAMPEN = .001;
+    private final static double F_MOTOR_COEFF = .09; //.2 before starts at .1
+    private final static double P_WINCH_COEFF = 0.009;
+    final static double POWER_DAMPEN = .005;
     static final double P_LANDER_COEFF = .0006;
     private final static double HOLD_TIME = .7;
     private final static double TIMEOUT = 5000;
 
-    private final static double AUTO_DRIVE_SPEED = 0.6;
+    private final static double AUTO_DRIVE_SPEED = 1;
     private final static double AUTO_TURN_SPEED = 1;
 
     private ElapsedTime time = new ElapsedTime();
@@ -109,19 +114,20 @@ public class Bot {
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
-        //dropperservo = hwMap.get(CRServo.class, "dropperServo");
-        //intakeServo = hwMap.get(Servo.class, "intakeServo");
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 //Lift Motor
         leftLift = hwMap.get(DcMotor.class, "leftLift");
         rightLift = hwMap.get(DcMotor.class, "rightLift");
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
         winch = hwMap.get(DcMotor.class, "winch");
-        //rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); TODO- Test
-        //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        //intake =hwMap.get(DcMotor.class, "Intake");
+        intake = hwMap.get(DcMotor.class, "Intake");
 
         //Color Sensor
         //colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
@@ -141,7 +147,6 @@ public class Bot {
 
         //Drive Config
 
-        //intake.setDirection(DcMotorSimple.Direction.REVERSE);
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
         //rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -156,8 +161,8 @@ public class Bot {
     public void setPower(double left, double right) {
         leftBackDrive.setPower(left);
         leftFrontDrive.setPower(left);
-        rightBackDrive.setPower(-right);
-        rightFrontDrive.setPower(-right);
+        rightBackDrive.setPower(right);
+        rightFrontDrive.setPower(right);
         /*
         opMode.telemetry.addData("leftBackDrive", leftBackDrive.getCurrentPosition());
         opMode.telemetry.addData("leftFrontDrive", leftFrontDrive.getCurrentPosition());
@@ -468,10 +473,40 @@ public class Bot {
 
     }
 
-    public void winchPower(double power)//do this
+    public void winchPower(double speed)//do this
     {
-       winch.setPower(power);//also do this to make variable
+       winch.setPower(speed);//also do this to make variable
     }
+
+    public void winchPos(int inches){winchPos(inches, 1);}
+
+    public void winchPos(int inches, double maxSpeed)
+        {
+            double speed = 0;
+            int error;
+            //sets the target encoder value
+            int target = winch.getCurrentPosition() + (int) (inches / WINCH_INCH_PER_TICK);
+            //sets current gyro value
+            double startHeading = getGyroHeading();
+            // While the absolute value of the error is greater than the error threshold
+            //adds the f value if positive or subtracts if negative
+            while (opMode.opModeIsActive() && Math.abs(winch.getCurrentPosition() - target) >= WINCH_THRESHOLD) {
+                error = target - winch.getCurrentPosition();
+                if (error * P_WINCH_COEFF < 0) {
+                speed = Range.clip((error * P_WINCH_COEFF) - F_WINCH_COEFF, -1, 0);
+                } else {
+                speed = Range.clip((error * P_WINCH_COEFF) + F_WINCH_COEFF, 0, 1);
+                }
+                winchPower(speed);
+
+                opMode.telemetry.addData("Winch Error", error);
+                opMode.telemetry.addData("Winch Power", winch.getPower());
+                opMode.telemetry.update();
+
+            }
+
+
+        }
 
 
     public int getliftPos()
@@ -482,6 +517,36 @@ public class Bot {
     public boolean isPressed()
     {
         return limitSwitch.isPressed();
+    }
+
+    public void setLeftLift(double angle){
+
+    }
+
+    public double getLeftBackPower(){
+        return leftBackDrive.getPower();
+    }
+
+    public double getLeftFrontPower(){
+        return leftFrontDrive.getPower();
+    }
+
+    public double getRightBackPower(){
+        return rightBackDrive.getPower();
+    }
+
+    public double getRightFrontPower(){
+        return rightFrontDrive.getPower();
+    }
+
+    public int getWinchPos()
+    {
+        return (int) (winch.getCurrentPosition() * WINCH_INCH_PER_TICK);
+    }
+
+    public void intakePower(double speed)
+    {
+        intake.setPower(speed);
     }
 
 /*

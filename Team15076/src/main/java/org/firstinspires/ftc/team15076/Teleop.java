@@ -11,9 +11,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
 
-    double power = 0;
-
     public void runOpMode(){
+        int i = 0;
         robot.init(hardwareMap); //initiate robot hardware
 
         telemetry.log().add("Op Mode is TELEOP"); //Visualize op mode
@@ -23,68 +22,31 @@ public class Teleop extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             robot.setPower(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
-            if(gamepad1.right_bumper)
+            if(gamepad1.right_trigger >= 0.25)
+            {
+                robot.intakePower(-1);
+            }
+            else if(gamepad1.left_trigger>=0.25)
             {
                 robot.liftPower(1);
             }
-            else if(gamepad1.right_trigger>=0.25)
-            {
-                robot.liftPower(-1);
-            }
             else
             {
+                robot.intakePower(0);
                 robot.liftStop();
             }
 
-            if(gamepad1.y)//button y
-            {
-                robot.liftPos(29,1);
+            if(gamepad1.x){
+                robot.liftPos(-30, 1);
             }
-            else if(gamepad1.b)//button b
-            {
-                 robot.liftPos(0,1);
+            if(gamepad1.y && robot.getliftPos() != 0){
+                robot.liftPos(30, 1);
             }
-            else
-            {
-                //robot.liftStop();
-            }
-
-           /* if(gamepad1.left_bumper)
-            {
-                robot.setPowerIntake(1);
-            }
-            else if (gamepad1.left_trigger>=.25)
-            {
-                robot.setPowerIntake(-1);
-            }
-            else
-            {
-                robot.setPowerIntake(0);
-            }
-
-            if(gamepad1.a)
-            {
-                robot.setPowerDropper(1);
-                //robot.gyroTurn(90);
-                //robot.gyroTurn(180);
-            }
-            if(gamepad1.x)
-            {
-                robot.setPowerDropper(-1);
-                //robot.gyroTurn(45);
-                //robot.encoderDrive(-5, 1);
-                //robot.gyroTurn(90);
-            }
-            else
-            {
-                robot.setPowerDropper(0);
-            }*/
-
-           if(gamepad1.dpad_up)
+           if(gamepad1.dpad_up )
            {
                robot.winchPower(1);
            }
-           if(gamepad1.dpad_down)
+           else if(gamepad1.dpad_down )
            {
                robot.winchPower(-1);
            }
@@ -92,6 +54,17 @@ public class Teleop extends LinearOpMode {
            {
                robot.winchPower(0);
            }
+
+           if(gamepad1.right_bumper)
+           {
+               robot.intakePower(0.75);
+           }
+           else if (gamepad1.left_bumper)
+           {
+               robot.liftPower(-1);
+           }
+
+
 
 
 
@@ -104,6 +77,13 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("left distance", robot.getLeft());
             telemetry.addData("right distance", robot.getRight());
             telemetry.addData("angle", robot.getGyroHeading());
+            telemetry.addData("Back Left Motor Power", robot.getLeftBackPower());
+            telemetry.addData("Back Right Motor Power", robot.getRightBackPower());
+            telemetry.addData("Front Left Motor Power", robot.getLeftFrontPower());
+            telemetry.addData("Front Right Motor Power", robot.getRightFrontPower());
+            telemetry.addData("Left Bumper: ", gamepad1.left_bumper);
+            telemetry.addData("Right Bumper: ", gamepad1.right_bumper);
+            telemetry.addData("Arm Position", robot.getWinchPos());
             //telemetry.addData("", robot.getRed());
             telemetry.update();
         }

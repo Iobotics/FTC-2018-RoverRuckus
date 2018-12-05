@@ -22,7 +22,7 @@ public class AutonomousNearDepotColor extends LinearOpMode{
         robot.liftTime(450, 1);
         robot.encoderDrive(-2, 1);
         robot.liftTime(450, -1);
-        robot.gyroTurn(90);
+        robot.gyroTurn(1,90);
         /*if(robot.isBlock())//if 1st block
         {
             robot.gyroTurn(180);//hit and turn around
@@ -47,7 +47,7 @@ public class AutonomousNearDepotColor extends LinearOpMode{
         sleep(0); //Change if needed
         robot.encoderDrive(-49, 1);
         //robot.markerdrop();  //reid is badd
-        robot.gyroTurn(-60);
+        robot.gyroTurn(1,-60);
         robot.driveLander(20);
 
     }

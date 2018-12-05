@@ -25,10 +25,10 @@ public class AutonomousColor extends LinearOpMode {
         robot.liftTime(450, 1);
         robot.encoderDrive(3 ,1);
         robot.liftTime(450, -1);
-        robot.gyroTurn(-90); //TODO fix
+        robot.gyroTurn(1,-90); //TODO fix
         sleep(0); //Change if needed
         robot.encoderDrive(7,1);
-        robot.gyroTurn(-90);
+        robot.gyroTurn(1,-90);
         /*if(robot.isBlock())//if 1st block
         {
             robot.gyroTurn(180);//hit and turn around
@@ -50,10 +50,10 @@ public class AutonomousColor extends LinearOpMode {
             }
         }
         */
-        robot.gyroTurn(-80);
+        robot.gyroTurn(1,-80);
         robot.encoderDrive(-40, 1);
         //robot.markerdrop();
-        robot.gyroTurn(60);
+        robot.gyroTurn(1,60);
         robot.driveLander(18);
 
 
