@@ -2,9 +2,9 @@ package org.firstinspires.ftc.team15076;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoDrop", group = "Bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoTestWinch", group = "Bot")
 //@Disabled
-public class AutoTest extends LinearOpMode {
+public class WinchTest extends LinearOpMode {
 
     public Bot robot = new Bot(this);
 
@@ -17,8 +17,10 @@ public class AutoTest extends LinearOpMode {
         robot.init(hardwareMap);
 
         waitForStart();
-        robot.liftPos(-30);
-
+        robot.winchPos(1, 0.5);
     }
+
+
+
 
 }

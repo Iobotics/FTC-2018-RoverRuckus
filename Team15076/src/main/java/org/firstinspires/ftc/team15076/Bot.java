@@ -43,13 +43,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -61,28 +58,28 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-<<<<<<< HEAD
-import java.util.concurrent.TimeUnit;
-
-import static java.lang.System.currentTimeMillis;
-
 
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.currentTimeMillis;
 
-=======
+
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.System.currentTimeMillis;
 import java.util.List;
->>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
+
 
 public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
-    final static int WHEEL_DIAMETER = 4; //Inches
+    final static int WHEEL_DIAMETER = 4;
+    final static int WINCH_DIAMETER = 1;
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
-
-<<<<<<< Updated upstream
+    final static double WINCH_INCH_PER_TICK = (WINCH_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
     final static double F_LIFT_COEFF = 0; //Against Gravity
+    final static double F_WINCH_COEFF = 0;
+    final static double WINCH_THRESHOLD = 1;
     final static int LIFT_THRESHOLD = 1;
 
     double _leftOffset;
@@ -100,42 +97,15 @@ public class Bot {
     //public ColorSensor colorSensor = null;
 
 
-
     //public DcMotor intake = null;
-
 
 
     //public NormalizedColorSensor colorSensor = null;
     //public NormalizedColorSensor intakeColor = null;
-
-
-=======
-    int _leftOffset;
-    int _rightOffset;
-
-    public DcMotor leftBackDrive = null;
-    public DcMotor leftFrontDrive = null;
-    public DcMotor rightFrontDrive = null;
-    public DcMotor rightBackDrive = null;
-    public DcMotor extend = null;
-    public DcMotor intake = null;
-    public DcMotor leftLift = null;
-    public DcMotor rightLift = null;
-
-    //public DcMotor intake = null;
-
-
-
-    //public NormalizedColorSensor colorSensor = null;
-    //public NormalizedColorSensor intakeColor = null;
-
-    public Servo intakeServo = null;
->>>>>>> Stashed changes
 
 
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
-    //private Servo intakeServo = null;
 
     private TouchSensor limitSwitch = null;
 
@@ -146,28 +116,30 @@ public class Bot {
 
     private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = 0.0517;   // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.0002;  // Larger is more responsive, but also less stable
-    private final static double F_MOTOR_COEFF = 0.11;   //Minimum amount of power given to motor from control loop
+    private final static double P_TURN_COEFF = .004;  // Larger is more responsive, but also less stable (0.001 works but slow)
+    private final static double P_DRIVE_COEFF = 0.001;  // Larger is more responsive, but also less stable
+    private final static double P_LIFT_COEFF = .01;
+    private final static double F_MOTOR_COEFF = .09; //.2 before starts at .1
+    private final static double P_WINCH_COEFF = 0.009;
+    final static double POWER_DAMPEN = .005;
+    static final double P_LANDER_COEFF = .0006;
+    private final static double HOLD_TIME = .7;
+    private final static double TIMEOUT = 5000;
 
-    private final static double AUTO_DRIVE_SPEED = 0.6;
-    private final static double AUTO_TURN_SPEED = 0.6;
-    private final static double POWER_DAMPEN = .1;
-<<<<<<< Updated upstream
+    private final static double AUTO_DRIVE_SPEED = 1;
+    private final static double AUTO_TURN_SPEED = 1;
 
-<<<<<<< HEAD
+
     private ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-=======
-    private ElapsedTime time = new ElapsedTime();
     private boolean timerStarted = false;
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
->>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
+
 
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
-    private static  final int timeTill = 0;
+    private static final int timeTill = 0;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -194,18 +166,11 @@ public class Bot {
      */
     private TFObjectDetector tfod;
 
-<<<<<<< HEAD
-=======
 
-    private ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
->>>>>>> Stashed changes
-=======
     private TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters();
->>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
 
 
-    public enum Sampling
-    {
+    public enum Sampling {
         LEFT,
         CENTER,
         RIGHT
@@ -222,65 +187,27 @@ public class Bot {
         this.opMode = opMode;
     }
 
-    public void init(HardwareMap ahwMap, boolean teleop) {
+    public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
         //Drive Motors
         leftBackDrive = hwMap.get(DcMotor.class, "backLeft");
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
-<<<<<<< HEAD
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-<<<<<<< Updated upstream
-        //dropperservo = hwMap.get(CRServo.class, "dropperServo");
-        //intakeServo = hwMap.get(Servo.class, "intakeServo");
-=======
->>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
 
 //Lift Motor
         leftLift = hwMap.get(DcMotor.class, "leftLift");
         rightLift = hwMap.get(DcMotor.class, "rightLift");
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
         winch = hwMap.get(DcMotor.class, "winch");
-
-<<<<<<< HEAD
-        //intake =hwMap.get(DcMotor.class, "Intake");
-
-
-
-
-        //Lift Motor
-        leftLift = hwMap.get(DcMotor.class, "leftLift");
-        rightLift = hwMap.get(DcMotor.class, "rightLift");
+        winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
         rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //Intake Motor
-        intake = hwMap.get(DcMotor.class, "intake");
-
-
-=======
-        //intake =hwMap.get(DcMotor.class, "intake");
->>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
-
-        limitSwitch = hwMap.get(TouchSensor.class, "limitSwitch");
-=======
-        //Servos (Expected)
-        intakeServo = hwMap.get(Servo.class, "intakeAct");
-
-        //Lift Motor
-        leftLift = hwMap.get(DcMotor.class, "leftLift");
-        rightLift = hwMap.get(DcMotor.class, "rightLift");
-        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //Intake Motor
-        extend = hwMap.get(DcMotor.class, "arm");
-        intake = hwMap.get(DcMotor.class, "intake");
-
->>>>>>> Stashed changes
+        intake = hwMap.get(DcMotor.class, "Intake");
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -292,42 +219,6 @@ public class Bot {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
-        //Drive Config
-<<<<<<< Updated upstream
-
-
-        //intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftPower(0);
-
-        _leftOffset = getLeft();
-        _rightOffset = getRight();
-
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
-        if (teleop) {
-            leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-            leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-            rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        } else {
-            leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-            leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-            rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-            rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        }
-        Looper.prepare();
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
-=======
-
->>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
     }
 
     /**
@@ -350,25 +241,14 @@ public class Bot {
      */
     public void stopDrive() {
         setPower(0, 0, 0, 0);
-<<<<<<< Updated upstream
 
     }
-=======
->>>>>>> Stashed changes
 
     /**
      * Moves arm w/ intake based on input
      */
-    public void setExtPower(double extendPower){
+    public void setExtPower(double extendPower) {
         winch.setPower(extendPower);
-    }
-
-
-    /**
-     * Moves arm w/ intake based on input
-     */
-    public void setExtPower(double extendPower){
-        extend.setPower(extendPower);
     }
 
 
@@ -388,7 +268,7 @@ public class Bot {
     /**
      * Moves the lift on up and down based on input
      */
-    public void setLiftPower(double liftPower){
+    public void setLiftPower(double liftPower) {
         rightLift.setPower(liftPower);
         leftLift.setPower(liftPower);
     }
@@ -396,20 +276,10 @@ public class Bot {
     /**
      * Moves intake to in or out
      */
-    public void setInPower(double inPower){
+    public void setInPower(double inPower) {
         intake.setPower(inPower);
     }
 
-<<<<<<< Updated upstream
-
-=======
-    /**
-     * Sets servo position of intake servo
-     */
-    public void setServo(double servoPos){
-        intakeServo.setPosition(servoPos);
-    }
->>>>>>> Stashed changes
 
     /**
      * Update phone telemtery every second without interrupting loop.
@@ -594,20 +464,7 @@ public class Bot {
         return time;
     }
 
-<<<<<<< HEAD
     public void encoderDrive(double inches, double maxSpeed) {
-=======
-    public void encoderDrive(int inches)
-    {
-        encoderDrive(inches, 1);
-    }
-
-    public void encoderDrive(int inches, double maxSpeed)
-    {
-        encoderDrive(opMode, inches, maxSpeed, P_DRIVE_COEFF);
-    }
->>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
-
         double speed;
         int error;
         //sets the target encoder value
@@ -622,30 +479,23 @@ public class Bot {
             opMode.telemetry.addData("speed: ", speed);
             opMode.telemetry.update();
         }
-<<<<<<< Updated upstream
         this.stopDrive();
     }
 
-    public double getLeft()
-    {
-        return (leftFrontDrive.getCurrentPosition()-_leftOffset)*INCHES_PER_TICK;
+    public double getLeft() {
+        return (leftFrontDrive.getCurrentPosition() - _leftOffset) * INCHES_PER_TICK;
     }
 
-    public double getRight()
-    {
-        return -(rightFrontDrive.getCurrentPosition()-_rightOffset)*INCHES_PER_TICK;
+    public double getRight() {
+        return -(rightFrontDrive.getCurrentPosition() - _rightOffset) * INCHES_PER_TICK;
     }
 
-    public void liftPower(double speed)
-    {
+    public void liftPower(double speed) {
         rightLift.setPower(speed);
         leftLift.setPower(speed);
 
         stopDrive();
 
-=======
-        stopDrive();
->>>>>>> Stashed changes
     }
 
     public Thread getThreadByName(String threadName) {
@@ -655,15 +505,13 @@ public class Bot {
         return null;
     }
 
-<<<<<<< Updated upstream
 
     public void liftStop() {
         rightLift.setPower(0);
         leftLift.setPower(0);
     }
 
-    public void liftPos(int inches)
-    {
+    public void liftPos(int inches) {
         liftPos(inches, 1);
     }
 
@@ -673,21 +521,83 @@ public class Bot {
         int error;
         //sets the target encoder value
         int target = leftLift.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
-
-
-
-    public void winchPower(double power)//do this
-    {
-       winch.setPower(power);//also do this to make variable
     }
 
 
-
-
-    public Sampling sample()
+    public void winchPower(double speed)//do this
     {
+        winch.setPower(speed);//also do this to make variable
+    }
 
-        initVuforia();
+    public void winchPos(int inches) {
+        winchPos(inches, 1);
+    }
+
+    public void winchPos(int inches, double maxSpeed) {
+        double speed = 0;
+        int error;
+        //sets the target encoder value
+        int target = winch.getCurrentPosition() + (int) (inches / WINCH_INCH_PER_TICK);
+        //sets current gyro value
+        double startHeading = getGyroHeading();
+        // While the absolute value of the error is greater than the error threshold
+        //adds the f value if positive or subtracts if negative
+        while (opMode.opModeIsActive() && Math.abs(winch.getCurrentPosition() - target) >= WINCH_THRESHOLD) {
+            error = target - winch.getCurrentPosition();
+            if (error * P_WINCH_COEFF < 0) {
+                speed = Range.clip((error * P_WINCH_COEFF) - F_WINCH_COEFF, -1, 0);
+            } else {
+                speed = Range.clip((error * P_WINCH_COEFF) + F_WINCH_COEFF, 0, 1);
+            }
+            winchPower(speed);
+
+            opMode.telemetry.addData("Winch Error", error);
+            opMode.telemetry.addData("Winch Power", winch.getPower());
+            opMode.telemetry.update();
+
+        }
+
+
+    }
+
+
+    public void setLeftLift(double angle) {
+
+    }
+
+    public double getLeftBackPower() {
+        return leftBackDrive.getPower();
+    }
+
+    public double getLeftFrontPower() {
+        return leftFrontDrive.getPower();
+    }
+
+    public double getRightBackPower() {
+        return rightBackDrive.getPower();
+    }
+
+    public double getRightFrontPower() {
+        return rightFrontDrive.getPower();
+    }
+
+    public int getWinchPos() {
+        return (int) (winch.getCurrentPosition() * WINCH_INCH_PER_TICK);
+    }
+
+    public void intakePower(double speed) {
+        intake.setPower(speed);
+    }
+
+/*
+    public void markerdrop() {
+        this.setPowerDropper(1);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {}
+        dropperservo.setPower(0);
+    }
+>>>>>>> merge
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
@@ -695,63 +605,8 @@ public class Bot {
             opMode.telemetry.addData("Sorry!", "This device is not compatible with TFOD");
         }
 
-        /** Wait for the game to begin */
-        opMode.telemetry.addData(">", "Press Play to start tracking");
-        opMode.telemetry.update();
-        opMode.waitForStart();
+*/
 
-        if (opMode.opModeIsActive()) {
-            /** Activate Tensor Flow Object Detection. */
-            if (tfod != null) {
-                tfod.activate();
-            }
-
-            double timeOffset = time.time();
-            while (time.time() - timeOffset <= 3000) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        opMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
-                        if (updatedRecognitions.size() == 3) {
-                            int goldMineralX = -1;
-                            int silverMineral1X = -1;
-                            int silverMineral2X = -1;
-                            for (Recognition recognition : updatedRecognitions) {
-                                if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                    goldMineralX = (int) recognition.getLeft();
-                                } else if (silverMineral1X == -1) {
-                                    silverMineral1X = (int) recognition.getLeft();
-                                } else {
-                                    silverMineral2X = (int) recognition.getLeft();
-                                }
-                            }
-                            if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                                if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                                    opMode.telemetry.addData("Gold Mineral Position", "Left");
-                                    return Sampling.LEFT;
-                                } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                                    opMode.telemetry.addData("Gold Mineral Position", "Right");
-                                    return Sampling.RIGHT;
-                                } else {
-                                    opMode.telemetry.addData("Gold Mineral Position", "Center");
-                                    return Sampling.CENTER;
-                                }
-                            }
-                        }
-                        opMode.telemetry.update();
-                    }
-                }
-            }
-        }
-
-        if (tfod != null) {
-            tfod.shutdown();
-        }
-
-        return Sampling.CENTER;
-    }
 
     /**
      * Initialize the Vuforia localization engine.
@@ -783,62 +638,11 @@ public class Bot {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
 
     }
-<<<<<<< HEAD
-*/
+
     /*private void setIntakeArm(int position)
     {
         intakeServo.setPosition(position);
     }*/
-}
-
-        this.stopDrive();
-    }
-}
-
-=======
-    public void driveStraight(double inches) {
-        driveStraight(opMode, inches, AUTO_DRIVE_SPEED, P_DRIVE_COEFF);
-    }
-
-    /**
-     * Method for driving straight
-     *
-     * @param inches Inches
-     */
-
-    public void driveStraight(LinearOpMode opmode, double inches, double maxSpeed, double pCoeff) {
-        double speed = 0;
-        int error;
-        //sets the target encoder value
-        int target = leftFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
-        //sets current gyro value
-        double startHeading = getGyroHeading();
-        // While the absolute value of the error is greater than the error threshold
-        //adds the f value if positive or subtracts if negative
-        while (opmode.opModeIsActive() && Math.abs(leftFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
-            error = target - leftFrontDrive.getCurrentPosition();
-            if (error * pCoeff < 0) {
-                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
-            } else {
-                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, 1);
-            }
-
-            if (false/*Math.abs(getGyroHeading() - startHeading) > 1*/) {
-                //setPower(speed, -(speed + POWER_DAMPEN * (getGyroHeading() - startHeading)), speed, -(speed + POWER_DAMPEN * (getGyroHeading() - startHeading)));
-            } else {
-                setPower(-speed, speed, -speed, speed);
-            }
-
-            opmode.telemetry.addData("Drive Error", error);
-            opmode.telemetry.addData("Drive Power", rightFrontDrive.getPower());
-            opMode.telemetry.update();
-        }
-        this.stopDrive();
-    }
-}
->>>>>>> Stashed changes
-=======
 
 
 }
->>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b

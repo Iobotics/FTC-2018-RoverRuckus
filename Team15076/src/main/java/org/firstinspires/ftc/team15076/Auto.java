@@ -14,19 +14,19 @@ public class Auto extends LinearOpMode {
         Auto For the Closest To the Crater
          */
 
-        robot.init(hardwareMap, false);
+        robot.init(hardwareMap);
 
         waitForStart();
         robot.setLiftPower(1);
         robot.setPower(-0.5, -0.5, -0.5, -0.5);
         robot.sleep(850);
         robot.setLiftPower(0);
-        robot.driveStraight(-10);
+        robot.encoderDrive(-10,1);
         robot.gyroTurn(-90);
-        robot.driveStraight(18);
+        robot.encoderDrive(18,1);
         robot.gyroTurn(330);
-        robot.driveStraight(24);
-        robot.driveStraight(-30);
+        robot.encoderDrive(24,1);
+        robot.encoderDrive(-30,1);
         robot.gyroTurn(180);
         robot.setExtPower(1);
         robot.sleep(1000);

@@ -2,9 +2,9 @@ package org.firstinspires.ftc.team15076;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoDrop", group = "Bot")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="AutoTestEncoder", group = "Bot")
 //@Disabled
-public class AutoTest extends LinearOpMode {
+public class AutoStrightTest extends LinearOpMode {
 
     public Bot robot = new Bot(this);
 
@@ -17,8 +17,12 @@ public class AutoTest extends LinearOpMode {
         robot.init(hardwareMap);
 
         waitForStart();
-        robot.liftPos(-30);
+        robot.encoderDrive(10,1);
 
     }
 
+
+
+
 }
+
