@@ -1,4 +1,3 @@
-//TODO Wednesday 10/17 test everyting (color sensors, encoderdrive, marker drop servo, lift, intake (if done)) (test autonomus and teleop)
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +29,24 @@
 
 package org.firstinspires.ftc.team15076;
 
+import android.os.Handler;
+import android.os.Looper;
+
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -48,11 +59,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.System.currentTimeMillis;
+
+
+import java.util.concurrent.TimeUnit;
+
+import static java.lang.System.currentTimeMillis;
+
+
 public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
-    final static int WHEEL_DIAMETER = 4;
+    final static int WHEEL_DIAMETER = 4; //Inches
     final static double INCHES_PER_TICK = (WHEEL_DIAMETER * Math.PI) / ENCODER_TICKS_PER_REV;
+
+<<<<<<< Updated upstream
     final static double F_LIFT_COEFF = 0; //Against Gravity
     final static int LIFT_THRESHOLD = 1;
 
@@ -64,11 +87,46 @@ public class Bot {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     public DcMotor winch = null;
-    //public DcMotor intake = null;
+    public DcMotor intake = null;
     public DcMotor leftLift = null;
     public DcMotor rightLift = null;
     //public NormalizedColorSensor colorSensor = null;
     //public ColorSensor colorSensor = null;
+
+
+
+    //public DcMotor intake = null;
+
+
+
+    //public NormalizedColorSensor colorSensor = null;
+    //public NormalizedColorSensor intakeColor = null;
+
+
+=======
+    int _leftOffset;
+    int _rightOffset;
+
+    public DcMotor leftBackDrive = null;
+    public DcMotor leftFrontDrive = null;
+    public DcMotor rightFrontDrive = null;
+    public DcMotor rightBackDrive = null;
+    public DcMotor extend = null;
+    public DcMotor intake = null;
+    public DcMotor leftLift = null;
+    public DcMotor rightLift = null;
+
+    //public DcMotor intake = null;
+
+
+
+    //public NormalizedColorSensor colorSensor = null;
+    //public NormalizedColorSensor intakeColor = null;
+
+    public Servo intakeServo = null;
+>>>>>>> Stashed changes
+
+
     private LinearOpMode opMode = null;
     private HardwareMap hwMap = null;
     //private Servo intakeServo = null;
@@ -80,23 +138,18 @@ public class Bot {
     private Orientation angles = null;
     private Acceleration gravity = null;
 
-    private final static double HEADING_THRESHOLD = 15; // As tight as we can make it with an integer gyro
-    private final static double PITCH_THRESHOLD = 1; // As tight as we can make it with an integer gyro
+    private final static double HEADING_THRESHOLD = 1; // As tight as we can make it with an integer gyro
 
-    private final static double P_TURN_COEFF = .01;  // Larger is more responsive, but also less stable
-    private final static double P_DRIVE_COEFF = 0.002;  // Larger is more responsive, but also less stable
-    private final static double P_LIFT_COEFF = .01;
-    private final static double F_MOTOR_COEFF = .07; //.2 before starts at .1
-    final static double POWER_DAMPEN = .001;
-    static final double P_LANDER_COEFF = .0006;
-    private final static double HOLD_TIME = .7;
-    private final static double TIMEOUT = 5000;
+    private final static double P_TURN_COEFF = 0.0517;   // Larger is more responsive, but also less stable
+    private final static double P_DRIVE_COEFF = 0.0002;  // Larger is more responsive, but also less stable
+    private final static double F_MOTOR_COEFF = 0.11;   //Minimum amount of power given to motor from control loop
 
     private final static double AUTO_DRIVE_SPEED = 0.6;
-    private final static double AUTO_TURN_SPEED = 1;
+    private final static double AUTO_TURN_SPEED = 0.6;
+    private final static double POWER_DAMPEN = .1;
+<<<<<<< Updated upstream
 
-    private ElapsedTime time = new ElapsedTime();
-    private boolean timerStarted = false;
+    private ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -129,20 +182,32 @@ public class Bot {
     //private TFObjectDetector tfod;
     //String VUFORIA_KEY = "ATClfsj/////AAAAGatavarNS0Ylq023fWG1Jgh553vtJDAOos2tGaHmeax7mcLW+BKC1TW84Spw4Y0oriANTicNCtnBfPQMDLWgayG7lHY/BE+IM5O7IB6177cNPk1uXN9CuSuq2mBkQh7cScuDbOOYraxGjL6xYWYrxNwlPYsk3+fR8d/pcgHr0xw8uezm0kgeiTHEbv4ww6XEg6oKFre1LwMlyjo1cFBP2nL3IdTEGczeT08wXC3mMbVfH8NQL6f8P4/Z8baRRgbQUDs4d5WgKSgMT0RW3JgghWwQdih06VKl+x6OhEd2T0bYNIQ7Ljhg03Nvya9DysJ+qVzbcTIyM/u6IUIoXdEqqRYNQpO/q/sg6XnZZRBrri1j";
 
+=======
+
+    private ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+>>>>>>> Stashed changes
 
     final static int DRIVE_THRESHOLD = (int) (0.1 / INCHES_PER_TICK);
+
+    private boolean limitHitL = false;
+    private boolean limitHitH = false;
+
+    private boolean isComm = false;
+
 
     public Bot(LinearOpMode opMode) {
         this.opMode = opMode;
     }
 
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap, boolean teleop) {
         hwMap = ahwMap;
         //Drive Motors
         leftBackDrive = hwMap.get(DcMotor.class, "backLeft");
         leftFrontDrive = hwMap.get(DcMotor.class, "frontLeft");
         rightBackDrive = hwMap.get(DcMotor.class, "backRight");
         rightFrontDrive = hwMap.get(DcMotor.class, "frontRight");
+
+<<<<<<< Updated upstream
         //dropperservo = hwMap.get(CRServo.class, "dropperServo");
         //intakeServo = hwMap.get(Servo.class, "intakeServo");
 
@@ -157,10 +222,38 @@ public class Bot {
 
         //intake =hwMap.get(DcMotor.class, "Intake");
 
-        //Color Sensor
-        //colorSensor = hwMap.get(ColorSensor.class, "colorSensor");
+
+
+
+        //Lift Motor
+        leftLift = hwMap.get(DcMotor.class, "leftLift");
+        rightLift = hwMap.get(DcMotor.class, "rightLift");
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Intake Motor
+        intake = hwMap.get(DcMotor.class, "intake");
+
+
 
         limitSwitch = hwMap.get(TouchSensor.class, "limitSwitch");
+=======
+        //Servos (Expected)
+        intakeServo = hwMap.get(Servo.class, "intakeAct");
+
+        //Lift Motor
+        leftLift = hwMap.get(DcMotor.class, "leftLift");
+        rightLift = hwMap.get(DcMotor.class, "rightLift");
+        rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Intake Motor
+        extend = hwMap.get(DcMotor.class, "arm");
+        intake = hwMap.get(DcMotor.class, "intake");
+
+>>>>>>> Stashed changes
 
         //Gyro
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -174,6 +267,8 @@ public class Bot {
         imu.initialize(parameters);
 
         //Drive Config
+<<<<<<< Updated upstream
+
 
         //intake.setDirection(DcMotorSimple.Direction.REVERSE);
         rightLift.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -185,26 +280,68 @@ public class Bot {
 
         _leftOffset = getLeft();
         _rightOffset = getRight();
+
+=======
+>>>>>>> Stashed changes
+        if (teleop) {
+            leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        } else {
+            leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+        Looper.prepare();
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
     }
 
-    public void setPower(double left, double right) {
-        leftBackDrive.setPower(left);
-        leftFrontDrive.setPower(left);
-        rightBackDrive.setPower(-right);
-        rightFrontDrive.setPower(-right);
-        /*
-        opMode.telemetry.addData("leftBackDrive", leftBackDrive.getCurrentPosition());
-        opMode.telemetry.addData("leftFrontDrive", leftFrontDrive.getCurrentPosition());
-        opMode.telemetry.addData("rightBackDrive", rightBackDrive.getCurrentPosition());
-        opMode.telemetry.addData("rightFrontDrive", rightFrontDrive.getCurrentPosition());
-        opMode.telemetry.update();
-        */
+    /**
+     * Set the drive power
+     *
+     * @param leftFront
+     * @param rightFront
+     * @param leftBack
+     * @param rightBack
+     */
+    public void setPower(double leftFront, double rightFront, double leftBack, double rightBack) {
+        leftBackDrive.setPower(leftBack);
+        leftFrontDrive.setPower(leftFront);
+        rightBackDrive.setPower(rightBack);
+        rightFrontDrive.setPower(rightFront);
     }
 
+    /**
+     * Stop robot movement
+     */
     public void stopDrive() {
-        setPower(0, 0);
+        setPower(0, 0, 0, 0);
+<<<<<<< Updated upstream
 
     }
+=======
+>>>>>>> Stashed changes
+
+    /**
+     * Moves arm w/ intake based on input
+     */
+    public void setExtPower(double extendPower){
+        winch.setPower(extendPower);
+    }
+
+
+    /**
+     * Moves arm w/ intake based on input
+     */
+    public void setExtPower(double extendPower){
+        extend.setPower(extendPower);
+    }
+
 
     /**
      * Sleep from LinearOpMode
@@ -216,6 +353,54 @@ public class Bot {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        }
+    }
+
+    /**
+     * Moves the lift on up and down based on input
+     */
+    public void setLiftPower(double liftPower){
+        rightLift.setPower(liftPower);
+        leftLift.setPower(liftPower);
+    }
+
+    /**
+     * Moves intake to in or out
+     */
+    public void setInPower(double inPower){
+        intake.setPower(inPower);
+    }
+
+<<<<<<< Updated upstream
+
+=======
+    /**
+     * Sets servo position of intake servo
+     */
+    public void setServo(double servoPos){
+        intakeServo.setPosition(servoPos);
+    }
+>>>>>>> Stashed changes
+
+    /**
+     * Update phone telemtery every second without interrupting loop.
+     */
+    public void updateTelemetry() {
+        if (!isComm) {
+            isComm = true;
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    opMode.telemetry.update();
+                }
+            }, 1000);
+            long previousMillis = currentTimeMillis();
+            long currentMillis = 0;
+            while (currentMillis - previousMillis < 1000) {
+                currentMillis = currentTimeMillis();
+            }
+            isComm = false;
         }
     }
 
@@ -244,23 +429,12 @@ public class Bot {
         return heading;
     }
 
-    //parameter overloaders for gyroTurn
-    public void gyroTurn(double angle)
-    {
-        gyroTurn(AUTO_TURN_SPEED, angle, TIMEOUT, P_TURN_COEFF);
+    public void gyroTurn(double angle) {
+        gyroTurn(AUTO_TURN_SPEED, angle);
     }
 
-    public void gyroTurn(double angle, double timeOut)
-    {
-        gyroTurn(AUTO_TURN_SPEED, angle, timeOut, P_TURN_COEFF);
-    }
-
-    //Turns the bot using onHeading, times out if it does not finish
-    public void gyroTurn(double speed, double angle, double timeOut, double pCoeff)
-    {
-        double beforeTime = time.time();
-        while(opMode.opModeIsActive() && !onHeading(speed, angle, pCoeff) && time.time() < timeOut)
-        {
+    public void gyroTurn(double speed, double angle) {
+        while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
             opMode.telemetry.update();
         }
     }
@@ -279,6 +453,39 @@ public class Bot {
         return pitch;
     }
 
+
+    public void gyroHold(double angle, double holdTime) {
+        gyroHold(AUTO_TURN_SPEED, angle, holdTime);
+    }
+
+
+    /**
+     * Method to obtain & hold a heading for a finite amount of time
+     * Move will stop once the requested time has elapsed or the error has reached a threshold
+     *
+     * @param speed    Desired speed of turn.
+     * @param angle    Absolute Angle (in Degrees) relative to last gyro reset.
+     *                 0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                 If a relative angle is required, add/subtract from current heading.
+     * @param holdTime Length of time (in seconds) to hold the specified heading.
+     */
+    public void gyroHold(double speed, double angle, double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        // keep looping while we have time remaining.
+        holdTimer.reset();
+        while (opMode.opModeIsActive() && (holdTimer.time() < holdTime) && !onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
+
+            opMode.telemetry.addData("timer", holdTimer.time());
+            opMode.telemetry.update();
+        }
+
+        // Stop all motion;
+        stopDrive();
+    }
+
     /**
      * Perform one cycle of closed loop heading control.
      *
@@ -289,67 +496,34 @@ public class Bot {
      * @param PCoeff Proportional Gain coefficient
      * @return onTarget
      */
-    boolean onHeading ( double speed, double angle, double PCoeff){
+    boolean onHeading(double speed, double angle, double PCoeff) {
         double error;
-        double steer = 0;
+        double steer;
         boolean onTarget = false;
-        double leftSpeed = 0;
-        double rightSpeed= 0;
-
+        double leftSpeed;
+        double rightSpeed;
 
         // determine turn power based on +/- error
         error = getError(angle);
-        if(Math.abs(error) <= HEADING_THRESHOLD && time.time() >= HOLD_TIME && timerStarted) {
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
             steer = 0.0;
             leftSpeed = 0.0;
             rightSpeed = 0.0;
             onTarget = true;
-        }
-        else if (Math.abs(error) <= HEADING_THRESHOLD) {
-            if (timerStarted == false) {
-                time.reset();
-                timerStarted = true;
-                opMode.telemetry.addLine("Reset Time");
-                steer = getSteer(error, PCoeff);
-                if(steer < 0){
-                    steer -= F_MOTOR_COEFF;
-                }
-                else{steer += F_MOTOR_COEFF;}
-                rightSpeed = Range.clip(steer, -speed, speed);
-                leftSpeed = -rightSpeed;
-            }
-            else{
-                opMode.telemetry.addLine("Timer is running");
-                steer = getSteer(error, PCoeff);
-                if(steer < 0){
-                    steer -= F_MOTOR_COEFF;
-                }
-                else{steer += F_MOTOR_COEFF;}
-                rightSpeed = Range.clip(steer, -speed, speed);
-                leftSpeed = -rightSpeed;
-            }
+        } else {
+            steer = getSteer(error, PCoeff);
+            leftSpeed = speed * steer;
+            rightSpeed = -leftSpeed;
         }
 
-        else {
-            steer = getSteer(error, PCoeff);
-            if(steer < 0){
-                steer -= F_MOTOR_COEFF;
-            }
-            else{steer += F_MOTOR_COEFF;}
-            rightSpeed = Range.clip(steer, -speed, speed);
-            leftSpeed = -rightSpeed;
-            timerStarted = false;
-        }
         // Send desired speeds to motors
-        setPower(leftSpeed, rightSpeed);
+        setPower(leftSpeed, rightSpeed, leftSpeed, rightSpeed);
 
         // Display it for the driver
         opMode.telemetry.addData("Target", "%5.2f", angle);
         opMode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
         opMode.telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
-        opMode.telemetry.addData("timer started", timerStarted);
-        opMode.telemetry.addData("hold timer", time.time());
-        opMode.telemetry.addData("on Target", onTarget);
 
         return onTarget;
     }
@@ -361,7 +535,7 @@ public class Bot {
      * @return error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
      * Positive error means the robot should turn LEFT (CCW) to reduce error.
      */
-    public double getError ( double targetAngle){
+    public double getError(double targetAngle) {
 
         double robotError;
 
@@ -379,11 +553,8 @@ public class Bot {
      * @param PCoeff Proportional Gain Coefficient
      * @return steer
      */
-    public double getSteer ( double error, double PCoeff){
-        if (error * PCoeff < 0){
-            return Range.clip((error * PCoeff)  - F_MOTOR_COEFF, -1, 0);
-        }
-        else{return Range.clip((error * PCoeff) + F_MOTOR_COEFF, 0, 1) ;}
+    public double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -1, 1);
     }
 
     public void resetTimer() {
@@ -394,48 +565,23 @@ public class Bot {
         return time;
     }
 
-    public void encoderDrive(int inches, double maxSpeed)
-    {
-        encoderDrive(opMode, inches, maxSpeed, P_DRIVE_COEFF);
-    }
+    public void encoderDrive(double inches, double maxSpeed) {
 
-    public void driveLander(double inches) {
-        encoderDrive(opMode, inches, 1, P_LANDER_COEFF);
-    }
-
-    /**
-     * r
-     * @param opmode
-     * @param inches
-     * @param maxSpeed
-     * @param pCoeff
-     */
-    public void encoderDrive(LinearOpMode opmode, double inches, double maxSpeed, double pCoeff) {
-        double speed = 0;
+        double speed;
         int error;
         //sets the target encoder value
         int target = leftFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
-        //sets current gyro value
-        double startHeading = getGyroHeading();
+
         // While the absolute value of the error is greater than the error threshold
-        //adds the f value if positive or subtracts if negative
-        while (opmode.opModeIsActive() && Math.abs(leftFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+        while (opMode.opModeIsActive() && Math.abs(leftFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
             error = target - leftFrontDrive.getCurrentPosition();
-            if (error * pCoeff < 0) {
-                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
-            } else {
-                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, 1) ;
-            }
+            speed = Range.clip(error * P_DRIVE_COEFF, -maxSpeed, maxSpeed);
 
-            if (Math.abs(getGyroHeading() - startHeading) > 1){
-                setPower(speed, speed + POWER_DAMPEN * (getGyroHeading() - startHeading));
-            }
-            else {setPower(speed, speed);}
-
-            opmode.telemetry.addData("Drive Error", error);
-            opmode.telemetry.addData("Drive Power", leftFrontDrive.getPower());
+            setPower(speed, speed, speed, speed);
+            opMode.telemetry.addData("speed: ", speed);
             opMode.telemetry.update();
         }
+<<<<<<< Updated upstream
         this.stopDrive();
     }
 
@@ -453,15 +599,22 @@ public class Bot {
     {
         rightLift.setPower(speed);
         leftLift.setPower(speed);
+
+        stopDrive();
+
+=======
+        stopDrive();
+>>>>>>> Stashed changes
     }
 
-    public void liftTime(int miliseconds, double speed)
-    {
-        liftPower(speed);
-        try {
-            Thread.sleep(miliseconds);
-        } catch (InterruptedException e1) {}
+    public Thread getThreadByName(String threadName) {
+        for (Thread t : Thread.getAllStackTraces().keySet()) {
+            if (t.getName().equals(threadName)) return t;
+        }
+        return null;
     }
+
+<<<<<<< Updated upstream
 
     public void liftStop() {
         rightLift.setPower(0);
@@ -479,28 +632,8 @@ public class Bot {
         int error;
         //sets the target encoder value
         int target = leftLift.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
-        //sets current gyro value
-        double startHeading = getGyroHeading();
-        // While the absolute value of the error is greater than the error threshold
-        //adds the f value if positive or subtracts if negative
-        while (opMode.opModeIsActive() && Math.abs(leftLift.getCurrentPosition() - target) >= LIFT_THRESHOLD) {
-            error = target - leftLift.getCurrentPosition();
-            if (error * P_LIFT_COEFF < 0) {
-                speed = Range.clip((error * P_LIFT_COEFF) - F_LIFT_COEFF, -1, 0);
-            } else {
-                speed = Range.clip((error * P_LIFT_COEFF) + F_LIFT_COEFF, 0, 1);
-            }
-            liftPower(speed);
-
-            opMode.telemetry.addData("Lift Error", error);
-            opMode.telemetry.addData("Lift Power", leftLift.getPower());
-            opMode.telemetry.update();
-
-        }
-        liftStop();
 
 
-    }
 
     public void winchPower(double power)//do this
     {
@@ -508,15 +641,7 @@ public class Bot {
     }
 
 
-    public int getliftPos()
-    {
-        return (int) (leftLift.getCurrentPosition() * INCHES_PER_TICK);
-    }
 
-    public boolean isPressed()
-    {
-        return limitSwitch.isPressed();
-    }
 
 /*
     public void markerdrop() {
@@ -564,3 +689,50 @@ public class Bot {
         intakeServo.setPosition(position);
     }*/
 }
+
+        this.stopDrive();
+    }
+}
+
+=======
+    public void driveStraight(double inches) {
+        driveStraight(opMode, inches, AUTO_DRIVE_SPEED, P_DRIVE_COEFF);
+    }
+
+    /**
+     * Method for driving straight
+     *
+     * @param inches Inches
+     */
+
+    public void driveStraight(LinearOpMode opmode, double inches, double maxSpeed, double pCoeff) {
+        double speed = 0;
+        int error;
+        //sets the target encoder value
+        int target = leftFrontDrive.getCurrentPosition() + (int) (inches / INCHES_PER_TICK);
+        //sets current gyro value
+        double startHeading = getGyroHeading();
+        // While the absolute value of the error is greater than the error threshold
+        //adds the f value if positive or subtracts if negative
+        while (opmode.opModeIsActive() && Math.abs(leftFrontDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
+            error = target - leftFrontDrive.getCurrentPosition();
+            if (error * pCoeff < 0) {
+                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
+            } else {
+                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, 1);
+            }
+
+            if (false/*Math.abs(getGyroHeading() - startHeading) > 1*/) {
+                //setPower(speed, -(speed + POWER_DAMPEN * (getGyroHeading() - startHeading)), speed, -(speed + POWER_DAMPEN * (getGyroHeading() - startHeading)));
+            } else {
+                setPower(-speed, speed, -speed, speed);
+            }
+
+            opmode.telemetry.addData("Drive Error", error);
+            opmode.telemetry.addData("Drive Power", rightFrontDrive.getPower());
+            opMode.telemetry.update();
+        }
+        this.stopDrive();
+    }
+}
+>>>>>>> Stashed changes
