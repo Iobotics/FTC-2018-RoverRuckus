@@ -49,32 +49,6 @@ public class Teleop extends LinearOpMode {
                 //robot.liftStop();
             }
 
-           /* if(gamepad1.left_bumper)
-            {
-                robot.setPowerIntake(1);
-            }
-            else if (gamepad1.left_trigger>=.25)
-            {
-                robot.setPowerIntake(-1);
-            }
-            else
-            {
-                robot.setPowerIntake(0);
-            }
-
-            if(gamepad1.a)
-            {
-                robot.setPowerDropper(1);
-            }
-            if(gamepad1.x)
-            {
-                robot.setPowerDropper(-1);
-            }
-            else
-            {
-                robot.setPowerDropper(0);
-            }*/
-
            if(gamepad1.dpad_up)
            {
                robot.winchPower(1);
@@ -88,18 +62,9 @@ public class Teleop extends LinearOpMode {
                robot.winchPower(0);
            }
 
-
-
-
-            //robot.setPower(power, power);
-            //robot.liftPower(power);
-            //telemetry.addData("power", power);
             telemetry.addData("is pressed", robot.isPressed());
             telemetry.addData("lift distance", robot.getliftPos());
-            //telemetry.addData("left distance", robot.getLeft());
-            //telemetry.addData("right distance", robot.getRight());
             telemetry.addData("angle", robot.getGyroHeading());
-            //telemetry.addData("", robot.getRed());
             telemetry.update();
         }
     }
