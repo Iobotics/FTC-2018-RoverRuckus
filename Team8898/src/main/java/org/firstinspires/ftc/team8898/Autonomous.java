@@ -59,7 +59,7 @@ public class Autonomous extends LinearOpMode {
 
         // Parking
         for(int i=0; i<3; i++){
-            robot.driveStraight( -19);
+            robot.driveStraight( -20);
         }
     }
 }

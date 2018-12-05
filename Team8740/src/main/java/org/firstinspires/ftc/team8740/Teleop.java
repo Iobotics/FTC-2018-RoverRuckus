@@ -19,11 +19,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Teleop extends LinearOpMode {
     private Bot robot = new Bot(this);
 
-    double yValue;
-    double xValue;
+    private double yValue;
+    private double xValue;
 
-    double leftPower;
-    double rightPower;
+    private double leftPower;
+    private double rightPower;
+    private boolean individualSpin = false;
 
     public void runOpMode(){
         robot.init(hardwareMap, true); //initiate robot hardware
@@ -41,7 +42,7 @@ public class Teleop extends LinearOpMode {
                 leftPower =  yValue - xValue;
                 rightPower = yValue + xValue;
 
-                robot.setPower(Range.clip(leftPower, -1.0, 1.0),Range.clip(rightPower, -1.0, 1.0),Range.clip(leftPower, -1.0, 1.0),Range.clip(rightPower, -1.0, 1.0));
+                if (!individualSpin) robot.setPower(Range.clip(leftPower, -1.0, 1.0),Range.clip(rightPower, -1.0, 1.0),Range.clip(leftPower, -1.0, 1.0),Range.clip(rightPower, -1.0, 1.0));
 
                 telemetry.addData("stick", "  y=" + yValue + "  x=" + xValue);
                 telemetry.addData("power", "  left=" + leftPower + "  right=" + rightPower);
@@ -73,12 +74,18 @@ public class Teleop extends LinearOpMode {
                 //Individually spin motors
                 if (gamepad1.right_stick_button && gamepad1.dpad_up) {
                     robot.setPower(-gamepad1.right_stick_y,0,0,0);
+                    individualSpin = true;
                 } else if (gamepad1.right_stick_button && gamepad1.dpad_right) {
                     robot.setPower(0,-gamepad1.right_stick_y,0,0);
+                    individualSpin = true;
                 } else if (gamepad1.right_stick_button && gamepad1.dpad_down) {
                     robot.setPower(0,0,-gamepad1.right_stick_y,0);
+                    individualSpin = true;
                 } else if (gamepad1.right_stick_button && gamepad1.dpad_up) {
                     robot.setPower(0,0,0,-gamepad1.right_stick_y);
+                    individualSpin = true;
+                } else {
+                    individualSpin = false;
                 }
 
                 if (gamepad1.b) {

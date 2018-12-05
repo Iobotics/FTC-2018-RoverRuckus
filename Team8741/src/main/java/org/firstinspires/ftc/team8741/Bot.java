@@ -43,11 +43,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 //Disabled
 public class Bot {
@@ -63,13 +66,17 @@ public class Bot {
     int _leftOffset;
     int _rightOffset;
 
+    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
+    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
+    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
+    private static final String VUFORIA_KEY = "AayLJf7/////AAABmVuaR0sGrEl/q1NavYUhLWpSlPllp9Bbe3BrknPrE8vykZ19I74yB2sxMw40YrDsQeANKcYA5fhhSqzbpzt9EtxutVSphCi5ADEbporcMa6Vx4rsq3RjWbC8o9uvpL6h8E6/uwRsu4Lu/AgegnCb33iVY52kwg7TpdacFWj7tGP1gCw4+FInFHiU9WGoW0CKeGIsOUZ6FqZFM0MST0jlz7rnu2kE7wrrd+GhpOCHK+jv1MvQzfT93jsq9xDfon+yLsAEKnLSc/mrzuile4twM3qTJAaeOHMByiB5n/awQ0POLT5+YpyWWsvE8TemZ8RSQlRHeMKdEj2BNeGb7aZZvgvFUD4HkBeywiKXoX0IzY4H\n";
     private final static double P_TURN_COEFF = 0.050;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.00060 ;  // Larger is more responsive, but also less stable
-    private final static double F_MOTOR_COEFF = 0.09;   //Minimum amount of power given to motor from control loop
+    private final static double F_MOTOR_COEFF = 0.07;   //Minimum amount of power given to motor from control loop
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
 
-    private final static double AUTO_DRIVE_SPEED = 0.6;
+    private final static double AUTO_DRIVE_SPEED = 0.7;
     private final static double AUTO_TURN_SPEED = 0.6;
     private final static double POWER_DAMPEN = .001;
     private final static double TIMEOUT = 5000;
@@ -91,6 +98,9 @@ public class Bot {
     private Orientation angles = null;
     private Acceleration gravity = null;
 
+    private TFObjectDetector tfod;
+    private VuforiaLocalizer vuforia;
+
     private ElapsedTime time = new ElapsedTime();
     private boolean timerStarted = false;
 
@@ -99,6 +109,8 @@ public class Bot {
     }
 
     public void init(HardwareMap ahwMap) {
+
+
         hwMap = ahwMap;
 
         //Instantiate motor objects
@@ -124,8 +136,42 @@ public class Bot {
         liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        initVuforia();
+
+        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+            initTfod();
+        } else {
+            opMode.telemetry.addData("Sorry!", "This device is not compatible with TFOD");
+        }
+
         _leftOffset = leftDrive.getCurrentPosition();
         _rightOffset = rightDrive.getCurrentPosition();
+    }
+
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
+    }
+
+    /**
+     * Initialize the Tensor Flow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }
 
     public float[] getHSV () {
@@ -202,9 +248,9 @@ public class Bot {
         while (opmode.opModeIsActive() && Math.abs(rightDrive.getCurrentPosition() - target) >= DRIVE_THRESHOLD) {
             error = target - rightDrive.getCurrentPosition();
             if (error * pCoeff < 0) {
-                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -1, 0);
+                speed = Range.clip((error * pCoeff) - F_MOTOR_COEFF, -maxSpeed, 0);
             } else {
-                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, 1) ;
+                speed = Range.clip((error * pCoeff) + F_MOTOR_COEFF, 0, maxSpeed) ;
             }
 
             if (Math.abs(getGyroHeading() - startHeading) > 1){

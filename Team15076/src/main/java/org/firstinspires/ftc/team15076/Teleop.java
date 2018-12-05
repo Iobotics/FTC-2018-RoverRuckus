@@ -58,6 +58,7 @@ Teleop extends LinearOpMode {
             }
 <<<<<<< Updated upstream
 
+<<<<<<< HEAD
            /* if(gamepad1.left_bumper)
             {
                 robot.setPowerIntake(1);
@@ -119,6 +120,8 @@ Teleop extends LinearOpMode {
                 robot.setPowerDropper(0);
             }*/
 
+=======
+>>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
            if(gamepad1.dpad_up)
            {
                robot.winchPower(1);
@@ -132,17 +135,10 @@ Teleop extends LinearOpMode {
                robot.winchPower(0);
            }
 
-
-
-
-            //robot.setPower(power, power);
-            //robot.liftPower(power);
-            //telemetry.addData("power", power);
             telemetry.addData("is pressed", robot.isPressed());
             telemetry.addData("lift distance", robot.getliftPos());
-            //telemetry.addData("left distance", robot.getLeft());
-            //telemetry.addData("right distance", robot.getRight());
             telemetry.addData("angle", robot.getGyroHeading());
+<<<<<<< HEAD
             //telemetry.addData("", robot.getRed());
 =======
             /*
@@ -185,6 +181,8 @@ Teleop extends LinearOpMode {
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> 8efe7d2740f7ddf934cca9cca3e9c80bf5b2343b
             telemetry.update();
         }
     }

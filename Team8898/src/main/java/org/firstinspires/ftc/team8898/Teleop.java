@@ -21,7 +21,7 @@ public class Teleop extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()) {
-            robot.setPower(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            robot.setPower(-gamepad1.right_stick_y, -gamepad1.left_stick_y);
             if (gamepad1.b) {
                 robot.setLiftPower(.7);
             }

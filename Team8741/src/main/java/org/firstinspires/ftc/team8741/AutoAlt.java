@@ -26,14 +26,14 @@ AutoAlt extends LinearOpMode {
         robot.gyroTurn(0);
         robot.driveStraight(-19);
         robot.gyroTurn(-90);
-        robot.driveStraight( 29);
-        robot.gyroTurn(-180);
-        robot.driveStraight(9);
-        robot.gyroTurn(135);
-        robot.driveStraight(47);
+        robot.driveStraight( 36);
+        robot.gyroTurn(0);
+        robot.driveStraight(-10);
+        robot.gyroTurn(-45);
+        robot.driveStraight(-52);
+        robot.gyroTurn(45);
         robot.setServo(0);
         robot.sleep(500);
-        robot.gyroTurn(45);
         robot.driveStraight(108);
 
 
