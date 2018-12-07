@@ -50,7 +50,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
 
 //Disabled
 public class Bot {
@@ -62,6 +65,8 @@ public class Bot {
     final static int DRIVE_THRESHOLD = (int) (0.5 / INCHES_PER_TICK);
 
     private final static double HEADING_THRESHOLD = 2.1;
+
+    private final double goldThreshold = 600;
 
     int _leftOffset;
     int _rightOffset;
@@ -111,6 +116,8 @@ public class Bot {
     public void init(HardwareMap ahwMap) {
 
 
+        initTfod();
+        tfod.activate();
         hwMap = ahwMap;
 
         //Instantiate motor objects
@@ -174,16 +181,28 @@ public class Bot {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }
 
-    public float[] getHSV () {
+    //Returns a value depending on the position of the mineral, 0 is right most, 1 is middle, 2 is leftmost, -1 is an error
 
-        float[] hsvValues = new float[3];
-        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+    public int getGoldPos(double timeThreshold){
 
-        return hsvValues;
-    }
+        int position = 0;
 
-    public int getRed(){
-        return colorSensor.red();
+        while (time.seconds() < timeThreshold){
+            opMode.telemetry.addData("pos", position);
+            opMode.telemetry.update();
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                for (Recognition recognition : updatedRecognitions) {
+                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL) && recognition.getLeft() > goldThreshold) {
+                        position = 2;
+                    } else if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                        position = 1;
+                    } else position = 0;
+                }
+            }
+        }
+        tfod.deactivate();
+        return position;
     }
 
     //Sets the power of both sides of the bot
