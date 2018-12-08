@@ -32,8 +32,8 @@ AutoAlt extends LinearOpMode {
       //  robot.setLiftPower(0);
         if(goldPos == 2){
             robot.gyroTurn(-30);
-            robot.driveStraight(-35);
-            robot.driveStraight(35);
+            robot.driveStraight(-38);
+            robot.driveStraight(36);
             robot.gyroTurn(0);
         }
         else if (goldPos ==1){
@@ -43,20 +43,17 @@ AutoAlt extends LinearOpMode {
 
         else if(goldPos ==0) {
             robot.gyroTurn(30);
-            robot.driveStraight(-35);
-            robot.driveStraight(35);
+            robot.driveStraight(-38);
+            robot.driveStraight(36);
             robot.gyroTurn(0);
         }
         robot.driveStraight(-17);
-        robot.gyroTurn(-90);
-        robot.driveStraight( 36);
-        robot.gyroTurn(0);
-        robot.driveStraight(-10);
-        robot.gyroTurn(-45);
-        robot.driveStraight(-52, 1);
+        robot.gyroTurn(90);
+        robot.driveStraight( 53);
         robot.gyroTurn(45);
+        robot.driveStraight(-59, 1);
         robot.setServo(0);
-        robot.sleep(500);
+        robot.gyroTurn(45);
         robot.driveStraight(96, 1);
         }
     }
