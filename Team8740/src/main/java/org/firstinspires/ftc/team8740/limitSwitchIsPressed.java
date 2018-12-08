@@ -13,7 +13,7 @@ public class limitSwitchIsPressed  extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            telemetry.addData("Top Limit", "%s", robot.armLimitH.isPressed());
+            //telemetry.addData("Top Limit", "%s", robot.armLimitH.isPressed());
             telemetry.addData("Bottom Limit", "%s", robot.armLimitL.isPressed());
             telemetry.update();
         }

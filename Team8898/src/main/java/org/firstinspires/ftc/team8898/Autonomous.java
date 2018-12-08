@@ -21,7 +21,7 @@ public class Autonomous extends LinearOpMode {
         robot.driveStraight(18);
         robot.driveStraight(10);
         robot.gyroTurn(45);
-        // clAIm
+        // claim
 
         robot.setDropper(.15);
 

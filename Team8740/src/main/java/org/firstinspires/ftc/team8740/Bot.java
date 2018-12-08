@@ -205,10 +205,7 @@ public class Bot {
      */
     public void hookRaise(){
         hook.setPower(0.5);
-        runtime.reset();
         while (armLimitL.isPressed()) {
-            opMode.telemetry.addData("Is pressed?","%s", armLimitH.isPressed());
-            opMode.telemetry.update();
             opMode.idle();
         }
         /*while (!limitHitL) {
@@ -217,10 +214,8 @@ public class Bot {
             }
         }*/
 
-        sleep(250);
+        sleep(750);
         hook.setPower(0);
-
-        driveStraight(-1);
 
         isLiftDone = true;
     }

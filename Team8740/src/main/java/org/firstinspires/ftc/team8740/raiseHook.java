@@ -13,11 +13,8 @@ public class raiseHook extends LinearOpMode {
 
     @Override
     public void runOpMode () {
-        //raise hook before comp
         robot.init(hardwareMap, false);
         waitForStart();
-        //robot.hook.setPower(-1);
-        robot.sleep(5000);
-        //robot.hook.setPower(0);
+        robot.hookRaise();
     }
 }
