@@ -18,15 +18,20 @@ public class AutoTest extends LinearOpMode {
         if(goldPos == 2){
             robot.gyroTurn(-30);
             robot.driveStraight(-35);
+            robot.driveStraight(35);
+            robot.gyroTurn(0);
         }
         else if (goldPos ==1){
-            robot.driveStraight(-35);
+            robot.driveStraight(-25);
+            robot.driveStraight(25);
         }
 
         else if(goldPos ==0) {
             robot.gyroTurn(30);
             robot.driveStraight(-35);
+            robot.driveStraight(35);
+            robot.gyroTurn(0);
         }
-        else {}
+
     }
 }

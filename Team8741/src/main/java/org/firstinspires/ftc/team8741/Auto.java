@@ -14,6 +14,7 @@ public class Auto extends LinearOpMode {
         Auto For the Closest To the Crater
          */
         robot.init(hardwareMap);
+        robot.initTFOD();
 
         waitForStart();
         robot.setLiftPower(1);
@@ -21,16 +22,34 @@ public class Auto extends LinearOpMode {
         robot.sleep(4200);
         robot.setLiftPower(0);
         robot.gyroTurn(0);
-        robot.driveStraight(-19);
-        robot.setLiftPower(-1);
-        robot.sleep(4200);
-        robot.setLiftPower(0);
+      //  robot.driveStraight(-2);
+       // robot.setLiftPower(-1);
+        double goldPos = robot.getGoldPos(4.2);
+       // robot.setLiftPower(0);
+        if(goldPos == 2){
+            robot.gyroTurn(-30);
+            robot.driveStraight(-35);
+            robot.driveStraight(35);
+            robot.gyroTurn(0);
+        }
+        else if (goldPos ==1){
+            robot.driveStraight(-25);
+            robot.driveStraight(25);
+        }
+
+        else if(goldPos ==0) {
+            robot.gyroTurn(30);
+            robot.driveStraight(-35);
+            robot.driveStraight(35);
+            robot.gyroTurn(0);
+        }
+        robot.driveStraight(-17);
         robot.gyroTurn(90);
-        robot.driveStraight(-46);
+        robot.driveStraight(-46, 1);
         robot.gyroTurn(135);
-        robot.driveStraight(-49);
+        robot.driveStraight(-49, 1);
         robot.setServo(0);
-        robot.sleep(500);
-        robot.driveStraight(96);
+        robot.gyroTurn(135);
+        robot.driveStraight(96, 1);
     }
 }

@@ -55,7 +55,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-//Disabled
 public class Bot {
 
     final static int ENCODER_TICKS_PER_REV = 1120;
@@ -78,11 +77,11 @@ public class Bot {
     private static final String VUFORIA_KEY = "AayLJf7/////AAABmVuaR0sGrEl/q1NavYUhLWpSlPllp9Bbe3BrknPrE8vykZ19I74yB2sxMw40YrDsQeANKcYA5fhhSqzbpzt9EtxutVSphCi5ADEbporcMa6Vx4rsq3RjWbC8o9uvpL6h8E6/uwRsu4Lu/AgegnCb33iVY52kwg7TpdacFWj7tGP1gCw4+FInFHiU9WGoW0CKeGIsOUZ6FqZFM0MST0jlz7rnu2kE7wrrd+GhpOCHK+jv1MvQzfT93jsq9xDfon+yLsAEKnLSc/mrzuile4twM3qTJAaeOHMByiB5n/awQ0POLT5+YpyWWsvE8TemZ8RSQlRHeMKdEj2BNeGb7aZZvgvFUD4HkBeywiKXoX0IzY4H\n";
     private final static double P_TURN_COEFF = 0.050;   // Larger is more responsive, but also less stable
     private final static double P_DRIVE_COEFF = 0.00060 ;  // Larger is more responsive, but also less stable
-    private final static double F_MOTOR_COEFF = 0.07;   //Minimum amount of power given to motor from control loop
+    private final static double F_MOTOR_COEFF = 0.09;   //Minimum amount of power given to motor from control loop
     private final static double HOLD_TIME = 0.7; //number of milliseconds the bot has to hold a position before the turn is completed
 
-    private final static double AUTO_DRIVE_SPEED = 0.7;
-    private final static double AUTO_TURN_SPEED = 0.6;
+    private final static double AUTO_DRIVE_SPEED = 0.6;
+    private final static double AUTO_TURN_SPEED = 0.7;
     private final static double POWER_DAMPEN = .001;
     private final static double TIMEOUT = 5000;
 
@@ -116,8 +115,6 @@ public class Bot {
     public void init(HardwareMap ahwMap) {
 
 
-        initTfod();
-        tfod.activate();
         hwMap = ahwMap;
 
         //Instantiate motor objects
@@ -168,6 +165,10 @@ public class Bot {
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
+    }
+
+    public void initTFOD(){
+        tfod.activate();
     }
 
     /**
@@ -247,6 +248,10 @@ public class Bot {
     public void driveStraight(double inches)
     {
         driveStraight(opMode, inches, AUTO_DRIVE_SPEED, P_DRIVE_COEFF);
+    }
+    public void driveStraight(double inches, double speed)
+    {
+        driveStraight(opMode, inches, speed, P_DRIVE_COEFF);
     }
 
     /**
